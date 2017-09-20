@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{297BA354-5E1E-4701-A6A2-73784BC8C8B1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ManiacEditor</RootNamespace>
+    <AssemblyName>ManiacEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Desktop, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Desktop.4.0.1\lib\net45\SharpDX.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\ActionAddDeleteEntities.cs" />
+    <Compile Include="Actions\ActionDummy.cs" />
+    <Compile Include="Actions\ActionEntityPropertyChange.cs" />
+    <Compile Include="Actions\ActionMoveEntities.cs" />
+    <Compile Include="Actions\ActionChangeTile.cs" />
+    <Compile Include="Actions\ActionsGroup.cs" />
+    <Compile Include="Actions\ActionsGroupCloseMarker.cs" />
+    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="ColorsCaching.cs" />
+    <Compile Include="DeviceEventArgs.cs" />
+    <Compile Include="EditorBackground.cs" />
+    <Compile Include="EntitiesToolbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EntitiesToolbar.Designer.cs">
+      <DependentUpon>EntitiesToolbar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FolderSelectDialog.cs" />
+    <Compile Include="IDrawArea.cs" />
+    <Compile Include="ImageViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImageViewer.designer.cs">
+      <DependentUpon>ImageViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalProperty.cs" />
+    <Compile Include="LocalPropertyGrid.cs" />
+    <Compile Include="Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor.designer.cs">
+      <DependentUpon>Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorEntities.cs" />
+    <Compile Include="EditorEntity.cs" />
+    <Compile Include="EditorLayer.cs" />
+    <Compile Include="Reflector.cs" />
+    <Compile Include="SceneSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SceneSelect.Designer.cs">
+      <DependentUpon>SceneSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextureCreator.cs" />
+    <Compile Include="ThumbnailFlowLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TilesList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TilesList.Designer.cs">
+      <DependentUpon>TilesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TilesToolbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TilesToolbar.Designer.cs">
+      <DependentUpon>TilesToolbar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DevicePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DevicePanel.designer.cs">
+      <DependentUpon>DevicePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="EntitiesToolbar.resx">
+      <DependentUpon>EntitiesToolbar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageViewer.resx">
+      <DependentUpon>ImageViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor.resx">
+      <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SceneSelect.resx">
+      <DependentUpon>SceneSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TilesList.resx">
+      <DependentUpon>TilesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TilesToolbar.resx">
+      <DependentUpon>TilesToolbar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Resources\objects_attributes.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\file.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSDKv5\RSDKv5.csproj">
+      <Project>{cf5496f8-002b-408f-9b3d-67c88f610283}</Project>
+      <Name>RSDKv5</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

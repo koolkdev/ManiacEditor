@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManiacEditor", "ManiacEditor\ManiacEditor.csproj", "{297BA354-5E1E-4701-A6A2-73784BC8C8B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF5496F8-002B-408F-9B3D-67C88F610283} = {CF5496F8-002B-408F-9B3D-67C88F610283}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSDKv5", "RSDKv5\RSDKv5.csproj", "{CF5496F8-002B-408F-9B3D-67C88F610283}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{297BA354-5E1E-4701-A6A2-73784BC8C8B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297BA354-5E1E-4701-A6A2-73784BC8C8B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297BA354-5E1E-4701-A6A2-73784BC8C8B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297BA354-5E1E-4701-A6A2-73784BC8C8B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF5496F8-002B-408F-9B3D-67C88F610283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF5496F8-002B-408F-9B3D-67C88F610283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF5496F8-002B-408F-9B3D-67C88F610283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF5496F8-002B-408F-9B3D-67C88F610283}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
