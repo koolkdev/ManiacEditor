@@ -1,0 +1,16 @@
+os:
+  - Visual Studio 2017
+
+shallow_clone: true
+
+configuration:
+  - Release
+
+before_build:
+  - nuget restore
+
+after_build:
+  - 7z a ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll
+
+artifacts:
+  - path: ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip
