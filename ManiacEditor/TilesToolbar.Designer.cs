@@ -52,6 +52,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tilesList.BackColor = System.Drawing.Color.White;
             this.tilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tilesList.FlipHorizontal = false;
+            this.tilesList.FlipVertical = false;
             this.tilesList.Location = new System.Drawing.Point(3, 59);
             this.tilesList.Name = "tilesList";
             this.tilesList.Size = new System.Drawing.Size(249, 312);
@@ -102,9 +104,9 @@
             this.option3CheckBox.AutoSize = true;
             this.option3CheckBox.Location = new System.Drawing.Point(5, 402);
             this.option3CheckBox.Name = "option3CheckBox";
-            this.option3CheckBox.Size = new System.Drawing.Size(93, 19);
+            this.option3CheckBox.Size = new System.Drawing.Size(86, 19);
             this.option3CheckBox.TabIndex = 4;
-            this.option3CheckBox.Text = "Hitbox (Top)";
+            this.option3CheckBox.Text = "Solid (Top)";
             this.option3CheckBox.UseVisualStyleBackColor = true;
             // 
             // option4CheckBox
@@ -113,9 +115,9 @@
             this.option4CheckBox.AutoSize = true;
             this.option4CheckBox.Location = new System.Drawing.Point(145, 402);
             this.option4CheckBox.Name = "option4CheckBox";
-            this.option4CheckBox.Size = new System.Drawing.Size(102, 19);
+            this.option4CheckBox.Size = new System.Drawing.Size(126, 19);
             this.option4CheckBox.TabIndex = 5;
-            this.option4CheckBox.Text = "Hitbox (L/R/B)";
+            this.option4CheckBox.Text = "Solid (All excl. top)";
             this.option4CheckBox.UseVisualStyleBackColor = true;
             // 
             // option5CheckBox
@@ -190,9 +192,9 @@
             this.tileOption2.AutoSize = true;
             this.tileOption2.Location = new System.Drawing.Point(145, 469);
             this.tileOption2.Name = "tileOption2";
-            this.tileOption2.Size = new System.Drawing.Size(102, 19);
+            this.tileOption2.Size = new System.Drawing.Size(126, 19);
             this.tileOption2.TabIndex = 11;
-            this.tileOption2.Text = "Hitbox (L/R/B)";
+            this.tileOption2.Text = "Solid (All excl. top)";
             this.tileOption2.UseVisualStyleBackColor = true;
             this.tileOption2.CheckedChanged += new System.EventHandler(this.tileOption2_CheckedChanged);
             // 
@@ -202,9 +204,9 @@
             this.tileOption1.AutoSize = true;
             this.tileOption1.Location = new System.Drawing.Point(5, 469);
             this.tileOption1.Name = "tileOption1";
-            this.tileOption1.Size = new System.Drawing.Size(93, 19);
+            this.tileOption1.Size = new System.Drawing.Size(86, 19);
             this.tileOption1.TabIndex = 10;
-            this.tileOption1.Text = "Hitbox (Top)";
+            this.tileOption1.Text = "Solid (Top)";
             this.tileOption1.UseVisualStyleBackColor = true;
             this.tileOption1.CheckedChanged += new System.EventHandler(this.tileOption1_CheckedChanged);
             // 
