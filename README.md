@@ -22,6 +22,7 @@
 Clicked tile is immediatily selected. To select multiple tiles, you can click and drag from empty spot to create a selection box.  
 You can move selected tiles by click on one of them and dragging them with your mouse.  
 You can use **Shift** and **Ctrl** + click (and drag) to add/remove items from your selection.  
+You can duplicate tiles by holding **Ctrl** and dragging the selected tiles.  
 You can add new tiles by dragging them from the selection window or double click on them.  
 You can change the properties of the selected tiles by click on the checkboxes at the bottom of the tiles sidebar.
 
@@ -29,6 +30,7 @@ You can change the properties of the selected tiles by click on the checkboxes a
 Clicking and dragging will create a selection box, even if you clicked on a tile. (in the default mode it will drag the tile instead)  
 You can move selected tiles by click on one of them and dragging them with your mouse.  
 You can use **Shift** and **Ctrl** + click (and drag) to add/remove items from your selection.  
+You can duplicate tiles by holding **Ctrl** and dragging the selected tiles.  
 You can add new tiles by dragging them from the selection window or double click on them.  
 You can change the properties of the selected tiles by click on the checkboxes at the bottom of the tiles sidebar.
 
