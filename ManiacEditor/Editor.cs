@@ -1013,13 +1013,15 @@ namespace ManiacEditor
                 {
                     MessageBox.Show("Please select the \"Data\" folder", "Message");
 
-                    FolderSelectDialog folderBrowserDialog = new FolderSelectDialog();
-                    folderBrowserDialog.Title = "Select Data Folder";
+                    using (var folderBrowserDialog = new FolderSelectDialog())
+                    {
+                        folderBrowserDialog.Title = "Select Data Folder";
 
-                    if (!folderBrowserDialog.ShowDialog())
-                        return false;
+                        if (!folderBrowserDialog.ShowDialog())
+                            return false;
 
-                    DataDirectory = folderBrowserDialog.FileName;
+                        DataDirectory = folderBrowserDialog.FileName;
+                    }
                 }
                 while (!File.Exists(Path.Combine(DataDirectory, "Game", "GameConfig.bin")));
 
