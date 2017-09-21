@@ -13,8 +13,8 @@ namespace RSDKv5
 
         const int TILES_COUNT = 0x400;
 
-        TileConfig[] FirstConfig = new TileConfig[TILES_COUNT];
-        TileConfig[] SecondConfig = new TileConfig[TILES_COUNT];
+        TileConfig[] CollisionPath1 = new TileConfig[TILES_COUNT];
+        TileConfig[] CollisionPath2 = new TileConfig[TILES_COUNT];
 
         public class TileConfig
         {
@@ -59,9 +59,9 @@ namespace RSDKv5
             using (Reader creader = reader.GetCompressedStream())
             {
                 for (int i = 0; i < TILES_COUNT; ++i)
-                    FirstConfig[i] = new TileConfig(creader);
+                    CollisionPath1[i] = new TileConfig(creader);
                 for (int i = 0; i < TILES_COUNT; ++i)
-                    SecondConfig[i] = new TileConfig(creader);
+                    CollisionPath2[i] = new TileConfig(creader);
             }
         }
     }
