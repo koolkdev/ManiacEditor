@@ -616,7 +616,7 @@ namespace ManiacEditor
                 }
             }
 
-            toolStripStatusLabel1.Text = "X: " + e.X + " Y: " + e.Y;
+            toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
 
             if (IsEditing())
             {
