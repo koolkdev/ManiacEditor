@@ -15,7 +15,8 @@ namespace RSDKv5
         public StageTiles(string stage_directory)
         {
             Image = new GIF(Path.Combine(stage_directory, "16x16Tiles.gif"));
-            Config = new TilesConfig(Path.Combine(stage_directory, "TileConfig.bin"));
+            if (File.Exists(Path.Combine(stage_directory, "TileConfig.bin")))
+                Config = new TilesConfig(Path.Combine(stage_directory, "TileConfig.bin"));
         }
 
         public void Dispose()
