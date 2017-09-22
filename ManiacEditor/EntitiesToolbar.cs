@@ -161,7 +161,7 @@ namespace ManiacEditor
                         break;
                     case RSDKv5.AttributeTypes.COLOR:
                         var color = attribute_value.ValueColor;
-                        addProperty(objProperties, category_index, attribute_name, "color", "color", Color.FromArgb(color.A, color.R, color.G, color.B));
+                        addProperty(objProperties, category_index, attribute_name, "color", "color", Color.FromArgb(255 /* color.A */, color.R, color.G, color.B));
                         break;
                 }
                 --category_index;
@@ -216,7 +216,7 @@ namespace ManiacEditor
                             break;
                         case RSDKv5.AttributeTypes.COLOR:
                             var color = attribute_value.ValueColor;
-                            obj.setValue(String.Format("{0}.{1}", attribute_name, "color"), Color.FromArgb(color.A, color.R, color.G, color.B));
+                            obj.setValue(String.Format("{0}.{1}", attribute_name, "color"), Color.FromArgb(255 /* color.A */, color.R, color.G, color.B));
                             break;
                     }
                 }

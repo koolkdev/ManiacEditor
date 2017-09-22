@@ -124,7 +124,7 @@ namespace ManiacEditor
             saveAsToolStripMenuItem.Enabled = enabled;
             saveAspngToolStripMenuItem.Enabled = enabled;
 
-            ShowFGHigh.Enabled = enabled;
+            ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled;
             ShowEntities.Enabled = enabled;
 
@@ -156,7 +156,7 @@ namespace ManiacEditor
         private void SetEditButtonsState(bool enabled)
         {
             EditFGLow.Enabled = enabled;
-            EditFGHigh.Enabled = enabled;
+            EditFGHigh.Enabled = enabled && FGHigh != null;
             EditEntities.Enabled = enabled;
             
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
@@ -616,7 +616,7 @@ namespace ManiacEditor
                 }
             }
 
-            toolStripStatusLabel1.Text = "X: " + e.X + " Y: " + e.Y;
+            toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
 
             if (IsEditing())
             {
@@ -1104,21 +1104,29 @@ namespace ManiacEditor
 
                 foreach (SceneLayer layer in Scene.Layers)
                 {
-                    if (layer.Name == "FG Low\0")
+                    if (layer.Name == "FG Low\0" || layer.Name == "Playfield\0")
                         low_layer = layer;
-                    else if (layer.Name == "FG High\0")
+                    else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
                         high_layer = layer;
                 }
 
-                if (low_layer == null || high_layer == null)
+                if (low_layer == null /* || high_layer == null */)
                 {
-                    MessageBox.Show("Not found FG Low and FG High", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     UnloadScene();
+                    MessageBox.Show("Unsupported scene (yet)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
+                ShowFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
+                EditFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
+                ShowFGHigh.Checked = high_layer != null;
+                if (high_layer != null) {
+                    ShowFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
+                    EditFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
+                }
+
                 FGLow = new EditorLayer(low_layer);
-                FGHigh = new EditorLayer(high_layer);
+                if (high_layer != null) FGHigh = new EditorLayer(high_layer);
 
                 Background = new EditorBackground();
 
