@@ -12,7 +12,7 @@ namespace RSDKv5
         byte IgnoredByte;
         public string Name;
 
-        public byte UnknownByte1;
+        public byte IsScrollingVertical;
         public byte UnknownByte2;
 
         public ushort Width;
@@ -66,7 +66,7 @@ namespace RSDKv5
         public SceneLayer(string name, ushort Width, ushort Height)
         {
             ScrollingInfo.Add(new ScrollInfo());
-            // Per pixel
+            // Per pixel (of height or of width, depends if it scrolls horizontal or veritcal)
             ScrollIndexes = new byte[Height * 16];
             Tiles = new ushort[Height][];
             for (int i = 0; i < Height; ++i)
@@ -83,7 +83,7 @@ namespace RSDKv5
 
             Name = reader.ReadRSDKString();
 
-            UnknownByte1 = reader.ReadByte();
+            IsScrollingVertical = reader.ReadByte();
             UnknownByte2 = reader.ReadByte();
 
             Width = reader.ReadUInt16();
@@ -116,7 +116,7 @@ namespace RSDKv5
 
             writer.WriteRSDKString(Name);
 
-            writer.Write(UnknownByte1);
+            writer.Write(IsScrollingVertical);
             writer.Write(UnknownByte2);
 
             writer.Write(Width);
