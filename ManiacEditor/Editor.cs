@@ -1110,8 +1110,8 @@ namespace ManiacEditor
 
                 if (low_layer == null /* || high_layer == null */)
                 {
-                    MessageBox.Show("Not found FG Low and FG High", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     UnloadScene();
+                    MessageBox.Show("Unsupported scene (yet)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
