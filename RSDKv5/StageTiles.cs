@@ -22,10 +22,5 @@ namespace RSDKv5
         {
             Image.Dispose();
         }
-
-        public void DisposeTextures()
-        {
-            Image.DisposeTextures();
-        }
     }
 }

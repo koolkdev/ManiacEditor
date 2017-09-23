@@ -49,7 +49,7 @@ namespace ManiacEditor
         
         public void DisposeTextures()
         {
-            TilesImage?.DisposeTextures();
+            //TilesImage?.DisposeTextures();
         }
 
         private void graphicPanel_Resize(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace ManiacEditor
         private void graphicPanel_OnRender(object sender, DeviceEventArgs e)
         {
 
-            if (TilesImage != null) {
+            /*if (TilesImage != null) {
                 // Create a local version of the graphics object for the PictureBox.
 
                 int tile_size = (TILE_SIZE + BorderSize * 2);
@@ -112,7 +112,7 @@ namespace ManiacEditor
                     // TODO: Need to fix the line drawing the DevicePanel
                     graphicPanel.DrawLine((SelectedTile % tiles_per_line) * tile_size + tile_size - BorderSize, (SelectedTile / tiles_per_line) * tile_size + tile_size - BorderSize, (SelectedTile % tiles_per_line) * tile_size + tile_size - BorderSize, (SelectedTile / tiles_per_line) * tile_size + tile_size - BorderSize, System.Drawing.Color.Red);
                 }
-            }
+            }*/
         }
 
         public Rectangle GetScreen()

@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=1.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.Next.1.2.2336.6514-pre\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=1.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.Next.GLControl.1.2.2336.6514-pre\lib\net20\OpenTK.GLControl.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -100,6 +106,9 @@
     <Compile Include="SceneSelect.Designer.cs">
       <DependentUpon>SceneSelect.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScheduledTask.cs" />
+    <Compile Include="TexCoords.cs" />
+    <Compile Include="Texture2D.cs" />
     <Compile Include="TextureCreator.cs" />
     <Compile Include="ThumbnailFlowLayoutPanel.cs">
       <SubType>Component</SubType>
@@ -125,6 +134,14 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GLViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GLViewControl.Designer.cs">
+      <DependentUpon>GLViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VertexBuffer.cs" />
+    <Compile Include="Vertices.cs" />
     <EmbeddedResource Include="EntitiesToolbar.resx">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>
     </EmbeddedResource>
@@ -153,6 +170,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

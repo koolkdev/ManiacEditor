@@ -10,7 +10,7 @@ namespace ManiacEditor
     {
         void Draw(Graphics g);
 
-        void Draw(DevicePanel d);
+        //void Draw(DevicePanel d);
 
         //void DrawAnimation(DevicePanel d);
     }

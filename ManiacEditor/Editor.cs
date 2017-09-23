@@ -10,10 +10,10 @@ using System.Drawing.Drawing2D;
 using ManiacEditor.Actions;
 using System.Collections;
 using System.Net;
-using SharpDX.Direct3D9;
 using RSDKv5;
 using System.IO;
-using Color = System.Drawing.Color;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace ManiacEditor
 {
@@ -22,7 +22,6 @@ namespace ManiacEditor
         bool dragged;
         bool startDragged;
         int lastX, lastY, draggedX, draggedY;
-        int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
 
         int ClickedX=-1, ClickedY=-1;
 
@@ -32,7 +31,7 @@ namespace ManiacEditor
         bool draggingSelection;
         int selectingX, selectingY;
         bool zooming;
-        double Zoom = 1;
+        //double Zoom = 1;
         int ZoomLevel = 0;
 
         string DataDirectory;
@@ -62,14 +61,20 @@ namespace ManiacEditor
 
         internal int SceneWidth;
         internal int SceneHeight;
+
+        int lastFPS;
         
         bool scrolling = false;
         bool scrollingDragged = false, wheelClicked = false;
-        Point scrollPosition;
+        Point scrollPosition, lastScrollPos;
 
         EditorEntities entities;
 
         public static Editor Instance;
+
+        public const double LAYER_DEPTH = 0.1;
+        
+        Timer scrollTimer = new Timer() { Interval = 1 };
 
         public Editor()
         {
@@ -80,9 +85,8 @@ namespace ManiacEditor
 
             GraphicPanel.GotFocus += new EventHandler(OnGotFocus);
             GraphicPanel.LostFocus += new EventHandler(OnLostFocus);
-            
-            GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
-            GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
+
+            scrollTimer.Tick += ScrollTick;
 
             SetViewSize();
 
@@ -185,7 +189,7 @@ namespace ManiacEditor
                     TilesToolbar = new TilesToolbar(StageTiles);
                     TilesToolbar.TileDoubleClick = new Action<int>(x =>
                     {
-                        EditorPlaceTile(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), x);
+                        EditorPlaceTile(new Point(GraphicPanel.ScreenX + EditorLayer.TILE_SIZE - 1, GraphicPanel.ScreenY + EditorLayer.TILE_SIZE - 1), x);
                     });
                     TilesToolbar.TileOptionChanged = new Action<int, bool>( (option, state) =>
                     {
@@ -493,11 +497,74 @@ namespace ManiacEditor
         {
         }
 
+        private void ScrollTick(object sender, EventArgs e)
+        {
+            Point position = new Point((int)(GraphicPanel.ScreenX * GraphicPanel.Zoom), (int)(GraphicPanel.ScreenY * GraphicPanel.Zoom));
+
+            if (wheelClicked)
+            {
+                scrollingDragged = true;
+            }
+
+            int xMove = (hScrollBar1.Visible) ? lastScrollPos.X - position.X - scrollPosition.X : 0;
+            int yMove = (vScrollBar1.Visible) ? lastScrollPos.Y - position.Y - scrollPosition.Y : 0;
+
+            if (Math.Abs(xMove) < 15) xMove = 0;
+            if (Math.Abs(yMove) < 15) yMove = 0;
+
+            if (xMove > 0)
+            {
+                if (yMove > 0) Cursor = Cursors.PanSE;
+                else if (yMove < 0) Cursor = Cursors.PanNE;
+                else Cursor = Cursors.PanEast;
+            }
+            else if (xMove < 0)
+            {
+                if (yMove > 0) Cursor = Cursors.PanSW;
+                else if (yMove < 0) Cursor = Cursors.PanNW;
+                else Cursor = Cursors.PanWest;
+            }
+            else
+            {
+                if (yMove > 0) Cursor = Cursors.PanSouth;
+                else if (yMove < 0) Cursor = Cursors.PanNorth;
+                else
+                {
+                    if (vScrollBar1.Visible && hScrollBar1.Visible) Cursor = Cursors.NoMove2D;
+                    else if (vScrollBar1.Visible) Cursor = Cursors.NoMoveVert;
+                    else if (hScrollBar1.Visible) Cursor = Cursors.NoMoveHoriz;
+                }
+            }
+
+            int x = xMove / 10 + position.X;
+            int y = yMove / 10 + position.Y;
+
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+            if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+            if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+            
+            if (x != position.X || y != position.Y)
+            {
+                if (vScrollBar1.Visible)
+                {
+                    vScrollBar1.Value = y;
+                }
+                if (hScrollBar1.Visible)
+                {
+                    hScrollBar1.Value = x;
+                }
+                Point nposition = new Point((int)(GraphicPanel.ScreenX * GraphicPanel.Zoom), (int)(GraphicPanel.ScreenY * GraphicPanel.Zoom));
+                lastScrollPos.X += nposition.X - position.X;
+                lastScrollPos.Y += nposition.Y - position.Y;
+            }
+        }
+
         private void GraphicPanel_OnMouseMove(object sender, MouseEventArgs e)
         {
             if (ClickedX != -1)
             {
-                Point clicked_point = new Point((int)(ClickedX / Zoom), (int)(ClickedY / Zoom));
+                Point clicked_point = new Point(ClickedX, ClickedY);
                 // There was just a click now we can determine that this click is dragging
                 if (IsTilesEdit())
                 {
@@ -557,63 +624,7 @@ namespace ManiacEditor
             }
             if (scrolling)
             {
-                if (wheelClicked)
-                {
-                    scrollingDragged = true;
-                }
-                
-                int xMove = (hScrollBar1.Visible) ? e.X - ShiftX - scrollPosition.X : 0;
-                int yMove = (vScrollBar1.Visible) ? e.Y - ShiftY - scrollPosition.Y : 0;
-
-                if (Math.Abs(xMove) < 15) xMove = 0;
-                if (Math.Abs(yMove) < 15) yMove = 0;
-
-                if (xMove > 0)
-                {
-                    if(yMove > 0) Cursor = Cursors.PanSE;
-                    else if(yMove < 0) Cursor = Cursors.PanNE;
-                    else Cursor = Cursors.PanEast;
-                }
-                else if (xMove < 0)
-                {
-                    if(yMove > 0) Cursor = Cursors.PanSW;
-                    else if(yMove < 0) Cursor = Cursors.PanNW;
-                    else Cursor = Cursors.PanWest;
-                }
-                else
-                {
-                    if(yMove > 0) Cursor = Cursors.PanSouth;
-                    else if(yMove < 0) Cursor = Cursors.PanNorth;
-                    else
-                    {
-                        if (vScrollBar1.Visible && hScrollBar1.Visible) Cursor = Cursors.NoMove2D;
-                        else if (vScrollBar1.Visible) Cursor = Cursors.NoMoveVert;
-                        else if (hScrollBar1.Visible) Cursor = Cursors.NoMoveHoriz;
-                    }
-                }
-
-                Point position = new Point(ShiftX, ShiftY); ;
-                int x = xMove / 10 + position.X;
-                int y = yMove / 10 + position.Y;
-
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
-                if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
-                
-                if (x != position.X || y != position.Y)
-                {
-                    if (vScrollBar1.Visible)
-                    {
-                        vScrollBar1.Value = y;
-                    }
-                    if (hScrollBar1.Visible)
-                    {
-                        hScrollBar1.Value = x;
-                    }
-                    GraphicPanel.Render();
-                    GraphicPanel.OnMouseMoveEventCreate();
-                }
+                lastScrollPos = new Point((int)(e.X * GraphicPanel.Zoom), (int)(e.Y * GraphicPanel.Zoom));
             }
 
             toolStripStatusLabel1.Text = "X: " + e.X + " Y: " + e.Y;
@@ -622,35 +633,34 @@ namespace ManiacEditor
             {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                 {
-                    Point p = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
                     if (e.Button == MouseButtons.Left)
                     {
                         // Place tile
                         if (TilesToolbar.SelectedTile != -1)
                         {
-                            if (EditLayer.GetTileAt(p) != TilesToolbar.SelectedTile)
+                            if (EditLayer.GetTileAt(e.Location) != TilesToolbar.SelectedTile)
                             {
-                                EditorPlaceTile(p, TilesToolbar.SelectedTile);
+                                EditorPlaceTile(e.Location, TilesToolbar.SelectedTile);
                             }
-                            else if (!EditLayer.IsPointSelected(p))
+                            else if (!EditLayer.IsPointSelected(e.Location))
                             {
-                                EditLayer.Select(p);
+                                EditLayer.Select(e.Location);
                             }
                         }
                     }
                     else if (e.Button == MouseButtons.Right)
                     {
                         // Remove tile
-                        if (!EditLayer.IsPointSelected(p))
+                        if (!EditLayer.IsPointSelected(e.Location))
                         {
-                            EditLayer.Select(p);
+                            EditLayer.Select(e.Location);
                         }
                         DeleteSelected();
                     }
                 }
                 if (draggingSelection || dragged)
                 {
-                    Point position = new Point(ShiftX, ShiftY); ;
+                    Point position = new Point((int)(GraphicPanel.ScreenX * GraphicPanel.Zoom), (int)(GraphicPanel.ScreenY * GraphicPanel.Zoom)); ;
                     int ScreenMaxX = position.X + splitContainer1.Panel1.Width - System.Windows.Forms.SystemInformation.VerticalScrollBarWidth;
                     int ScreenMaxY = position.Y + splitContainer1.Panel1.Height - System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight;
                     int ScreenMinX = position.X;
@@ -658,22 +668,24 @@ namespace ManiacEditor
 
                     int x = position.X;
                     int y = position.Y;
+                    int eX = (int)(e.X * GraphicPanel.Zoom);
+                    int eY = (int)(e.Y * GraphicPanel.Zoom);
 
-                    if (e.X > ScreenMaxX)
+                    if (eX > ScreenMaxX)
                     {
-                        x += (e.X - ScreenMaxX) / 10;
+                        x += (eX - ScreenMaxX) / 10;
                     }
-                    else if (e.X < ScreenMinX)
+                    else if (eX < ScreenMinX)
                     {
-                        x += (e.X - ScreenMinX) / 10;
+                        x += (eX - ScreenMinX) / 10;
                     }
-                    if (e.Y > ScreenMaxY)
+                    if (eY > ScreenMaxY)
                     {
-                        y += (e.Y - ScreenMaxY) / 10;
+                        y += (eY - ScreenMaxY) / 10;
                     }
-                    else if (e.Y < ScreenMinY)
+                    else if (eY < ScreenMinY)
                     {
-                        y += (e.Y - ScreenMinY) / 10;
+                        y += (eY - ScreenMinY) / 10;
                     }
 
                     if (x < 0) x = 0;
@@ -691,27 +703,27 @@ namespace ManiacEditor
                         {
                             hScrollBar1.Value = x;
                         }
-                        GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
+                        GraphicPanel.Invalidate();
+                        GraphicPanel.Update();
                     }
-
                 }
 
                 if (draggingSelection)
                 {
                     if (selectingX != e.X && selectingY != e.Y)
                     {
-                        int x1 = (int)(selectingX / Zoom), x2 = (int)(e.X / Zoom);
-                        int y1 = (int)(selectingY / Zoom), y2 = (int)(e.Y / Zoom);
+                        int x1 = selectingX, x2 = e.X;
+                        int y1 = selectingY, y2 = e.Y;
                         if (x1 > x2)
                         {
-                            x1 = (int)(e.X / Zoom);
-                            x2 = (int)(selectingX / Zoom);
+                            x1 = e.X;
+                            x2 = selectingX;
                         }
                         if (y1 > y2)
                         {
-                            y1 = (int)(e.Y / Zoom);
-                            y2 = (int)(selectingY / Zoom);
+                            y1 = e.Y;
+                            y2 = selectingY;
                         }
                         EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
                         UpdateTilesOptions();
@@ -721,8 +733,8 @@ namespace ManiacEditor
                 }
                 else if (dragged)
                 {
-                    Point oldPoint = new Point((int)(lastX / Zoom), (int)(lastY / Zoom));
-                    Point newPoint = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
+                    Point oldPoint = new Point(lastX, lastY);
+                    Point newPoint = e.Location;
 
                     EditLayer?.MoveSelected(oldPoint, newPoint, CtrlPressed());
                     UpdateEditLayerActions();
@@ -767,7 +779,7 @@ namespace ManiacEditor
                             // Place tile
                             if (TilesToolbar.SelectedTile != -1)
                             {
-                                EditorPlaceTile(new Point((int)(e.X / Zoom), (int)(e.Y / Zoom)), TilesToolbar.SelectedTile);
+                                EditorPlaceTile(e.Location, TilesToolbar.SelectedTile);
                             }
                         }
                         else
@@ -778,16 +790,15 @@ namespace ManiacEditor
                     }
                     else if (IsEntitiesEdit())
                     {
-                        Point clicked_point = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
-                        if (entities.GetEntityAt(clicked_point)?.Selected ?? false)
+                        if (entities.GetEntityAt(e.Location)?.Selected ?? false)
                         {
                             // We will have to check if this dragging or clicking
                             ClickedX = e.X;
                             ClickedY = e.Y;
                         }
-                        else if (!ShiftPressed() && !CtrlPressed() && entities.GetEntityAt(clicked_point) != null)
+                        else if (!ShiftPressed() && !CtrlPressed() && entities.GetEntityAt(e.Location) != null)
                         {
-                            entities.Select(clicked_point);
+                            entities.Select(e.Location);
                             SetSelectOnlyButtonsState();
                             // Start dragging the single selected entity
                             dragged = true;
@@ -806,6 +817,7 @@ namespace ManiacEditor
                 if (scrolling)
                 {
                     scrolling = false;
+                    scrollTimer.Stop();
                     Cursor = Cursors.Default;
                 }
             }
@@ -814,10 +826,9 @@ namespace ManiacEditor
                 if (IsTilesEdit() && placeTilesButton.Checked)
                 {
                     // Remove tile
-                    Point p = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
-                    if (!EditLayer.IsPointSelected(p))
+                    if (!EditLayer.IsPointSelected(e.Location))
                     {
-                        EditLayer.Select(p);
+                        EditLayer.Select(e.Location);
                     }
                     DeleteSelected();
                 }
@@ -827,7 +838,9 @@ namespace ManiacEditor
                 wheelClicked = true;
                 scrolling = true;
                 scrollingDragged = false;
-                scrollPosition = new Point(e.X - ShiftX, e.Y - ShiftY);
+                scrollPosition = new Point((int)((e.X - GraphicPanel.ScreenX) * GraphicPanel.Zoom), (int)((e.Y - GraphicPanel.ScreenY) * GraphicPanel.Zoom));
+                lastScrollPos = scrollPosition;
+                scrollTimer.Start();
                 if (vScrollBar1.Visible && hScrollBar1.Visible)
                 {
                     Cursor = Cursors.NoMove2D;
@@ -843,6 +856,7 @@ namespace ManiacEditor
                 else
                 {
                     scrolling = false;
+                    scrollTimer.Stop();
                 }
             }
         }
@@ -857,17 +871,17 @@ namespace ManiacEditor
                         if (selectingX != e.X && selectingY != e.Y)
                         {
 
-                            int x1 = (int)(selectingX / Zoom), x2 = (int)(e.X / Zoom);
-                            int y1 = (int)(selectingY / Zoom), y2 = (int)(e.Y / Zoom);
+                            int x1 = selectingX, x2 = e.X;
+                            int y1 = selectingY, y2 = e.Y;
                             if (x1 > x2)
                             {
-                                x1 = (int)(e.X / Zoom);
-                                x2 = (int)(selectingX / Zoom);
+                                x1 = e.X;
+                                x2 = selectingX;
                             }
                             if (y1 > y2)
                             {
-                                y1 = (int)(e.Y / Zoom);
-                                y2 = (int)(selectingY / Zoom);
+                                y1 = e.Y;
+                                y2 = selectingY;
                             }
 
                             EditLayer?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
@@ -884,15 +898,14 @@ namespace ManiacEditor
                         if (ClickedX != -1)
                         {
                             // So it was just click
-                            Point clicked_point = new Point((int)(ClickedX / Zoom), (int)(ClickedY / Zoom));
                             if (IsTilesEdit())
                             {
-                                EditLayer.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                EditLayer.Select(e.Location, ShiftPressed() || CtrlPressed(), CtrlPressed());
                                 UpdateEditLayerActions();
                             }
                             else if (IsEntitiesEdit())
                             {
-                                entities.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                entities.Select(e.Location, ShiftPressed() || CtrlPressed(), CtrlPressed());
                             }
                             SetSelectOnlyButtonsState();
                             ClickedX = -1;
@@ -928,6 +941,7 @@ namespace ManiacEditor
                 if (scrollingDragged)
                 {
                     scrolling = false;
+                    scrollTimer.Stop();
                     Cursor = Cursors.Default;
                 }
             }
@@ -935,7 +949,6 @@ namespace ManiacEditor
 
         private void GraphicPanel_MouseWheel(object sender, MouseEventArgs e)
         {
-            //GraphicPanel.Focus();
             if (CtrlPressed())
             {
                 int change = e.Delta / 120;
@@ -943,7 +956,7 @@ namespace ManiacEditor
                 if (ZoomLevel > 5) ZoomLevel = 5;
                 if (ZoomLevel < -5) ZoomLevel = -5;
                 
-                SetZoomLevel(ZoomLevel, new Point(e.X - ShiftX, e.Y - ShiftY));
+                SetZoomLevel(ZoomLevel, new Point(e.X - GraphicPanel.ScreenX, e.Y - GraphicPanel.ScreenY));
             }
             else
             {
@@ -960,44 +973,40 @@ namespace ManiacEditor
 
         public void SetZoomLevel(int zoom_level, Point zoom_point)
         {            
-            double old_zoom = Zoom;
+            double old_zoom = GraphicPanel.Zoom;
 
             ZoomLevel = zoom_level;
 
             switch (ZoomLevel)
             {
-                case 5: Zoom = 4; break;
-                case 4: Zoom = 3; break;
-                case 3: Zoom = 2; break;
-                case 2: Zoom = 3 / 2.0; break;
-                case 1: Zoom = 5 / 4.0; break;
-                case 0: Zoom = 1; break;
-                case -1: Zoom = 2 / 3.0; break;
-                case -2: Zoom = 1 / 2.0; break;
-                case -3: Zoom = 1 / 3.0; break;
-                case -4: Zoom = 1 / 4.0; break;
-                case -5: Zoom = 1 / 8.0; break;
+                case 5: GraphicPanel.Zoom = 4; break;
+                case 4: GraphicPanel.Zoom = 3; break;
+                case 3: GraphicPanel.Zoom = 2; break;
+                case 2: GraphicPanel.Zoom = 3 / 2.0; break;
+                case 1: GraphicPanel.Zoom = 5 / 4.0; break;
+                case 0: GraphicPanel.Zoom = 1; break;
+                case -1: GraphicPanel.Zoom = 2 / 3.0; break;
+                case -2: GraphicPanel.Zoom = 1 / 2.0; break;
+                case -3: GraphicPanel.Zoom = 1 / 3.0; break;
+                case -4: GraphicPanel.Zoom = 1 / 4.0; break;
+                case -5: GraphicPanel.Zoom = 1 / 8.0; break;
             }
 
             zooming = true;
 
-            int oldShiftX = ShiftX;
-            int oldShiftY = ShiftY;
+            int screenX = GraphicPanel.ScreenX;
+            int screenY = GraphicPanel.ScreenY;
 
             if (Scene != null)
-                SetViewSize((int)(SceneWidth * Zoom), (int)(SceneHeight * Zoom));
+                SetViewSize((int)(SceneWidth * GraphicPanel.Zoom), (int)(SceneHeight * GraphicPanel.Zoom));
 
             if (hScrollBar1.Visible)
             {
-                ShiftX = (int)((zoom_point.X + oldShiftX) / old_zoom * Zoom - zoom_point.X);
-                ShiftX = Math.Min(hScrollBar1.Maximum - hScrollBar1.LargeChange, Math.Max(0, ShiftX));
-                hScrollBar1.Value = ShiftX;
+                hScrollBar1.Value = Math.Min(hScrollBar1.Maximum - hScrollBar1.LargeChange, Math.Max(0, (int)((zoom_point.X + GraphicPanel.ScreenX) * GraphicPanel.Zoom - zoom_point.X * old_zoom)));
             }
             if (vScrollBar1.Visible)
             {
-                ShiftY = (int)((zoom_point.Y + oldShiftY) / old_zoom * Zoom - zoom_point.Y);
-                ShiftY = Math.Min(vScrollBar1.Maximum - vScrollBar1.LargeChange, Math.Max(0, ShiftY));
-                vScrollBar1.Value = ShiftY;
+                vScrollBar1.Value = Math.Min(vScrollBar1.Maximum - vScrollBar1.LargeChange, Math.Max(0, (int)((zoom_point.Y + GraphicPanel.ScreenY) * GraphicPanel.Zoom - zoom_point.Y * old_zoom)));
             }
 
             zooming = false;
@@ -1051,7 +1060,7 @@ namespace ManiacEditor
 
             entities = null;
 
-            Zoom = 1;
+            GraphicPanel.Zoom = 1;
             ZoomLevel = 0;
 
             undo.Clear();
@@ -1158,13 +1167,11 @@ namespace ManiacEditor
                 //vScrollBar1.Location = new Point(splitContainer1.SplitterDistance - 19, 0);
                 vScrollBar1.Height = viewPanel.Height - (hScrollBar1.Visible ? hScrollBar1.Height : 0);
                 vScrollBar1.LargeChange = vScrollBar1.Height;
-                ScreenHeight = vScrollBar1.Height;
                 hScrollBar1.Value = Math.Max(0, Math.Min(hScrollBar1.Value, hScrollBar1.Maximum - hScrollBar1.LargeChange));
             }
             else
             {
-                ScreenHeight = GraphicPanel.Height;
-                ShiftY = 0;
+                //GraphicPanel.ScreenY = 0;
                 vScrollBar1.Value = 0;
             }
             if (hScrollBar1.Visible)
@@ -1172,13 +1179,11 @@ namespace ManiacEditor
                 //hScrollBar1.Location = new Point(0, splitContainer1.Height - 18);
                 hScrollBar1.Width = viewPanel.Width - (vScrollBar1.Visible ? vScrollBar1.Width : 0);
                 hScrollBar1.LargeChange = hScrollBar1.Width;
-                ScreenWidth = hScrollBar1.Width;
                 vScrollBar1.Value = Math.Max(0, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange));
             }
             else
             {
-                ScreenWidth = GraphicPanel.Width;
-                ShiftX = 0;
+                //GraphicPanel.ScreenX = 0;
                 hScrollBar1.Value = 0;
             }
 
@@ -1188,11 +1193,6 @@ namespace ManiacEditor
                 //panel3.Location = new Point(hScrollBar1.Width, vScrollBar1.Height);
             }
             else panel3.Visible = false;
-
-            while (ScreenWidth > GraphicPanel.Width)
-                ResizeGraphicPanel(GraphicPanel.Width * 2, GraphicPanel.Height);
-            while (ScreenHeight > GraphicPanel.Height)
-                ResizeGraphicPanel(GraphicPanel.Width, GraphicPanel.Height * 2);
         }
 
 
@@ -1201,24 +1201,13 @@ namespace ManiacEditor
             vScrollBar1.Maximum = height;
             hScrollBar1.Maximum = width;
 
-            GraphicPanel.DrawWidth = Math.Min(width, GraphicPanel.Width);
-            GraphicPanel.DrawHeight = Math.Min(height, GraphicPanel.Height);
+            /*GraphicPanel.DrawWidth = Math.Min(width, GraphicPanel.Width);
+            GraphicPanel.DrawHeight = Math.Min(height, GraphicPanel.Height);*/
 
             Form1_Resize(null, null);
 
             hScrollBar1.Value = Math.Max(0, Math.Min(hScrollBar1.Value, hScrollBar1.Maximum - hScrollBar1.LargeChange));
             vScrollBar1.Value = Math.Max(0, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange));
-        }
-        
-        private void ResizeGraphicPanel(int width = 0, int height = 0)
-        {
-            GraphicPanel.Width = width;
-            GraphicPanel.Height = height;
-
-            GraphicPanel.ResetDevice();
-
-            GraphicPanel.DrawWidth = Math.Min(hScrollBar1.Maximum, GraphicPanel.Width);
-            GraphicPanel.DrawHeight = Math.Min(vScrollBar1.Maximum, GraphicPanel.Height);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1226,30 +1215,65 @@ namespace ManiacEditor
             Open_Click(sender, e);
         }
 
-        public void OnResetDevice(object sender, DeviceEventArgs e)
+        private void GraphicPanel_Render(object sender, EventArgs e)
         {
-            Device device = e.Device;
-        }
 
-        private void GraphicPanel_OnRender(object sender, DeviceEventArgs e)
-        {
+            if (GraphicPanel.MeasuredFPS != lastFPS)
+            {
+                lastFPS = GraphicPanel.MeasuredFPS;
+                this.Text = String.Format("{0} FPS", lastFPS);
+            }
+
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.Enable(EnableCap.DepthTest);
+
+            GL.Color3(System.Drawing.Color.White);
+            GL.Begin(PrimitiveType.Quads);
+            GL.Vertex2(0, 0);
+            GL.Vertex2(0, SceneHeight);
+            GL.Vertex2(SceneWidth, SceneHeight);
+            GL.Vertex2(SceneWidth, 0);
+            GL.End();
+            /*GL.PushMatrix();
+            GL.Translate(100f, 0.0, 0.0);
+            GL.LineWidth(5.0f * (float)GraphicPanel.Zoom);
+            GL.Color3(1.0f, 0.0f, 0.0f);
+            GL.Begin(PrimitiveType.LineLoop);
+            GL.Vertex2(100f, 0f);
+            GL.Vertex2(200f, 100f);
+            GL.Vertex2(200f, 200f);
+            GL.End();
+            GL.PopMatrix();*/
+            
+     
             // hmm, if I call refresh when I update the values, for some reason it will stop to render until I stop calling refrsh
             // So I will refresh it here
             if (entitiesToolbar?.NeedRefresh ?? false) entitiesToolbar.PropertiesRefresh();
             if (Scene != null)
             {
-                if (!IsTilesEdit())
-                    Background.Draw(GraphicPanel);
+                GL.PushMatrix();
+                GL.Translate(0, 0, LAYER_DEPTH);
+                /*if (!IsTilesEdit())
+                    Background.Draw(GraphicPanel);*/
+               
+                GL.Translate(0, 0, LAYER_DEPTH);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
+
+                GL.Translate(0, 0, LAYER_DEPTH);
+                /*if (ShowEntities.Checked && !EditEntities.Checked)
+                    entities.Draw(GraphicPanel);*/
+
+                GL.Translate(0, 0, LAYER_DEPTH);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
-                if (EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
+
+                GL.PopMatrix();
+                /*if (EditEntities.Checked)
+                    entities.Draw(GraphicPanel);*/
             }
-            if (draggingSelection)
+            /*if (draggingSelection)
             {
                 int x1 = (int)(selectingX / Zoom), x2 = (int)(lastX / Zoom);
                 int y1 = (int)(selectingY / Zoom), y2 = (int)(lastY / Zoom);
@@ -1279,19 +1303,14 @@ namespace ManiacEditor
                 if (vScrollBar1.Visible && hScrollBar1.Visible) GraphicPanel.Draw2DCursor(scrollPosition.X, scrollPosition.Y);
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
                 else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
-            }
+            }*/
+            GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.DepthTest);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            GraphicPanel.Init(this);
-        }
-
-        public void Run()
-        {
-            Show();
-            Focus();
-            GraphicPanel.Run();
+            /*GraphicPanel.Init(this);*/
         }
 
         private void LayerShowButton_Click(ToolStripButton button, string desc)
@@ -1565,7 +1584,7 @@ namespace ManiacEditor
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (IsTilesEdit() && TilesClipboard != null)
+            /*if (IsTilesEdit() && TilesClipboard != null)
             {
                 EditLayer.PasteFromClipboard(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
                 UpdateEditLayerActions();
@@ -1584,7 +1603,7 @@ namespace ManiacEditor
                 }
                 UpdateEntitiesToolbarList();
                 SetSelectOnlyButtonsState();
-            }
+            }*/
         }
 
         private void GraphicPanel_MouseEnter(object sender, EventArgs e)
@@ -1594,7 +1613,7 @@ namespace ManiacEditor
 
         private void GraphicPanel_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
+            /*if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
             {
                 Point rel = GraphicPanel.PointToScreen(Point.Empty);
                 e.Effect = DragDropEffects.Move;
@@ -1605,23 +1624,23 @@ namespace ManiacEditor
             else
             {
                 e.Effect = DragDropEffects.None;
-            }
+            }*/
         }
 
         private void GraphicPanel_DragOver(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
+            /*if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
             {
                 Point rel = GraphicPanel.PointToScreen(Point.Empty);
                 EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
                 GraphicPanel.Render();
-            }
+            }*/
         }
 
         private void GraphicPanel_DragLeave(object sender, EventArgs e)
         {
             EditLayer?.EndDragOver(true);
-            GraphicPanel.Render();
+            //GraphicPanel.Invalidate();
         }
 
         private void GraphicPanel_DragDrop(object sender, DragEventArgs e)
@@ -1722,48 +1741,48 @@ namespace ManiacEditor
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
-            ShiftY = e.NewValue;
-            GraphicPanel.Render();
+            GraphicPanel.ScreenY = (int)(e.NewValue / GraphicPanel.Zoom);
+            //GraphicPanel.Invalidate();
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
-            ShiftX = e.NewValue;
-            GraphicPanel.Render();
+            GraphicPanel.ScreenX = (int)(e.NewValue / GraphicPanel.Zoom);
+            //GraphicPanel.Invalidate();
         }
 
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
         {
-            ShiftY = (sender as VScrollBar).Value;
-            if(!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            GraphicPanel.ScreenY = (int)((sender as VScrollBar).Value / GraphicPanel.Zoom);
+            //if(!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Invalidate();
 
-            if (draggingSelection)
+            /*if (draggingSelection)
             {
                 GraphicPanel.OnMouseMoveEventCreate();
-            }
+            }*/
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
-            ShiftX = hScrollBar1.Value;
-            if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            GraphicPanel.ScreenX = (int)((sender as HScrollBar).Value / GraphicPanel.Zoom);
+            //if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Invalidate();
         }
 
         public void DisposeTextures()
         {
-            if (StageTiles != null) StageTiles.DisposeTextures();
             if (FGHigh != null) FGHigh.DisposeTextures();
             if (FGLow != null) FGLow.DisposeTextures();
         }
 
         public Rectangle GetScreen()
         {
-            return new Rectangle(ShiftX, ShiftY, viewPanel.Width, viewPanel.Height);
+            //return new Rectangle(ShiftX, ShiftY, viewPanel.Width, viewPanel.Height);
+            return new Rectangle(0, 0, viewPanel.Width, viewPanel.Height);
         }
 
         public double GetZoom()
         {
-            return Zoom;
+            return GraphicPanel.Zoom;
         }
     }
 }

@@ -22,8 +22,7 @@ namespace ManiacEditor
             {
                 RSDKv5.Objects.InitObjects(stream);
             }
-            new Editor().Run();
-            //Application.Run(new GUI.MapEditor());
+            Application.Run(new Editor());
         }
     }
 }

@@ -13,9 +13,10 @@ namespace RSDKv5
     public class GIF : IDisposable
     {
         Bitmap bitmap;
-        
+
+        public Bitmap Bitmap { get { return bitmap; } }
+
         Dictionary<Tuple<Rectangle, bool, bool>, Bitmap> bitmapCache = new Dictionary<Tuple<Rectangle, bool, bool>, Bitmap>();
-        Dictionary<Tuple<Rectangle, bool, bool>, Texture> texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
 
         public GIF(string filename)
         {
@@ -35,7 +36,7 @@ namespace RSDKv5
             Bitmap bmp = new Bitmap(section.Width, section.Height);
 
             Graphics g = Graphics.FromImage(bmp);
-            
+
             // Draw the given area (section) of the source image
             // at location 0,0 on the empty bitmap (bmp)
             g.DrawImage(source, 0, 0, section, GraphicsUnit.Pixel);
@@ -62,34 +63,9 @@ namespace RSDKv5
             return bmp;
         }
 
-        // TOREMOVE
-        public Texture GetTexture(Device device, Rectangle section, bool flipX = false, bool flipY = false)
-        {
-            Texture texture;
-            if (texturesCache.TryGetValue(new Tuple<Rectangle, bool, bool>(section, flipX, flipY), out texture)) return texture;
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                GetBitmap(section, flipX, flipY).Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                texture = Texture.FromStream(device, memoryStream);
-            }
-
-            texturesCache[new Tuple<Rectangle, bool, bool>(section, flipX, flipY)] = texture;
-            return texture;
-        }
-
         public void Dispose()
         {
             bitmap.Dispose();
-            texturesCache = null;
-        }
-
-        public void DisposeTextures()
-        {
-            foreach (Texture texture in texturesCache.Values)
-                texture.Dispose();
-            texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
         }
 
         public GIF Clone()
