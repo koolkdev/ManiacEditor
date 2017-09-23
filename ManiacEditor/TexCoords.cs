@@ -18,12 +18,12 @@ namespace ManiacEditor
 
         public int Count
         {
-            get { return count; }
+            get { return count / 2; }
         }
 
-        public TexCoords(int count, int width, int height)
+        public TexCoords(float[] buf, int width, int height)
         {
-            coords = new float[count * 8];
+            coords = buf;
             count = 0;
 
             this.width = width;
@@ -33,9 +33,20 @@ namespace ManiacEditor
         public void Create()
         {
             vb.Create();
-            vb.Bind();
-            vb.SetData(coords);
-            vb.Unbind();
+        }
+
+        public void Destroy()
+        {
+            if (vb.IsCreated())
+            {
+                vb.Destroy();
+            }
+        }
+
+        public void SetBuffer(float[] buf)
+        {
+            coords = buf;
+            count = 0;
         }
 
         public void Add(int x, int y, int width, int height, bool flipX=false, bool flipY=false)
@@ -73,11 +84,23 @@ namespace ManiacEditor
             count = 0;
         }
 
+        public void SetData()
+        {
+            if (!vb.IsCreated())
+            {
+                Create();
+            }
+            vb.Bind();
+            vb.SetData(coords);
+            vb.Unbind();
+        }
+
         public void UpdateData()
         {
             if (!vb.IsCreated())
             {
                 Create();
+                SetData();
             }
             else
             {

@@ -18,7 +18,11 @@ namespace ManiacEditor
 
         public const int TILE_SIZE = 16;
 
+        static float[] verticesBuffer = new float[TILE_SIZE * TILE_SIZE * 8];
+        static float[] textCoordsBuffer = new float[TILE_SIZE * TILE_SIZE * 8];
         ChunkVBO[][] chunks;
+        ChunkVBO[][] selectedChunks;
+        ChunkVBO selectedOOB;
         Texture2D texture;
 
         public PointsMap SelectedTiles;
@@ -27,7 +31,9 @@ namespace ManiacEditor
         public PointsMap TempSelectionTiles;
         bool TempSelectionDeselect;
 
-        bool FirstDrag;
+        Point draggedDistance;
+        bool dragging;
+        
         bool isDragOver;
 
         public List<IAction> Actions = new List<IAction>();
@@ -39,9 +45,9 @@ namespace ManiacEditor
 
         class ChunkVBO
         {
-            public Vertices Vertices = new Vertices(TILES_CHUNK_SIZE * TILES_CHUNK_SIZE);
+            public Vertices Vertices;
             public bool VerticesUpdated = false;
-            public TexCoords TexCoords = new TexCoords(TILES_CHUNK_SIZE * TILES_CHUNK_SIZE, TILE_SIZE, TILE_SIZE * 0x400);
+            public TexCoords TexCoords;
             public bool TexCoordsUpdated = false;
         }
 
@@ -49,6 +55,7 @@ namespace ManiacEditor
         {
             HashSet<Point>[][] PointsChunks;
             HashSet<Point> OutOfBoundsPoints = new HashSet<Point>();
+            public HashSet<Point> ChangedChunks = new HashSet<Point>();
             public int Count = 0;
 
             public PointsMap(int width, int height)
@@ -68,7 +75,10 @@ namespace ManiacEditor
                 if (point.Y < 0 || point.X < 0 || point.Y / TILES_CHUNK_SIZE >= PointsChunks.Length || point.X / TILES_CHUNK_SIZE >= PointsChunks[0].Length)
                     h = OutOfBoundsPoints;
                 else
+                {
                     h = PointsChunks[point.Y / TILES_CHUNK_SIZE][point.X / TILES_CHUNK_SIZE];
+                    ChangedChunks.Add(new Point(point.X / TILES_CHUNK_SIZE, point.Y / TILES_CHUNK_SIZE));
+                }
                 Count -= h.Count;
                 h.Add(point);
                 Count += h.Count;
@@ -80,9 +90,13 @@ namespace ManiacEditor
                 if (point.Y < 0 || point.X < 0 || point.Y / TILES_CHUNK_SIZE >= PointsChunks.Length || point.X / TILES_CHUNK_SIZE >= PointsChunks[0].Length)
                     h = OutOfBoundsPoints;
                 else
+                {
                     h = PointsChunks[point.Y / TILES_CHUNK_SIZE][point.X / TILES_CHUNK_SIZE];
+                    ChangedChunks.Add(new Point(point.X / TILES_CHUNK_SIZE, point.Y / TILES_CHUNK_SIZE));
+                }
                 Count -= h.Count;
                 h.Remove(point);
+                ChangedChunks.Add(new Point(point.X / TILES_CHUNK_SIZE, point.Y / TILES_CHUNK_SIZE));
                 Count += h.Count;
             }
 
@@ -102,8 +116,14 @@ namespace ManiacEditor
             public void Clear()
             {
                 for (int i = 0; i < PointsChunks.Length; ++i)
+                {
                     for (int j = 0; j < PointsChunks[i].Length; ++j)
+                    {
+                        if (PointsChunks[i][j].Count > 0)
+                            ChangedChunks.Add(new Point(j, i));
                         PointsChunks[i][j].Clear();
+                    }
+                }
                 OutOfBoundsPoints.Clear();
                 Count = 0;
             }
@@ -135,6 +155,11 @@ namespace ManiacEditor
                 points.ForEach(point => Add(point));
             }
 
+            public HashSet<Point> GetOOB()
+            {
+                return OutOfBoundsPoints;
+            }
+
 
         }
 
@@ -147,16 +172,89 @@ namespace ManiacEditor
             {
                 chunks[i] = new ChunkVBO[DivideRoundUp(this.Layer.Width, TILES_CHUNK_SIZE)];
                 for (int j = 0; j < chunks[i].Length; ++j)
+                {
+                    // We can use the same buffers because we fill each chunk at a time
                     chunks[i][j] = new ChunkVBO();
+                    chunks[i][j].Vertices = new Vertices(verticesBuffer);
+                    chunks[i][j].TexCoords = new TexCoords(textCoordsBuffer, TILE_SIZE, TILE_SIZE * 0x400);
+                }
             }
+
+            selectedChunks = new ChunkVBO[DivideRoundUp(this.Layer.Height, TILES_CHUNK_SIZE)][];
+            for (int i = 0; i < selectedChunks.Length; ++i)
+            {
+                selectedChunks[i] = new ChunkVBO[DivideRoundUp(this.Layer.Width, TILES_CHUNK_SIZE)];
+                for (int j = 0; j < selectedChunks[i].Length; ++j)
+                {
+                    selectedChunks[i][j] = new ChunkVBO();
+                    selectedChunks[i][j].Vertices = new Vertices(verticesBuffer);
+                    selectedChunks[i][j].TexCoords = new TexCoords(textCoordsBuffer, TILE_SIZE, TILE_SIZE * 0x400);
+                }
+            }
+
+            selectedOOB = new ChunkVBO();
+            selectedOOB.TexCoords = new TexCoords(null, TILE_SIZE, TILE_SIZE * 0x400);
+            selectedOOB.Vertices = new Vertices(null);
 
             SelectedTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
             TempSelectionTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
         }
 
-        public void StartDrag()
+        public bool IsTriggerDrag(Point oldPos, Point newPos)
         {
-            FirstDrag = true;
+            oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
+            newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
+            return oldPos != newPos;
+        }
+
+        public void StartDrag(bool duplicate)
+        {
+            List<Point> newPoints = SelectedTiles.PopAll();
+            Dictionary<Point, ushort> newDict = new Dictionary<Point, ushort>();
+            foreach (Point point in newPoints)
+            {
+                if (SelectedTilesValue.ContainsKey(point))
+                {
+                    newDict[point] = SelectedTilesValue[point];
+                }
+                else
+                {
+                    // Not moved yet
+                    newDict[point] = Layer.Tiles[point.Y][point.X];
+                    if (!duplicate) RemoveTile(point);
+                }
+            }
+            if (duplicate)
+            {
+                Deselect();
+                // Create new actions group
+                Actions.Add(new ActionDummy());
+            }
+            SelectedTilesValue = newDict;
+            SelectedTiles.AddPoints(newPoints);
+            InvalidateSelectedChunks();
+
+            selectedOOB.TexCoordsUpdated = false;
+            selectedOOB.VerticesUpdated = false;
+
+            dragging = true;
+            draggedDistance = Point.Empty;
+        }
+
+        public void UpdateDrag(Point oldPos, Point newPos)
+        {
+            oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
+            newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
+            draggedDistance = new Point(newPos.X - oldPos.X, newPos.Y - oldPos.Y);
+        }
+
+        public void EndDrag(Point oldPos, Point newPos)
+        {
+            dragging = false;
+            MoveSelected(oldPos, newPos);
+
+            selectedOOB.Vertices.SetBuffer(null);
+            selectedOOB.TexCoords.SetBuffer(null);
         }
 
         public void StartDragOver(Point point, ushort value)
@@ -172,6 +270,7 @@ namespace ManiacEditor
             SelectedTilesValue.Clear();
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
             SelectedTiles.Add(point);
+            InvalidateSelectedChunks();
             SelectedTilesValue[point] = value;
         }
 
@@ -186,6 +285,7 @@ namespace ManiacEditor
                 }
                 isDragOver = false;
             }
+            InvalidateSelectedChunks();
         }
 
         private void DetachSelected()
@@ -201,14 +301,12 @@ namespace ManiacEditor
             }
         }
 
-        public void MoveSelected(Point oldPos, Point newPos, bool duplicate)
+        public void MoveSelected(Point oldPos, Point newPos, bool duplicate=false)
         {
             oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
             newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
             if (oldPos != newPos)
             {
-                duplicate &= FirstDrag;
-                FirstDrag = false;
                 Dictionary<Point, ushort> newDict = new Dictionary<Point, ushort>();
                 List<Point> newPoints = new List<Point>(SelectedTiles.Count);
                 foreach (Point point in SelectedTiles.PopAll())
@@ -234,6 +332,7 @@ namespace ManiacEditor
                 }
                 SelectedTilesValue = newDict;
                 SelectedTiles.AddPoints(newPoints);
+                InvalidateSelectedChunks();
             }
         }
 
@@ -340,6 +439,7 @@ namespace ManiacEditor
                 SelectedTiles.Add(tilePos);
                 SelectedTilesValue[tilePos] = point.Value;
             }
+            InvalidateSelectedChunks();
             // Create new actions group
             Actions.Add(new ActionDummy());
         }
@@ -371,6 +471,7 @@ namespace ManiacEditor
                     }
                 }
             }
+            InvalidateSelectedChunks();
         }
 
         public void Select(Point point, bool addSelection = false, bool deselectIfSelected = false)
@@ -390,6 +491,7 @@ namespace ManiacEditor
                     SelectedTiles.Add(point);
                 }
             }
+            InvalidateSelectedChunks();
         }
 
         public void TempSelection(Rectangle area, bool deselectIfSelected)
@@ -406,6 +508,7 @@ namespace ManiacEditor
                     }
                 }
             }
+            InvalidateSelectedChunks();
         }
 
         public void EndTempSelection()
@@ -417,6 +520,24 @@ namespace ManiacEditor
         {
             chunks[y][x].VerticesUpdated = false;
             chunks[y][x].TexCoordsUpdated = false;
+        }
+
+        private void InvalidateSelectedChunks()
+        {
+            foreach (var chunk in SelectedTiles.ChangedChunks)
+            {
+                selectedChunks[chunk.Y][chunk.X].VerticesUpdated = false;
+                selectedChunks[chunk.Y][chunk.X].TexCoordsUpdated = false;
+                InvalidateChunk(chunk.X, chunk.Y);
+            }
+            SelectedTiles.ChangedChunks.Clear();
+            foreach (var chunk in TempSelectionTiles.ChangedChunks)
+            {
+                selectedChunks[chunk.Y][chunk.X].VerticesUpdated = false;
+                selectedChunks[chunk.Y][chunk.X].TexCoordsUpdated = false;
+                InvalidateChunk(chunk.X, chunk.Y);
+            }
+            TempSelectionTiles.ChangedChunks.Clear();
         }
 
         private ushort GetTile(Point point)
@@ -462,6 +583,7 @@ namespace ManiacEditor
 
             SelectedTiles.Clear();
             SelectedTilesValue.Clear();
+            InvalidateSelectedChunks();
         }
 
         public bool IsPointSelected(Point point)
@@ -509,7 +631,7 @@ namespace ManiacEditor
                 new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
         }
         
-        private void AddTileToVBO(ChunkVBO vbo, ushort tile, int x, int y, bool selected, int Transperncy)
+        private void AddTileToVBO(ChunkVBO vbo, ushort tile, int x, int y)
         {
             bool flipX = ((tile >> 10) & 1) == 1;
             bool flipY = ((tile >> 11) & 1) == 1;
@@ -556,12 +678,103 @@ namespace ManiacEditor
             if (!vbo.VerticesUpdated) vbo.Vertices.Reset();
             if (!vbo.TexCoordsUpdated) vbo.TexCoords.Reset();
 
+            bool checkSelected = SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y);
+
             Rectangle rect = GetTilesChunkArea(x, y);
-            
+
             for (int ty = rect.Y; ty < rect.Y + rect.Height; ++ty)
+            {
                 for (int tx = rect.X; tx < rect.X + rect.Width; ++tx)
+                {
                     if (Layer.Tiles[ty][tx] != 0xffff)
-                        AddTileToVBO(vbo, Layer.Tiles[ty][tx], tx, ty, false, 255);
+                    {
+                        if (!checkSelected || dragging)
+                            AddTileToVBO(vbo, Layer.Tiles[ty][tx], tx, ty);
+                        else
+                        {
+                            Point p = new Point(tx, ty);
+                            if (SelectedTiles.Contains(p) || TempSelectionTiles.Contains(p))
+                            {
+                                if (SelectedTiles.Contains(p) && TempSelectionTiles.Contains(p) && TempSelectionDeselect)
+                                    AddTileToVBO(vbo, Layer.Tiles[ty][tx], tx, ty);
+                            }
+                            else
+                                AddTileToVBO(vbo, Layer.Tiles[ty][tx], tx, ty);
+                        }
+                    }
+                }
+            }
+
+            if (!vbo.VerticesUpdated)
+            {
+                vbo.Vertices.UpdateData();
+                vbo.VerticesUpdated = true;
+            }
+            if (!vbo.TexCoordsUpdated)
+            {
+                vbo.TexCoords.UpdateData();
+                vbo.TexCoordsUpdated = true;
+            }
+        }
+
+        private void UpdateSelectedChunkVBO(int x, int y)
+        {
+            ChunkVBO vbo = selectedChunks[y][x];
+            if (vbo.TexCoordsUpdated && vbo.VerticesUpdated) return;
+
+            if (!vbo.VerticesUpdated) vbo.Vertices.Reset();
+            if (!vbo.TexCoordsUpdated) vbo.TexCoords.Reset();
+
+            Rectangle rect = GetTilesChunkArea(x, y);
+
+            foreach (Point p in SelectedTiles.GetChunkPoint(x, y))
+            {
+                if (!TempSelectionDeselect || !TempSelectionTiles.Contains(p))
+                {
+                    if (SelectedTilesValue.ContainsKey(p))
+                        AddTileToVBO(vbo, SelectedTilesValue[p], p.X, p.Y);
+                    else // It is still in the original place
+                        AddTileToVBO(vbo, Layer.Tiles[p.Y][p.X], p.X, p.Y);
+                }
+            }
+
+            foreach (Point p in TempSelectionTiles.GetChunkPoint(x, y))
+            {
+                if (SelectedTiles.Contains(p)) continue;
+                AddTileToVBO(vbo, Layer.Tiles[p.Y][p.X], p.X, p.Y);
+            }
+
+            if (!vbo.VerticesUpdated)
+            {
+                vbo.Vertices.UpdateData();
+                vbo.VerticesUpdated = true;
+            }
+            if (!vbo.TexCoordsUpdated)
+            {
+                vbo.TexCoords.UpdateData();
+                vbo.TexCoordsUpdated = true;
+            }
+        }
+
+        private void UpdateSelectedOOBVBO()
+        {
+            ChunkVBO vbo = selectedOOB;
+            if (vbo.TexCoordsUpdated && vbo.VerticesUpdated) return;
+
+            if (!vbo.VerticesUpdated)
+            {
+                vbo.Vertices.SetBuffer(new float[SelectedTiles.GetOOB().Count * 8]);
+            }
+
+            if (!vbo.TexCoordsUpdated)
+            {
+                vbo.TexCoords.SetBuffer(new float[SelectedTiles.GetOOB().Count * 8]);
+            }
+
+            foreach (Point p in SelectedTiles.GetOOB())
+            {
+                AddTileToVBO(vbo, SelectedTilesValue[p], p.X, p.Y);
+            }
 
             if (!vbo.VerticesUpdated)
             {
@@ -641,7 +854,7 @@ namespace ManiacEditor
 
         public void Draw(GLViewControl g)
         {
-            int Transperncy = (Editor.Instance.EditLayer != null && Editor.Instance.EditLayer != this) ? 0x32 : 0xFF;
+            byte Transperncy = (Editor.Instance.EditLayer != null && Editor.Instance.EditLayer != this) ? (byte)0x32 : (byte)0xFF;
 
             if (texture == null)
             {
@@ -649,6 +862,8 @@ namespace ManiacEditor
             }
             GL.Enable(EnableCap.Texture2D);
             texture.Bind();
+
+            GL.PushAttrib(AttribMask.CurrentBit);
 
             /*int start_x = g.ScreenX / (TILES_CHUNK_SIZE * TILE_SIZE);
             int end_x = Math.Min(DivideRoundUp(g.ScreenX + g.ScreenWidth, TILES_CHUNK_SIZE * TILE_SIZE), chunks[0].Length);
@@ -678,6 +893,8 @@ namespace ManiacEditor
                     }
                     DrawSelectedTiles(d, x, y, Transperncy);*/
 
+                    GL.Color4((byte)255, (byte)255, (byte)255, Transperncy);
+
                     chunks[y][x].Vertices.Load();
                     chunks[y][x].TexCoords.Load();
                     GL.DrawArrays(PrimitiveType.Quads, 0, chunks[y][x].Vertices.Count);
@@ -685,6 +902,52 @@ namespace ManiacEditor
                     chunks[y][x].TexCoords.Unload();
                 }
             }
+            for (int y = start_y; y < end_y; ++y)
+            {
+                for (int x = start_x; x < end_x; ++x)
+                {
+                    if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
+                    {
+
+                        GL.Color4(System.Drawing.Color.BlueViolet.R, System.Drawing.Color.BlueViolet.G, System.Drawing.Color.BlueViolet.B, Transperncy);
+                        UpdateSelectedChunkVBO(x, y);
+
+                        if (dragging)
+                        {
+                            GL.PushMatrix();
+                            GL.Translate(draggedDistance.X * TILE_SIZE, draggedDistance.Y * TILE_SIZE, Editor.LAYER_DEPTH / 2);
+                        }
+
+                        selectedChunks[y][x].Vertices.Load();
+                        selectedChunks[y][x].TexCoords.Load();
+                        GL.DrawArrays(PrimitiveType.Quads, 0, selectedChunks[y][x].Vertices.Count);
+                        selectedChunks[y][x].Vertices.Unload();
+                        selectedChunks[y][x].TexCoords.Unload();
+
+                        if (dragging)
+                        {
+                            GL.PopMatrix();
+                        }
+                    }
+                }
+            }
+            if (dragging)
+            {
+                UpdateSelectedOOBVBO();
+
+                GL.PushMatrix();
+                GL.Translate(draggedDistance.X * TILE_SIZE, draggedDistance.Y * TILE_SIZE, Editor.LAYER_DEPTH / 2);
+
+                selectedOOB.Vertices.Load();
+                selectedOOB.TexCoords.Load();
+                GL.DrawArrays(PrimitiveType.Quads, 0, selectedOOB.Vertices.Count);
+                selectedOOB.Vertices.Unload();
+                selectedOOB.TexCoords.Unload();
+                
+                GL.PopMatrix();
+            }
+
+            GL.PopAttrib();
 
             texture.Unbind();
             GL.Disable(EnableCap.Texture2D);

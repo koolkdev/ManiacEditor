@@ -22,6 +22,7 @@ namespace ManiacEditor
         bool dragged;
         bool startDragged;
         int lastX, lastY, draggedX, draggedY;
+        Point draggedStart;
 
         int ClickedX=-1, ClickedY=-1;
 
@@ -572,16 +573,20 @@ namespace ManiacEditor
                     {
                         // Start dragging the tiles
                         dragged = true;
+                        draggedX = 0;
+                        draggedY = 0;
+                        draggedStart = e.Location;
                         startDragged = true;
-                        EditLayer.StartDrag();
                     }
                     else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && EditLayer.HasTileAt(clicked_point))
                     {
                         // Start dragging the single selected tile
                         EditLayer.Select(clicked_point);
                         dragged = true;
+                        draggedX = 0;
+                        draggedY = 0;
+                        draggedStart = e.Location;
                         startDragged = true;
-                        EditLayer.StartDrag();
                     }
                     else
                     {
@@ -606,6 +611,7 @@ namespace ManiacEditor
                         dragged = true;
                         draggedX = 0;
                         draggedY = 0;
+                        draggedStart = e.Location;
                         startDragged = true;
                     }
                     else
@@ -693,7 +699,7 @@ namespace ManiacEditor
                     if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
                     if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
 
-                    if (x != position.X || y != position.Y)
+                    if ((x != position.X && hScrollBar1.Visible) || (y != position.Y && vScrollBar1.Visible))
                     {
                         if (vScrollBar1.Visible)
                         {
@@ -726,7 +732,7 @@ namespace ManiacEditor
                             y2 = selectingY;
                         }
                         EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
-                        UpdateTilesOptions();
+                        //UpdateTilesOptions();
 
                         if (IsEntitiesEdit()) entities.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
                     }
@@ -736,8 +742,15 @@ namespace ManiacEditor
                     Point oldPoint = new Point(lastX, lastY);
                     Point newPoint = e.Location;
 
-                    EditLayer?.MoveSelected(oldPoint, newPoint, CtrlPressed());
-                    UpdateEditLayerActions();
+                    //EditLayer?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                    if (IsTilesEdit() && startDragged)
+                    {
+                        EditLayer.StartDrag(CtrlPressed());
+                        UpdateEditLayerActions();
+                        startDragged = false;
+                    }
+                    if (IsTilesEdit() && !startDragged)
+                        EditLayer.UpdateDrag(draggedStart, new Point(draggedStart.X + draggedX, draggedStart.Y + draggedY));
                     if (IsEntitiesEdit())
                     {
                         try
@@ -750,16 +763,16 @@ namespace ManiacEditor
                             dragged = false;
                             return;
                         }
-                        draggedX += newPoint.X - oldPoint.X;
-                        draggedY += newPoint.Y - oldPoint.Y;
                         if (CtrlPressed() && startDragged)
                         {
                             UpdateEntitiesToolbarList();
                             SetSelectOnlyButtonsState();
                         }
                         entitiesToolbar.UpdateCurrentEntityProperites();
+                        startDragged = false;
                     }
-                    startDragged = false;
+                    draggedX += newPoint.X - oldPoint.X;
+                    draggedY += newPoint.Y - oldPoint.Y;
                 }
             }
             lastX = e.X;
@@ -804,6 +817,7 @@ namespace ManiacEditor
                             dragged = true;
                             draggedX = 0;
                             draggedY = 0;
+                            draggedStart = e.Location;
                             startDragged = true;
                         }
                         else
@@ -913,6 +927,10 @@ namespace ManiacEditor
                         }
                         if (dragged && (draggedX != 0 || draggedY != 0))
                         {
+                            if (IsTilesEdit())
+                            {
+                                EditLayer.EndDrag(draggedStart, new Point(draggedStart.X + draggedX, draggedStart.Y + draggedY));
+                            }
                             if (IsEntitiesEdit())
                             {
                                 IAction action = new ActionMoveEntities(entities.SelectedEntities.ToList(), new Point(draggedX, draggedY));
