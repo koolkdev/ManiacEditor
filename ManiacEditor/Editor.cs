@@ -316,7 +316,7 @@ namespace ManiacEditor
             {
                 List<IAction> actions = EditLayer.Actions;
                 if (actions.Count > 0) redo.Clear();
-                while (actions.Count > 0)
+                for (int i = 0; i < actions.Count; ++i)
                 {
                     bool create_new = false;
                     if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
@@ -331,9 +331,9 @@ namespace ManiacEditor
                     {
                         undo.Push(new ActionsGroup());
                     }
-                    (undo.Peek() as ActionsGroup).AddAction(actions[0]);
-                    actions.RemoveAt(0);
+                    (undo.Peek() as ActionsGroup).AddAction(actions[i]);
                 }
+                actions.Clear();
                 UpdateControls();
             }
         }

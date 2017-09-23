@@ -31,6 +31,8 @@ namespace ManiacEditor
         public PointsMap TempSelectionTiles;
         bool TempSelectionDeselect;
 
+        Rectangle tempSelectionArea;
+
         Point draggedDistance;
         bool dragging;
         
@@ -494,25 +496,74 @@ namespace ManiacEditor
             InvalidateSelectedChunks();
         }
 
-        public void TempSelection(Rectangle area, bool deselectIfSelected)
+        private void AddToTempSelection(Rectangle area)
         {
-            TempSelectionTiles.Clear();
-            TempSelectionDeselect = deselectIfSelected;
             for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
             {
                 for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
                 {
-                    if (SelectedTiles.Contains(new Point(x, y)) || Layer.Tiles[y][x] != 0xffff)
+                    if (!TempSelectionTiles.Contains(new Point(x, y)) && (SelectedTiles.Contains(new Point(x, y)) || Layer.Tiles[y][x] != 0xffff))
                     {
                         TempSelectionTiles.Add(new Point(x, y));
                     }
                 }
             }
+        }
+        private void RemoveFromTempSelection(Rectangle area, Rectangle newArea)
+        {
+            for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
+            {
+                for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
+                {
+                    if (TempSelectionTiles.Contains(new Point(x, y)) && !newArea.Contains(new Point(x * TILE_SIZE, y * TILE_SIZE)))
+                    {
+                        TempSelectionTiles.Remove(new Point(x, y));
+                    }
+                }
+            }
+        }
+
+        public void TempSelection(Rectangle area, bool deselectIfSelected)
+        {
+            TempSelectionDeselect = deselectIfSelected;
+
+            if (tempSelectionArea == Rectangle.Empty)
+            {
+                TempSelectionTiles.Clear();
+
+                for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
+                {
+                    for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
+                    {
+                        if (SelectedTiles.Contains(new Point(x, y)) || Layer.Tiles[y][x] != 0xffff)
+                        {
+                            TempSelectionTiles.Add(new Point(x, y));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Rectangle commonArea = area;
+                commonArea.Intersect(tempSelectionArea);
+
+                AddToTempSelection(new Rectangle(area.Left, area.Top, area.Width, Math.Max(commonArea.Top - area.Top, 0)));
+                AddToTempSelection(new Rectangle(commonArea.Right, commonArea.Top, Math.Max(area.Right - commonArea.Right, 0), commonArea.Height));
+                AddToTempSelection(new Rectangle(area.Left, commonArea.Top, Math.Max(commonArea.Left - area.Left, 0), commonArea.Height));
+                AddToTempSelection(new Rectangle(area.Left, commonArea.Bottom, area.Width, Math.Max(area.Bottom - commonArea.Bottom, 0)));
+
+                RemoveFromTempSelection(new Rectangle(tempSelectionArea.Left, tempSelectionArea.Top, tempSelectionArea.Width, Math.Max(commonArea.Top - tempSelectionArea.Top, 0)), area);
+                RemoveFromTempSelection(new Rectangle(commonArea.Right, commonArea.Top, Math.Max(tempSelectionArea.Right - commonArea.Right, 0), commonArea.Height), area);
+                RemoveFromTempSelection(new Rectangle(tempSelectionArea.Left, commonArea.Top, Math.Max(commonArea.Left - tempSelectionArea.Left, 0), commonArea.Height), area);
+                RemoveFromTempSelection(new Rectangle(tempSelectionArea.Left, commonArea.Bottom, tempSelectionArea.Width, Math.Max(tempSelectionArea.Bottom - commonArea.Bottom, 0)), area);
+            }
+            tempSelectionArea = area;
             InvalidateSelectedChunks();
         }
 
         public void EndTempSelection()
         {
+            tempSelectionArea = Rectangle.Empty;
             TempSelectionTiles.Clear();
         }
 
@@ -656,7 +707,7 @@ namespace ManiacEditor
             }
         }*/
 
-        public void Draw(Graphics g)
+                public void Draw(Graphics g)
         {
             for (int y = 0; y < Layer.Height; ++y)
             {
@@ -778,12 +829,12 @@ namespace ManiacEditor
 
             if (!vbo.VerticesUpdated)
             {
-                vbo.Vertices.UpdateData();
+                vbo.Vertices.SetData();
                 vbo.VerticesUpdated = true;
             }
             if (!vbo.TexCoordsUpdated)
             {
-                vbo.TexCoords.UpdateData();
+                vbo.TexCoords.SetData();
                 vbo.TexCoordsUpdated = true;
             }
         }
@@ -874,6 +925,8 @@ namespace ManiacEditor
             int end_x = chunks[0].Length;
             int start_y = 0;
             int end_y = chunks.Length;
+
+            GL.Color4((byte)255, (byte)255, (byte)255, Transperncy);
             for (int y = start_y; y < end_y; ++y)
             {
                 for (int x = start_x; x < end_x; ++x)
@@ -893,8 +946,6 @@ namespace ManiacEditor
                     }
                     DrawSelectedTiles(d, x, y, Transperncy);*/
 
-                    GL.Color4((byte)255, (byte)255, (byte)255, Transperncy);
-
                     chunks[y][x].Vertices.Load();
                     chunks[y][x].TexCoords.Load();
                     GL.DrawArrays(PrimitiveType.Quads, 0, chunks[y][x].Vertices.Count);
@@ -902,14 +953,13 @@ namespace ManiacEditor
                     chunks[y][x].TexCoords.Unload();
                 }
             }
+            GL.Color4(System.Drawing.Color.BlueViolet.R, System.Drawing.Color.BlueViolet.G, System.Drawing.Color.BlueViolet.B, Transperncy);
             for (int y = start_y; y < end_y; ++y)
             {
                 for (int x = start_x; x < end_x; ++x)
                 {
                     if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
                     {
-
-                        GL.Color4(System.Drawing.Color.BlueViolet.R, System.Drawing.Color.BlueViolet.G, System.Drawing.Color.BlueViolet.B, Transperncy);
                         UpdateSelectedChunkVBO(x, y);
 
                         if (dragging)
