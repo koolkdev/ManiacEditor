@@ -752,7 +752,15 @@ namespace ManiacEditor
             {
                 for (int tx = rect.X; tx < rect.X + rect.Width; ++tx)
                 {
-                    if (Layer.Tiles[ty][tx] != 0xffff)
+                    if (checkSelected && TempSelectionDeselect && SelectedTiles.Contains(new Point(tx, ty)) && TempSelectionTiles.Contains(new Point(tx, ty)))
+                    {
+                        Point p = new Point(tx, ty);
+                        if (SelectedTilesValue.ContainsKey(p))
+                            AddTileToVBO(vbo, SelectedTilesValue[p], p.X, p.Y);
+                        else // It is still in the original place
+                            AddTileToVBO(vbo, Layer.Tiles[p.Y][p.X], p.X, p.Y);
+                    }
+                    else if (Layer.Tiles[ty][tx] != 0xffff)
                     {
                         if (!checkSelected || dragging)
                             AddTileToVBO(vbo, Layer.Tiles[ty][tx], tx, ty);

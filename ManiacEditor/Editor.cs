@@ -1242,6 +1242,10 @@ namespace ManiacEditor
                 this.Text = String.Format("{0} FPS", lastFPS);
             }
 
+
+            //GL.Enable(EnableCap.AlphaTest);
+            //GL.AlphaFunc(AlphaFunction.Greater, 0f);
+
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.DepthTest);
@@ -1345,6 +1349,7 @@ namespace ManiacEditor
                 else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
             }*/
             GL.Disable(EnableCap.Blend);
+            //GL.Disable(EnableCap.AlphaTest);
             GL.Disable(EnableCap.DepthTest);
         }
 
