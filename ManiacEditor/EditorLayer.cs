@@ -257,7 +257,7 @@ namespace ManiacEditor
         public void EndDrag(Point oldPos, Point newPos)
         {
             dragging = false;
-            MoveSelected(oldPos, newPos);
+            MoveSelected(oldPos, newPos, false, true);
 
             selectedOOB.Vertices.SetBuffer(null);
             selectedOOB.SelectIndices.SetBuffer(null);
@@ -308,7 +308,7 @@ namespace ManiacEditor
             }
         }
 
-        public void MoveSelected(Point oldPos, Point newPos, bool duplicate=false)
+        public void MoveSelected(Point oldPos, Point newPos, bool duplicate=false, bool forceUpdate=false)
         {
             oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
             newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
@@ -339,6 +339,14 @@ namespace ManiacEditor
                 }
                 SelectedTilesValue = newDict;
                 SelectedTiles.AddPoints(newPoints);
+                InvalidateSelectedChunks();
+            }
+            else if (forceUpdate)
+            {
+                for (int y = 0; y < chunks.Length; ++y)
+                    for (int x = 0; x < chunks[0].Length; ++x)
+                        if (SelectedTiles.IsChunkUsed(x, y))
+                            SelectedTiles.ChangedChunks.Add(new Point(x, y));
                 InvalidateSelectedChunks();
             }
         }

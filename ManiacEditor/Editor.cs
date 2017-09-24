@@ -1291,32 +1291,54 @@ namespace ManiacEditor
                 /*if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);*/
             }
-            /*if (draggingSelection)
+            if (draggingSelection)
             {
-                int x1 = (int)(selectingX / Zoom), x2 = (int)(lastX / Zoom);
-                int y1 = (int)(selectingY / Zoom), y2 = (int)(lastY / Zoom);
+                int x1 = selectingX, x2 = lastX;
+                int y1 = selectingY, y2 = lastY;
                 if (x1 != x2 && y1 != y2)
                 {
                     if (x1 > x2)
                     {
-                        x1 = (int)(lastX / Zoom);
-                        x2 = (int)(selectingX / Zoom);
+                        x1 = lastX;
+                        x2 = selectingX;
                     }
                     if (y1 > y2)
                     {
-                        y1 = (int)(lastY / Zoom);
-                        y2 = (int)(selectingY / Zoom);
+                        y1 = lastY;
+                        y2 = selectingY;
                     }
 
-                    GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(50, Color.Purple));
+                    GL.PushMatrix();
+                    GL.Translate(0, 0, 0.9f);
 
-                    GraphicPanel.DrawLine(x1, y1, x2, y1, Color.Purple);
-                    GraphicPanel.DrawLine(x1, y1, x1, y2, Color.Purple);
-                    GraphicPanel.DrawLine(x2, y2, x2, y1, Color.Purple);
-                    GraphicPanel.DrawLine(x2, y2, x1, y2, Color.Purple);
+                    // Draw rectangle
+                    GL.Begin(PrimitiveType.Quads);
+                    GL.Color4(System.Drawing.Color.Purple.R, System.Drawing.Color.Purple.G, System.Drawing.Color.Purple.B, (byte)50);
+                    GL.Vertex2(x1, y1);
+                    GL.Vertex2(x2, y1);
+                    GL.Vertex2(x2, y2);
+                    GL.Vertex2(x1, y2);
+                    GL.End();
+
+                    // Draw the lines around
+                    GL.Translate(0, 0, 0.05f);
+                    GL.Begin(PrimitiveType.Lines);
+                    GL.Color3(System.Drawing.Color.Purple);
+                    GL.LineWidth(1.0f);
+                    GL.Vertex2(x1, y1);
+                    GL.Vertex2(x2, y1);
+                    GL.Vertex2(x2, y1);
+                    GL.Vertex2(x2, y2);
+                    GL.Vertex2(x2, y2);
+                    GL.Vertex2(x1, y2);
+                    GL.Vertex2(x1, y2);
+                    GL.Vertex2(x1, y1);
+                    GL.End();
+
+                    GL.PopMatrix();
                 }
             }
-            if (scrolling)
+            /*if (scrolling)
             {
                 if (vScrollBar1.Visible && hScrollBar1.Visible) GraphicPanel.Draw2DCursor(scrollPosition.X, scrollPosition.Y);
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
