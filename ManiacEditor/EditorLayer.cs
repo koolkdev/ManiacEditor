@@ -1042,7 +1042,6 @@ namespace ManiacEditor
                 selectedOOB.Vertices.Load();
                 selectedOOB.TexCoords.Load();
                 GL.DrawArrays(PrimitiveType.Quads, 0, selectedOOB.Vertices.Count);
-                selectedOOB.Vertices.Unload();
                 selectedOOB.TexCoords.Unload();
                 GL.Disable(EnableCap.Texture2D);
 
