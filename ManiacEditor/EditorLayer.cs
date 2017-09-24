@@ -20,6 +20,7 @@ namespace ManiacEditor
 
         static float[] verticesBuffer = new float[TILE_SIZE * TILE_SIZE * 8];
         static float[] textCoordsBuffer = new float[TILE_SIZE * TILE_SIZE * 8];
+        static uint[] indicesBuffer = new uint[TILE_SIZE * TILE_SIZE * 8];
         ChunkVBO[][] chunks;
         ChunkVBO[][] selectedChunks;
         ChunkVBO selectedOOB;
@@ -51,6 +52,7 @@ namespace ManiacEditor
             public bool VerticesUpdated = false;
             public TexCoords TexCoords;
             public bool TexCoordsUpdated = false;
+            public Indices SelectIndices;
         }
 
         public class PointsMap
@@ -191,12 +193,14 @@ namespace ManiacEditor
                     selectedChunks[i][j] = new ChunkVBO();
                     selectedChunks[i][j].Vertices = new Vertices(verticesBuffer);
                     selectedChunks[i][j].TexCoords = new TexCoords(textCoordsBuffer, TILE_SIZE, TILE_SIZE * 0x400);
+                    selectedChunks[i][j].SelectIndices = new Indices(indicesBuffer);
                 }
             }
 
             selectedOOB = new ChunkVBO();
             selectedOOB.TexCoords = new TexCoords(null, TILE_SIZE, TILE_SIZE * 0x400);
             selectedOOB.Vertices = new Vertices(null);
+            selectedOOB.SelectIndices = new Indices(null);
 
             SelectedTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
             TempSelectionTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
@@ -256,6 +260,7 @@ namespace ManiacEditor
             MoveSelected(oldPos, newPos);
 
             selectedOOB.Vertices.SetBuffer(null);
+            selectedOOB.SelectIndices.SetBuffer(null);
             selectedOOB.TexCoords.SetBuffer(null);
         }
 
@@ -498,6 +503,7 @@ namespace ManiacEditor
 
         private void AddToTempSelection(Rectangle area)
         {
+            if (area.Width == 0 || area.Height == 0) return;
             for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
             {
                 for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
@@ -511,11 +517,12 @@ namespace ManiacEditor
         }
         private void RemoveFromTempSelection(Rectangle area, Rectangle newArea)
         {
+            if (area.Width == 0 || area.Height == 0) return;
             for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
             {
                 for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
                 {
-                    if (TempSelectionTiles.Contains(new Point(x, y)) && !newArea.Contains(new Point(x * TILE_SIZE, y * TILE_SIZE)))
+                    if (TempSelectionTiles.Contains(new Point(x, y)) && !newArea.IntersectsWith(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)))
                     {
                         TempSelectionTiles.Remove(new Point(x, y));
                     }
@@ -768,12 +775,33 @@ namespace ManiacEditor
             }
         }
 
+        private void AddSelectIndices(ChunkVBO vbo)
+        {
+            // Make rectangle around the selected block, using the vertices
+            // Line 1
+            vbo.SelectIndices.Add(vbo.Vertices.Count);
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 1);
+            // Line 2
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 1);
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 2);
+            // Line 3
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 2);
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 3);
+            // Line 4
+            vbo.SelectIndices.Add(vbo.Vertices.Count + 3);
+            vbo.SelectIndices.Add(vbo.Vertices.Count);
+        }
+
         private void UpdateSelectedChunkVBO(int x, int y)
         {
             ChunkVBO vbo = selectedChunks[y][x];
             if (vbo.TexCoordsUpdated && vbo.VerticesUpdated) return;
 
-            if (!vbo.VerticesUpdated) vbo.Vertices.Reset();
+            if (!vbo.VerticesUpdated)
+            {
+                vbo.Vertices.Reset();
+                vbo.SelectIndices.Reset();
+            }
             if (!vbo.TexCoordsUpdated) vbo.TexCoords.Reset();
 
             Rectangle rect = GetTilesChunkArea(x, y);
@@ -782,6 +810,9 @@ namespace ManiacEditor
             {
                 if (!TempSelectionDeselect || !TempSelectionTiles.Contains(p))
                 {
+                    if (!vbo.VerticesUpdated)
+                        AddSelectIndices(vbo);
+
                     if (SelectedTilesValue.ContainsKey(p))
                         AddTileToVBO(vbo, SelectedTilesValue[p], p.X, p.Y);
                     else // It is still in the original place
@@ -792,12 +823,15 @@ namespace ManiacEditor
             foreach (Point p in TempSelectionTiles.GetChunkPoint(x, y))
             {
                 if (SelectedTiles.Contains(p)) continue;
+                if (!vbo.VerticesUpdated)
+                    AddSelectIndices(vbo);
                 AddTileToVBO(vbo, Layer.Tiles[p.Y][p.X], p.X, p.Y);
             }
 
             if (!vbo.VerticesUpdated)
             {
                 vbo.Vertices.UpdateData();
+                vbo.SelectIndices.UpdateData();
                 vbo.VerticesUpdated = true;
             }
             if (!vbo.TexCoordsUpdated)
@@ -815,6 +849,7 @@ namespace ManiacEditor
             if (!vbo.VerticesUpdated)
             {
                 vbo.Vertices.SetBuffer(new float[SelectedTiles.GetOOB().Count * 8]);
+                vbo.SelectIndices.SetBuffer(new uint[SelectedTiles.GetOOB().Count * 8]);
             }
 
             if (!vbo.TexCoordsUpdated)
@@ -824,12 +859,15 @@ namespace ManiacEditor
 
             foreach (Point p in SelectedTiles.GetOOB())
             {
+                if (!vbo.VerticesUpdated)
+                    AddSelectIndices(vbo);
                 AddTileToVBO(vbo, SelectedTilesValue[p], p.X, p.Y);
             }
 
             if (!vbo.VerticesUpdated)
             {
                 vbo.Vertices.SetData();
+                vbo.SelectIndices.SetData();
                 vbo.VerticesUpdated = true;
             }
             if (!vbo.TexCoordsUpdated)
@@ -953,7 +991,10 @@ namespace ManiacEditor
                     chunks[y][x].TexCoords.Unload();
                 }
             }
+            GL.Disable(EnableCap.Texture2D);
+
             GL.Color4(System.Drawing.Color.BlueViolet.R, System.Drawing.Color.BlueViolet.G, System.Drawing.Color.BlueViolet.B, Transperncy);
+            GL.LineWidth(1.0f);
             for (int y = start_y; y < end_y; ++y)
             {
                 for (int x = start_x; x < end_x; ++x)
@@ -968,11 +1009,20 @@ namespace ManiacEditor
                             GL.Translate(draggedDistance.X * TILE_SIZE, draggedDistance.Y * TILE_SIZE, Editor.LAYER_DEPTH / 2);
                         }
 
+                        GL.Enable(EnableCap.Texture2D);
                         selectedChunks[y][x].Vertices.Load();
                         selectedChunks[y][x].TexCoords.Load();
                         GL.DrawArrays(PrimitiveType.Quads, 0, selectedChunks[y][x].Vertices.Count);
-                        selectedChunks[y][x].Vertices.Unload();
                         selectedChunks[y][x].TexCoords.Unload();
+                        GL.Disable(EnableCap.Texture2D);
+
+                        GL.PushMatrix();
+                        GL.Translate(0, 0, Editor.LAYER_DEPTH / 4);
+                        selectedChunks[y][x].SelectIndices.Load();
+                        GL.DrawElements(PrimitiveType.Lines, selectedChunks[y][x].SelectIndices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+                        selectedChunks[y][x].SelectIndices.Unload();
+                        selectedChunks[y][x].Vertices.Unload();
+                        GL.PopMatrix();
 
                         if (dragging)
                         {
@@ -988,19 +1038,28 @@ namespace ManiacEditor
                 GL.PushMatrix();
                 GL.Translate(draggedDistance.X * TILE_SIZE, draggedDistance.Y * TILE_SIZE, Editor.LAYER_DEPTH / 2);
 
+                GL.Enable(EnableCap.Texture2D);
                 selectedOOB.Vertices.Load();
                 selectedOOB.TexCoords.Load();
                 GL.DrawArrays(PrimitiveType.Quads, 0, selectedOOB.Vertices.Count);
                 selectedOOB.Vertices.Unload();
                 selectedOOB.TexCoords.Unload();
-                
+                GL.Disable(EnableCap.Texture2D);
+
+                GL.PushMatrix();
+                GL.Translate(0, 0, Editor.LAYER_DEPTH / 4);
+                selectedOOB.SelectIndices.Load();
+                GL.DrawElements(PrimitiveType.Lines, selectedOOB.SelectIndices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+                selectedOOB.SelectIndices.Unload();
+                selectedOOB.Vertices.Unload();
+                GL.PopMatrix();
+
                 GL.PopMatrix();
             }
 
             GL.PopAttrib();
 
             texture.Unbind();
-            GL.Disable(EnableCap.Texture2D);
         }
 
         public void Dispose()

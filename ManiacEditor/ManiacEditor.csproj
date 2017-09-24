@@ -88,6 +88,7 @@
     <Compile Include="ImageViewer.designer.cs">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="IndexBuffer.cs" />
     <Compile Include="LocalProperty.cs" />
     <Compile Include="LocalPropertyGrid.cs" />
     <Compile Include="Editor.cs">
@@ -170,6 +171,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Indices.cs" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
