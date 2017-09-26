@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace ManiacEditor
 {
-    class EditorLayer : IDrawable, IDisposable
+    class EditorLayer : IDrawable
     {
         public SceneLayer Layer;
 
@@ -970,36 +970,13 @@ namespace ManiacEditor
 
             GL.PushAttrib(AttribMask.CurrentBit);
 
-            /*int start_x = g.ScreenX / (TILES_CHUNK_SIZE * TILE_SIZE);
-            int end_x = Math.Min(DivideRoundUp(g.ScreenX + g.ScreenWidth, TILES_CHUNK_SIZE * TILE_SIZE), chunks[0].Length);
-            int start_y = g.ScreenY / (TILES_CHUNK_SIZE * TILE_SIZE);
-            int end_y = Math.Min(DivideRoundUp(g.ScreenY + g.ScreenHeight, TILES_CHUNK_SIZE * TILE_SIZE), chunks.Length);*/
-
-            int start_x = 0;
-            int end_x = chunks[0].Length;
-            int start_y = 0;
-            int end_y = chunks.Length;
-
             GL.Color4((byte)255, (byte)255, (byte)255, Transperncy);
-            for (int y = start_y; y < end_y; ++y)
+            for (int y = 0; y < chunks.Length; ++y)
             {
-                for (int x = start_x; x < end_x; ++x)
+                for (int x = 0; x < chunks[0].Length; ++x)
                 {
                     UpdateChunkVBO(x, y);
-
-                    /*Rectangle rect = GetTilesChunkArea(x, y);
-                    if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
-                    {
-                        // TODO: If the full chunk is selected, cache it
-                        // draw one by one
-                        DrawTilesChunk(d, x, y, Transperncy);
-                    }
-                    else
-                    {
-                        d.DrawBitmap(GetTilesChunkTexture(d, x, y), rect.X * TILE_SIZE, rect.Y * TILE_SIZE, rect.Width * TILE_SIZE, rect.Height * TILE_SIZE, false, Transperncy);
-                    }
-                    DrawSelectedTiles(d, x, y, Transperncy);*/
-
+                    
                     chunks[y][x].Vertices.Load();
                     chunks[y][x].TexCoords.Load();
                     GL.DrawArrays(PrimitiveType.Quads, 0, chunks[y][x].Vertices.Count);
@@ -1011,9 +988,9 @@ namespace ManiacEditor
 
             GL.Color4(System.Drawing.Color.BlueViolet.R, System.Drawing.Color.BlueViolet.G, System.Drawing.Color.BlueViolet.B, Transperncy);
             GL.LineWidth(1.0f);
-            for (int y = start_y; y < end_y; ++y)
+            for (int y = 0; y < chunks.Length; ++y)
             {
-                for (int x = start_x; x < end_x; ++x)
+                for (int x = 0; x < chunks[0].Length; ++x)
                 {
                     if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
                     {
@@ -1077,28 +1054,29 @@ namespace ManiacEditor
             texture.Unbind();
         }
 
-        public void Dispose()
+        public void DisposeGraphics(GLViewControl gl)
         {
-            /*foreach (Texture[] textures in TileChunksTextures)
-                foreach (Texture texture in textures)
-                    if (texture != null)
-                        texture.Dispose();
-            TileChunksTextures = null;*/
-        }
-
-        public void DisposeTextures()
-        {
-            /*foreach (Texture[] textures in TileChunksTextures)
+            gl.MakeCurrent();
+            foreach (var vbos in chunks)
             {
-                for (int i = 0; i < textures.Length; ++i)
+                foreach (var vbo in vbos)
                 {
-                    if (textures[i] != null)
-                    {
-                        textures[i].Dispose();
-                        textures[i] = null;
-                    }
+                    vbo.TexCoords.Destroy();
+                    vbo.Vertices.Destroy();
                 }
-            }*/
+            }
+            foreach (var vbos in selectedChunks)
+            {
+                foreach (var vbo in vbos)
+                {
+                    vbo.TexCoords.Destroy();
+                    vbo.Vertices.Destroy();
+                    vbo.SelectIndices.Destroy();
+                }
+            }
+            selectedOOB.TexCoords.Destroy();
+            selectedOOB.Vertices.Destroy();
+            selectedOOB.SelectIndices.Destroy();
         }
     }
 }

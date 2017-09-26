@@ -232,11 +232,11 @@ namespace ManiacEditor
 
         }
 
-        public void Draw(DevicePanel d)
+        /*public void Draw(DevicePanel d)
         {
             foreach (var entity in entities)
                 entity.Draw(d);
-        }
+        }*/
 
     }
 }

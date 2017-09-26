@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace ManiacEditor
 {
@@ -90,6 +91,11 @@ namespace ManiacEditor
             vb.Unbind();
         }
 
+        public void SetDataSize(int count)
+        {
+            this.count = count;
+        }
+
         public void UpdateData()
         {
             if (!vb.IsCreated())
@@ -117,6 +123,23 @@ namespace ManiacEditor
 
             GL.DisableClientState(ArrayCap.VertexArray);
             vb.Unbind();
+        }
+
+        public void Draw(PrimitiveType type, int? count=null)
+        {
+            Load();
+            GL.DrawArrays(type, 0, count ?? Count);
+            Unload();
+        }
+
+        public void Draw(PrimitiveType type, Color color, int? count=null)
+        {
+            GL.PushAttrib(AttribMask.CurrentBit);
+            GL.Color4(color);
+            Load();
+            GL.DrawArrays(type, 0, count ?? Count);
+            Unload();
+            GL.PopAttrib();
         }
 
     }

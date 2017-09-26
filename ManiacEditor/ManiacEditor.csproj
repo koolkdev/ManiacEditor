@@ -141,6 +141,7 @@
     <Compile Include="GLViewControl.Designer.cs">
       <DependentUpon>GLViewControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="VBCreator.cs" />
     <Compile Include="VertexBuffer.cs" />
     <Compile Include="Vertices.cs" />
     <EmbeddedResource Include="EntitiesToolbar.resx">

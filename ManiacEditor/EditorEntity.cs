@@ -48,7 +48,7 @@ namespace ManiacEditor
             return new Rectangle(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT);
         }
 
-        public void Draw(DevicePanel d)
+        /*public void Draw(DevicePanel d)
         {
             if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
             Color color = Selected ? Color.MediumPurple : Color.MediumTurquoise;
@@ -65,6 +65,6 @@ namespace ManiacEditor
             d.DrawLine(x + NAME_BOX_WIDTH, y, x + NAME_BOX_WIDTH, y + NAME_BOX_HEIGHT, Color.FromArgb(Transparency, color2));
 
             if (Editor.Instance.GetZoom() >= 1) d.DrawTextSmall(String.Format("{0} (ID: {1})", entity.Object.Name, entity.SlotID), x + 2, y + 2, NAME_BOX_WIDTH - 4, Color.FromArgb(Transparency, Color.Black), true);
-        }
+        }*/
     }
 }

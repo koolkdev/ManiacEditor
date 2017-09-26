@@ -17,7 +17,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace ManiacEditor
 {
-    public partial class Editor : Form, IDrawArea
+    public partial class Editor : Form
     {
         bool dragged;
         bool startDragged;
@@ -75,7 +75,7 @@ namespace ManiacEditor
 
         public const double LAYER_DEPTH = 0.1;
         
-        Timer scrollTimer = new Timer() { Interval = 1 };
+        Timer scrollTimer = new Timer() { Interval = 10 };
 
         public Editor()
         {
@@ -507,8 +507,8 @@ namespace ManiacEditor
                 scrollingDragged = true;
             }
 
-            int xMove = (hScrollBar1.Visible) ? lastScrollPos.X - position.X - scrollPosition.X : 0;
-            int yMove = (vScrollBar1.Visible) ? lastScrollPos.Y - position.Y - scrollPosition.Y : 0;
+            int xMove = (hScrollBar1.Visible) ? lastScrollPos.X - scrollPosition.X : 0;
+            int yMove = (vScrollBar1.Visible) ? lastScrollPos.Y - scrollPosition.Y : 0;
 
             if (Math.Abs(xMove) < 15) xMove = 0;
             if (Math.Abs(yMove) < 15) yMove = 0;
@@ -630,7 +630,7 @@ namespace ManiacEditor
             }
             if (scrolling)
             {
-                lastScrollPos = new Point((int)(e.X * GraphicPanel.Zoom), (int)(e.Y * GraphicPanel.Zoom));
+                lastScrollPos = new Point((int)((e.X - GraphicPanel.ScreenX) * GraphicPanel.Zoom), (int)((e.Y - GraphicPanel.ScreenY) * GraphicPanel.Zoom));
             }
 
             toolStripStatusLabel1.Text = "X: " + e.X + " Y: " + e.Y;
@@ -749,8 +749,6 @@ namespace ManiacEditor
                         UpdateEditLayerActions();
                         startDragged = false;
                     }
-                    if (IsTilesEdit() && !startDragged)
-                        EditLayer.UpdateDrag(draggedStart, new Point(draggedStart.X + draggedX, draggedStart.Y + draggedY));
                     if (IsEntitiesEdit())
                     {
                         try
@@ -773,6 +771,8 @@ namespace ManiacEditor
                     }
                     draggedX += newPoint.X - oldPoint.X;
                     draggedY += newPoint.Y - oldPoint.Y;
+                    if (IsTilesEdit() && !startDragged)
+                        EditLayer.UpdateDrag(draggedStart, new Point(draggedStart.X + draggedX, draggedStart.Y + draggedY));
                 }
             }
             lastX = e.X;
@@ -1066,11 +1066,12 @@ namespace ManiacEditor
             if (StageTiles != null) StageTiles.Dispose();
             StageTiles = null;
 
-            if (FGHigh != null) FGHigh.Dispose();
+            FGHigh?.DisposeGraphics(GraphicPanel);
             FGHigh = null;
-            if (FGLow != null) FGLow.Dispose();
+            FGLow?.DisposeGraphics(GraphicPanel);
             FGLow = null;
 
+            Background?.DisposeGraphics();
             Background = null;
             
             TilesClipboard = null;
@@ -1145,12 +1146,12 @@ namespace ManiacEditor
                 FGLow = new EditorLayer(low_layer);
                 FGHigh = new EditorLayer(high_layer);
 
-                Background = new EditorBackground();
-
                 entities = new EditorEntities(Scene);
 
                 SceneWidth = low_layer.Width * 16;
                 SceneHeight = low_layer.Height * 16;
+
+                Background = new EditorBackground(SceneWidth, SceneHeight);
 
                 SetViewSize(SceneWidth, SceneHeight);
 
@@ -1276,8 +1277,8 @@ namespace ManiacEditor
             {
                 GL.PushMatrix();
                 GL.Translate(0, 0, LAYER_DEPTH);
-                /*if (!IsTilesEdit())
-                    Background.Draw(GraphicPanel);*/
+                if (!IsTilesEdit())
+                    Background.Draw(GraphicPanel);
                
                 GL.Translate(0, 0, LAYER_DEPTH);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
@@ -1811,23 +1812,6 @@ namespace ManiacEditor
         {
             GraphicPanel.ScreenX = (int)((sender as HScrollBar).Value / GraphicPanel.Zoom);
             //if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Invalidate();
-        }
-
-        public void DisposeTextures()
-        {
-            if (FGHigh != null) FGHigh.DisposeTextures();
-            if (FGLow != null) FGLow.DisposeTextures();
-        }
-
-        public Rectangle GetScreen()
-        {
-            //return new Rectangle(ShiftX, ShiftY, viewPanel.Width, viewPanel.Height);
-            return new Rectangle(0, 0, viewPanel.Width, viewPanel.Height);
-        }
-
-        public double GetZoom()
-        {
-            return GraphicPanel.Zoom;
         }
     }
 }
