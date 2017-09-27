@@ -1102,10 +1102,10 @@ namespace ManiacEditor
 
                 foreach (SceneLayer layer in Scene.Layers)
                 {
-                    if (layer.Name == "FG Low\0" || layer.Name == "Playfield\0")
+                    if (layer.Name == "Print Source\0")
                         low_layer = layer;
-                    else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
-                        high_layer = layer;
+                    /*else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
+                        high_layer = layer;*/
                 }
 
                 if (low_layer == null /* || high_layer == null */)
