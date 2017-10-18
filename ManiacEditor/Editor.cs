@@ -1577,14 +1577,14 @@ namespace ManiacEditor
         {
             if (IsTilesEdit() && TilesClipboard != null)
             {
-                EditLayer.PasteFromClipboard(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
+                EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
                 UpdateEditLayerActions();
             }
             else if (IsEntitiesEdit())
             {
                 try
                 {
-                    entities.PasteFromClipboard(new Point((int)(ShiftX / Zoom), (int)(ShiftY / Zoom)), entitiesClipboard);
+                    entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), entitiesClipboard);
                     UpdateLastEntityAction();
                 }
                 catch (EditorEntities.TooManyEntitiesException)
