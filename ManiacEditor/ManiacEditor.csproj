@@ -74,6 +74,7 @@
     <Compile Include="EntitiesToolbar.Designer.cs">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\FlipDirection.cs" />
     <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="IDrawArea.cs" />
     <Compile Include="ImageViewer.cs">

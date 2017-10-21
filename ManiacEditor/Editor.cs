@@ -14,6 +14,7 @@ using SharpDX.Direct3D9;
 using RSDKv5;
 using System.IO;
 using Color = System.Drawing.Color;
+using ManiacEditor.Enums;
 
 namespace ManiacEditor
 {
@@ -1449,7 +1450,7 @@ namespace ManiacEditor
 
         private void flipHorizontalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditLayer?.FlipPropertySelected(1 << 10);
+            EditLayer?.FlipPropertySelected(FlipDirection.Horizontal);
             UpdateEditLayerActions();
         }
 
@@ -1726,7 +1727,7 @@ namespace ManiacEditor
 
         private void flipVerticalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditLayer?.FlipPropertySelected(1 << 11);
+            EditLayer?.FlipPropertySelected(FlipDirection.Veritcal);
             UpdateEditLayerActions();
         }
 

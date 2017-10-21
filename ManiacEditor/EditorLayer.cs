@@ -7,6 +7,7 @@ using System.Drawing;
 using RSDKv5;
 using SharpDX.Direct3D9;
 using ManiacEditor.Actions;
+using ManiacEditor.Enums;
 
 namespace ManiacEditor
 {
@@ -245,15 +246,84 @@ namespace ManiacEditor
             SelectedTilesValue.Clear();
         }
 
-        public void FlipPropertySelected(ushort bit)
+        public void FlipPropertySelected(FlipDirection direction)
         {
             DetachSelected();
-
             List<Point> points = new List<Point>(SelectedTilesValue.Keys);
+
+            if (points.Count == 0) return;
+
+            if (points.Count == 1)
+            {
+                FlipIndividualTiles(direction, points);
+                return;
+            }
+
+            IEnumerable<int> monoCoordinates;
+
+            if (direction == FlipDirection.Horizontal)
+            {
+                monoCoordinates = points.Select(p => p.X);
+            }
+            else
+            {
+                monoCoordinates = points.Select(p => p.Y);
+            }
+
+            int min = monoCoordinates.Min();
+            int max = monoCoordinates.Max();
+            int diff = max - min;
+
+            if (diff == 0)
+            {
+                FlipIndividualTiles(direction, points);
+            }
+            else
+            {
+                FlipGroupTiles(direction, points, min, max);
+            }
+        }
+
+        private void FlipIndividualTiles(FlipDirection direction, IEnumerable<Point> points)
+        {
             foreach (Point point in points)
             {
-                SelectedTilesValue[point] ^= bit;
+                SelectedTilesValue[point] ^= (ushort)direction;
             }
+        }
+
+        private void FlipGroupTiles(FlipDirection direction, IEnumerable<Point> points, int min, int max)
+        {
+            Dictionary<Point, ushort> workingTiles = new Dictionary<Point, ushort>();
+            foreach (Point point in points)
+            {
+                ushort tileValue = SelectedTilesValue[point];
+                Point newPoint; 
+
+                if (direction == FlipDirection.Horizontal)
+                {
+                    int fromLeft = point.X - min;
+                    int fromRight = max - point.X;
+
+                    int newX = fromLeft < fromRight ? max - fromLeft : min + fromRight;
+                    newPoint = new Point(newX, point.Y);
+                }
+                else
+                {
+                    int fromBottom = point.Y - min;
+                    int fromTop = max - point.Y;
+
+                    int newY = fromBottom < fromTop ? max - fromBottom : min + fromTop;
+                    newPoint = new Point(point.X, newY);
+                }
+
+                workingTiles.Add(newPoint, tileValue ^= (ushort)direction);
+            }
+
+            SelectedTiles.Clear();
+            SelectedTilesValue.Clear();
+            SelectedTiles.AddPoints(workingTiles.Select(wt => wt.Key).ToList());
+            SelectedTilesValue = workingTiles;
         }
 
         public void SetPropertySelected(int bit, bool state)
