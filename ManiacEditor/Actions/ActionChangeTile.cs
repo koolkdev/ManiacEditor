@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 
 namespace ManiacEditor.Actions
@@ -12,6 +8,8 @@ namespace ManiacEditor.Actions
         Action<Point, ushort> setLayer;
         Point position;
         private ushort oldValue, newValue;
+
+        public string Description => $"placing tile at postion ({position.X},{position.Y})";
 
         public ActionChangeTile(Action<Point, ushort> setLayer, Point position, ushort oldValue, ushort newValue)
         {

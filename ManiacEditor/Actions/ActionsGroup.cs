@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManiacEditor.Actions
 {
@@ -20,6 +18,8 @@ namespace ManiacEditor.Actions
             }
         }
 
+        public string Description => $"{actions.Count} actions";
+        
         public ActionsGroup()
         {
         }
@@ -48,7 +48,7 @@ namespace ManiacEditor.Actions
 
         public void Undo()
         {
-            if (!closed) throw new Exception("Can't undn unclosed group.");
+            if (!closed) throw new Exception("Can't undo unclosed group.");
             foreach (IAction action in actions) {
                 action.Undo();
             }

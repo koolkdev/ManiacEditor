@@ -619,7 +619,8 @@
             this.undoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.undoButton.Name = "undoButton";
             this.undoButton.Size = new System.Drawing.Size(23, 23);
-            this.undoButton.Text = "Undo (Ctrl + Z)";
+            this.undoButton.Text = "Undo {0} (Ctrl + Z)";
+            this.undoButton.ToolTipText = "Undo (Ctrl + Z)";
             this.undoButton.Click += new System.EventHandler(this.undoButton_Click);
             // 
             // redoButton
@@ -629,7 +630,8 @@
             this.redoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.redoButton.Name = "redoButton";
             this.redoButton.Size = new System.Drawing.Size(23, 23);
-            this.redoButton.Text = "Redo (Ctrl + Y)";
+            this.redoButton.Text = "Redo {0} (Ctrl + Y)";
+            this.redoButton.ToolTipText = "Redo (Ctrl + Y)";
             this.redoButton.Click += new System.EventHandler(this.redoButton_Click);
             // 
             // toolStripSeparator9

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 
 namespace ManiacEditor.Actions
 {
@@ -11,6 +8,35 @@ namespace ManiacEditor.Actions
         List<EditorEntity> entities;
         Point diff;
         bool key;
+
+        public string Description => GenerateActionDescription();
+
+        private string GenerateActionDescription()
+        {
+            string name = null;
+
+            if (null == entities)
+            {
+                // this shouldn't happen
+                name = "object";
+            }
+            else if (entities.Count == 1)
+            {
+                name = entities[0]?.Entity?.Object?.Name?.Name;
+            }
+            else
+            {
+                name = $"{entities.Count} objects";
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                // this probably shouldn't happen either
+                name = "object";
+            }
+
+            return $"moving {name} ({-(diff.X)},{-(diff.Y)})";
+        }
 
         public ActionMoveEntities(List<EditorEntity> entities, Point diff, bool key=false)
         {

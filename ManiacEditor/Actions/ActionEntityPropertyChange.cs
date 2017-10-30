@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RSDKv5;
+﻿using RSDKv5;
+using System;
 
 namespace ManiacEditor.Actions
 {
@@ -14,6 +10,8 @@ namespace ManiacEditor.Actions
         object oldValue;
         object newValue;
         Action<SceneEntity, string, object, object> setValue;
+
+        public string Description => $"changing {tag} on {entity.Object.Name.Name} from {oldValue} to {newValue}";
 
         public ActionEntityPropertyChange(SceneEntity entity, string tag, object oldValue, object newValue, Action<SceneEntity, string, object, object> setValue)
         {

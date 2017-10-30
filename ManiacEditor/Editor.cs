@@ -135,6 +135,7 @@ namespace ManiacEditor
             zoomOutButton.Enabled = enabled && ZoomLevel > -5;
 
             SetEditButtonsState(enabled);
+            UpdateTooltips();
         }
 
         private void SetSelectOnlyButtonsState(bool enabled=true)
@@ -1555,6 +1556,25 @@ namespace ManiacEditor
                 }
             }
             UpdateControls();
+        }
+
+        private void UpdateTooltips()
+        {
+            UpdateTooltipForStacks(undoButton, undo);
+            UpdateTooltipForStacks(redoButton, redo);
+        }
+
+        private void UpdateTooltipForStacks(ToolStripButton tsb, Stack<IAction> actionStack)
+        {
+            if (actionStack?.Count > 0)
+            {
+                IAction action = actionStack.Peek();
+                tsb.ToolTipText = string.Format(tsb.Text, action.Description + " ");
+            }
+            else
+            {
+                tsb.ToolTipText = string.Format(tsb.Text, string.Empty);
+            }
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
