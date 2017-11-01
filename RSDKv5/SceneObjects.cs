@@ -9,7 +9,11 @@ namespace RSDKv5
 {
     public class SceneObject
     {
-        public readonly NameIdentifier Name;
+        public NameIdentifier Name
+        {
+            get;
+            private set;
+        }
         public readonly List<AttributeInfo> Attributes = new List<AttributeInfo>();
         public List<SceneEntity> Entities = new List<SceneEntity>();
 

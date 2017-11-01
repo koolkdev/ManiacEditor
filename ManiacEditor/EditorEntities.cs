@@ -238,5 +238,23 @@ namespace ManiacEditor
                 entity.Draw(d);
         }
 
+        /// <summary>
+        /// Creates a new instance of the given SceneObject at the indicated position.
+        /// </summary>
+        /// <param name="sceneObject">Type of SceneObject to create an instance of.</param>
+        /// <param name="position">Location to insert into the scene.</param>
+        public void Add(RSDKv5.SceneObject sceneObject, RSDKv5.Position position)
+        {
+            var editorEntity = new EditorEntity(new RSDKv5.SceneEntity(sceneObject, getFreeSlot(null)));
+            editorEntity.Entity.Position = position;
+            var newEntities = new List<EditorEntity> { editorEntity };
+            LastAction = new Actions.ActionAddDeleteEntities(newEntities, true, x => AddEntities(x), x => DeleteEntities(x));
+            AddEntities(newEntities);
+
+            Deselect();
+            editorEntity.Selected = true;
+            selectedEntities.Add(editorEntity);
+        }
+
     }
 }

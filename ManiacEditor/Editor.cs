@@ -212,7 +212,7 @@ namespace ManiacEditor
             {
                 if (entitiesToolbar == null)
                 {
-                    entitiesToolbar = new EntitiesToolbar();
+                    entitiesToolbar = new EntitiesToolbar(Scene.Objects);
                     entitiesToolbar.SelectedEntity = new Action<int>(x =>
                     {
                         entities.SelectSlot(x);
@@ -221,6 +221,13 @@ namespace ManiacEditor
                     entitiesToolbar.AddAction = new Action<IAction>(x =>
                     {
                         undo.Push(x);
+                        redo.Clear();
+                        UpdateControls();
+                    });
+                    entitiesToolbar.Spawn = new Action<SceneObject>(x =>
+                    {
+                        entities.Add(x, new Position((short)(ShiftX / Zoom), (short)(ShiftY / Zoom)));
+                        undo.Push(entities.LastAction);
                         redo.Clear();
                         UpdateControls();
                     });

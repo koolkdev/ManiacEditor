@@ -14,16 +14,19 @@ namespace ManiacEditor
     {
         public Action<int> SelectedEntity;
         public Action<Actions.IAction> AddAction;
+        public Action<RSDKv5.SceneObject> Spawn;
 
-        private List<RSDKv5.SceneEntity> entities;
+        private List<RSDKv5.SceneEntity> _entities;
+        private BindingSource _bindingSceneObjectsSource = new BindingSource();
 
         private RSDKv5.SceneEntity currentEntity;
 
-        public List<RSDKv5.SceneEntity> Entities {
+        public List<RSDKv5.SceneEntity> Entities
+        {
             set
             {
-                entities = value.ToList();
-                entities.Sort((x, y) => x.SlotID.CompareTo(y.SlotID));
+                _entities = value.ToList();
+                _entities.Sort((x, y) => x.SlotID.CompareTo(y.SlotID));
                 UpdateEntitiesList();
             }
         }
@@ -42,16 +45,26 @@ namespace ManiacEditor
 
         /*private RSDKv5.SceneObject currentObject;*/
 
-        public EntitiesToolbar()
+        public EntitiesToolbar(List<RSDKv5.SceneObject> sceneObjects)
         {
             InitializeComponent();
+
+            sceneObjects.Sort((x, y) => x.Name.Name.CompareTo(y.Name.Name));
+            var bindingSceneObjectsList = new BindingList<RSDKv5.SceneObject>(sceneObjects);
+            _bindingSceneObjectsSource.DataSource = bindingSceneObjectsList;
+
+            if (_bindingSceneObjectsSource != null && _bindingSceneObjectsSource.Count > 0)
+            {
+                cbSpawn.DataSource = _bindingSceneObjectsSource;
+                cbSpawn.SelectedIndex = 0;
+            }
         }
 
         private void UpdateEntitiesList()
         {
             entitiesList.Items.Clear();
             entitiesList.ResetText();
-            if (currentEntity != null && entities.Contains(currentEntity))
+            if (currentEntity != null && _entities.Contains(currentEntity))
             {
                 entitiesList.SelectedText = String.Format("{0} - {1}", currentEntity.SlotID, currentEntity.Object.Name);
             }
@@ -59,7 +72,7 @@ namespace ManiacEditor
 
         private void entitiesList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (updateSelected) SelectedEntity?.Invoke(entities[entitiesList.SelectedIndex].SlotID);
+            if (updateSelected) SelectedEntity?.Invoke(_entities[entitiesList.SelectedIndex].SlotID);
         }
 
         private void addProperty(LocalProperties properties, int category_index, string category, string name, string value_type, object value, bool read_only=false) {
@@ -101,7 +114,7 @@ namespace ManiacEditor
             if (entity == currentEntity) return;
             currentEntity = entity;
 
-            if (entitiesList.SelectedIndex >= 0 && entitiesList.SelectedIndex < entities.Count && entities[entitiesList.SelectedIndex] == currentEntity)
+            if (entitiesList.SelectedIndex >= 0 && entitiesList.SelectedIndex < _entities.Count && _entities[entitiesList.SelectedIndex] == currentEntity)
             {
                 // Than it is called from selected item in the menu, so changeing the text will remove it, we don't want that
             }
@@ -335,7 +348,16 @@ namespace ManiacEditor
         {
             // It is slow to update the list, so lets generate it when the menu opens
             entitiesList.Items.Clear();
-            entitiesList.Items.AddRange(entities.Select(x => String.Format("{0} - {1}", x.SlotID, x.Object.Name)).ToArray());
+            entitiesList.Items.AddRange(_entities.Select(x => String.Format("{0} - {1}", x.SlotID, x.Object.Name)).ToArray());
+        }
+
+        private void btnSpawn_Click(object sender, EventArgs e)
+        {
+            if (cbSpawn?.SelectedItem != null
+                && cbSpawn.SelectedItem is RSDKv5.SceneObject)
+            {
+                Spawn?.Invoke(cbSpawn.SelectedItem as RSDKv5.SceneObject);
+            }
         }
     }
 }
