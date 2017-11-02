@@ -17,7 +17,7 @@ namespace RSDKv5
         int value_int32;
         uint value_var;
         bool value_bool;
-        string value_string;
+        string value_string = string.Empty; // default to empty string, null causes many problems
         Position value_position;
         Color value_color;
 
