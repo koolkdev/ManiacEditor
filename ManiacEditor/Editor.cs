@@ -50,6 +50,8 @@ namespace ManiacEditor
 
         internal EditorLayer FGHigh;
         internal EditorLayer FGLow;
+        private IList<EditorLayer> _editorLayers;
+        private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
 
@@ -84,6 +86,9 @@ namespace ManiacEditor
             
             GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
+
+            _editorLayers = new List<EditorLayer>();
+            _extraLayerButtons = new List<ToolStripButton>();
 
             SetViewSize();
 
@@ -126,7 +131,7 @@ namespace ManiacEditor
             saveAspngToolStripMenuItem.Enabled = enabled;
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
-            ShowFGLow.Enabled = enabled;
+            ShowFGLow.Enabled = enabled && FGLow != null;
             ShowEntities.Enabled = enabled;
 
             Save.Enabled = enabled;
@@ -157,12 +162,18 @@ namespace ManiacEditor
 
         private void SetEditButtonsState(bool enabled)
         {
-            EditFGLow.Enabled = enabled;
+            EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
             EditEntities.Enabled = enabled;
-            
+
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
+            else if (enabled && _extraLayerButtons.Any(elb => elb.Checked))
+            {
+                var selectedExtraLayerButton = _extraLayerButtons.Single(elb => elb.Checked);
+                var editorLayer = _editorLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
+                EditLayer = editorLayer;
+            }
             else EditLayer = null;
 
             undoToolStripMenuItem.Enabled = enabled && undo.Count > 0;
@@ -1054,6 +1065,13 @@ namespace ManiacEditor
             FGHigh = null;
             if (FGLow != null) FGLow.Dispose();
             FGLow = null;
+            _editorLayers.Clear();
+            foreach (var elb in _extraLayerButtons)
+            {
+                elb.Click -= AdHocLayerEdit;
+                toolStrip1.Items.Remove(elb);
+            }
+            _extraLayerButtons.Clear();
 
             Background = null;
             
@@ -1117,37 +1135,79 @@ namespace ManiacEditor
                         low_layer = layer;
                     else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
                         high_layer = layer;
+                    else
+                    {
+                        var el = new EditorLayer(layer);
+                        _editorLayers.Add(el);
+                        ToolStripButton tsb = new ToolStripButton(el.Name);
+                        toolStrip1.Items.Add(tsb);
+                        tsb.ForeColor = Color.DarkGreen;
+                        tsb.CheckOnClick = true;
+                        tsb.Click += AdHocLayerEdit;
+
+                        _extraLayerButtons.Add(tsb);
+                    }
                 }
 
-                if (low_layer == null /* || high_layer == null */)
-                {
-                    UnloadScene();
-                    MessageBox.Show("Unsupported scene (yet)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                ShowFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
-                EditFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
-                ShowFGHigh.Checked = high_layer != null;
-                if (high_layer != null) {
-                    ShowFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
-                    EditFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
-                }
-
-                FGLow = new EditorLayer(low_layer);
+                if (low_layer != null) FGLow = new EditorLayer(low_layer);
                 if (high_layer != null) FGHigh = new EditorLayer(high_layer);
+
+                UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
+                UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
 
                 Background = new EditorBackground();
 
                 entities = new EditorEntities(Scene);
 
-                SceneWidth = low_layer.Width * 16;
-                SceneHeight = low_layer.Height * 16;
+                SceneWidth = Scene.Layers.Max(sl => sl.Width) * 16;
+                SceneHeight = Scene.Layers.Max(sl => sl.Height) * 16;
 
                 SetViewSize(SceneWidth, SceneHeight);
 
                 UpdateControls();
             }
+        }
+
+        /// <summary>
+        /// Given a scene layer, configure the given visibiltiy and edit buttons which will control that layer.
+        /// </summary>
+        /// <param name="layer">The layer of the scene from which to extract a name.</param>
+        /// <param name="visibilityButton">The button which controls the visibility of the layer.</param>
+        /// <param name="editButton">The button which controls editing the layer.</param>
+        private void UpdateDualButtonsControlsForLayer(EditorLayer layer, ToolStripButton visibilityButton, ToolStripButton editButton)
+        {
+            bool layerValid = layer != null;
+            visibilityButton.Checked = layerValid;
+            if (layerValid)
+            {
+                string name = layer.Name;
+                visibilityButton.Text = name;
+                editButton.Text = name;
+            }
+        }
+
+        private void AdHocLayerEdit(object sender, EventArgs e)
+        {
+            ToolStripButton tsb = sender as ToolStripButton;
+            Deselect(false);
+            if (tsb.Checked)
+            {
+                ShowFGLow.Checked = false;
+                ShowFGHigh.Checked = false;
+                EditFGLow.Checked = false;
+                EditFGHigh.Checked = false;
+                EditEntities.Checked = false;
+
+                foreach (var elb in _extraLayerButtons)
+                {
+                    if (elb != tsb)
+                    {
+                        elb.Checked = false;
+                    }
+                }
+            }
+
+            UpdateControls();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -1259,6 +1319,8 @@ namespace ManiacEditor
             {
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
+                if (_editorLayers.Contains(EditLayer))
+                    EditLayer.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
                 if (ShowEntities.Checked && !EditEntities.Checked)
@@ -1267,6 +1329,8 @@ namespace ManiacEditor
                     FGHigh.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
+
+                
             }
             if (draggingSelection)
             {
@@ -1368,6 +1432,11 @@ namespace ManiacEditor
                 EditFGHigh.Checked = false;
                 EditEntities.Checked = false;
                 button.Checked = true;
+            }
+
+            foreach(var elb in _extraLayerButtons)
+            {
+                elb.Checked = false;
             }
             UpdateControls();
         }

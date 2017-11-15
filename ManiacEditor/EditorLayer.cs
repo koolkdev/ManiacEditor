@@ -13,7 +13,7 @@ namespace ManiacEditor
 {
     class EditorLayer : IDrawable, IDisposable
     {
-        public SceneLayer Layer;
+        private SceneLayer _layer;
 
         const int TILES_CHUNK_SIZE = 16;
 
@@ -31,6 +31,15 @@ namespace ManiacEditor
         bool isDragOver;
 
         public List<IAction> Actions = new List<IAction>();
+
+        public string Name
+        {
+            get
+            {
+                string internalName = _layer.Name;
+                return internalName?.TrimEnd('\0');
+            }
+        }
 
         static int DivideRoundUp(int number, int by)
         {
@@ -132,14 +141,14 @@ namespace ManiacEditor
 
         public EditorLayer(SceneLayer layer)
         {
-            this.Layer = layer;
+            this._layer = layer;
 
-            TileChunksTextures = new Texture[DivideRoundUp(this.Layer.Height, TILES_CHUNK_SIZE)][];
+            TileChunksTextures = new Texture[DivideRoundUp(this._layer.Height, TILES_CHUNK_SIZE)][];
             for (int i = 0; i < TileChunksTextures.Length; ++i)
-                TileChunksTextures[i] = new Texture[DivideRoundUp(this.Layer.Width, TILES_CHUNK_SIZE)];
+                TileChunksTextures[i] = new Texture[DivideRoundUp(this._layer.Width, TILES_CHUNK_SIZE)];
 
-            SelectedTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
-            TempSelectionTiles = new PointsMap(this.Layer.Width, this.Layer.Height);
+            SelectedTiles = new PointsMap(this._layer.Width, this._layer.Height);
+            TempSelectionTiles = new PointsMap(this._layer.Width, this._layer.Height);
         }
 
         public void StartDrag()
@@ -183,7 +192,7 @@ namespace ManiacEditor
                 if (!SelectedTilesValue.ContainsKey(point))
                 {
                     // Not moved yet
-                    SelectedTilesValue[point] = Layer.Tiles[point.Y][point.X];
+                    SelectedTilesValue[point] = _layer.Tiles[point.Y][point.X];
                     RemoveTile(point);
                 }
             }
@@ -210,7 +219,7 @@ namespace ManiacEditor
                     else
                     {
                         // Not moved yet
-                        newDict[newPoint] = Layer.Tiles[point.Y][point.X];
+                        newDict[newPoint] = _layer.Tiles[point.Y][point.X];
                         if (!duplicate) RemoveTile(point);
                     }
                 }
@@ -354,13 +363,13 @@ namespace ManiacEditor
                 else
                 {
                     // Not moved yet
-                    selectedValues.Add(Layer.Tiles[point.Y][point.X]);
+                    selectedValues.Add(_layer.Tiles[point.Y][point.X]);
                 }
             }
             foreach (Point point in TempSelectionTiles.GetAll())
             {
                 if (SelectedTiles.Contains(point)) continue;
-                selectedValues.Add(Layer.Tiles[point.Y][point.X]);
+                selectedValues.Add(_layer.Tiles[point.Y][point.X]);
             }
             return selectedValues;
         }
@@ -404,9 +413,9 @@ namespace ManiacEditor
         public void Select(Rectangle area, bool addSelection = false, bool deselectIfSelected = false)
         {
             if (!addSelection) Deselect();
-            for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
+            for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), _layer.Height); ++y)
             {
-                for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
+                for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), _layer.Width); ++x)
                 {
                     if (addSelection || deselectIfSelected)
                     {
@@ -422,7 +431,7 @@ namespace ManiacEditor
                             continue;
                         }
                     }
-                    if (Layer.Tiles[y][x] != 0xffff)
+                    if (_layer.Tiles[y][x] != 0xffff)
                     {
                         SelectedTiles.Add(new Point(x, y));
                     }
@@ -434,14 +443,14 @@ namespace ManiacEditor
         {
             if (!addSelection) Deselect();
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
-            if (point.X >= 0 && point.Y >= 0 && point.X < this.Layer.Tiles[0].Length && point.Y < this.Layer.Tiles.Length)
+            if (point.X >= 0 && point.Y >= 0 && point.X < this._layer.Tiles[0].Length && point.Y < this._layer.Tiles.Length)
             {
                 if (deselectIfSelected && SelectedTiles.Contains(point))
                 {
                     // Deselect
                     DeselectPoint(point);
                 }
-                else if (this.Layer.Tiles[point.Y][point.X] != 0xffff)
+                else if (this._layer.Tiles[point.Y][point.X] != 0xffff)
                 {
                     // Just add the point
                     SelectedTiles.Add(point);
@@ -453,11 +462,11 @@ namespace ManiacEditor
         {
             TempSelectionTiles.Clear();
             TempSelectionDeselect = deselectIfSelected;
-            for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), Layer.Height); ++y)
+            for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), _layer.Height); ++y)
             {
-                for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), Layer.Width); ++x)
+                for (int x = Math.Max(area.X / TILE_SIZE, 0); x < Math.Min(DivideRoundUp(area.X + area.Width, TILE_SIZE), _layer.Width); ++x)
                 {
-                    if (SelectedTiles.Contains(new Point(x, y)) || Layer.Tiles[y][x] != 0xffff)
+                    if (SelectedTiles.Contains(new Point(x, y)) || _layer.Tiles[y][x] != 0xffff)
                     {
                         TempSelectionTiles.Add(new Point(x, y));
                     }
@@ -478,14 +487,14 @@ namespace ManiacEditor
 
         private ushort GetTile(Point point)
         {
-            return Layer.Tiles[point.Y][point.X];
+            return _layer.Tiles[point.Y][point.X];
         }
 
         private void SetTile(Point point, ushort value, bool addAction = true)
         {
             if (addAction)
-                Actions.Add(new ActionChangeTile((x, y) => SetTile(x, y, false), point, Layer.Tiles[point.Y][point.X], value));
-            Layer.Tiles[point.Y][point.X] = value;
+                Actions.Add(new ActionChangeTile((x, y) => SetTile(x, y, false), point, _layer.Tiles[point.Y][point.X], value));
+            _layer.Tiles[point.Y][point.X] = value;
             InvalidateChunk(point.X / TILES_CHUNK_SIZE, point.Y / TILES_CHUNK_SIZE);
         }
 
@@ -511,7 +520,7 @@ namespace ManiacEditor
             foreach (KeyValuePair<Point, ushort> point in SelectedTilesValue)
             {
                 // ignore out of bounds
-                if (point.Key.X < 0 || point.Key.Y < 0 || point.Key.Y >= Layer.Height || point.Key.X >= Layer.Width) continue;
+                if (point.Key.X < 0 || point.Key.Y < 0 || point.Key.Y >= _layer.Height || point.Key.X >= _layer.Width) continue;
                 SetTile(point.Key, point.Value);
             }
             if (hasTiles)
@@ -529,9 +538,9 @@ namespace ManiacEditor
         public bool HasTileAt(Point point)
         {
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
-            if (point.X >= 0 && point.Y >= 0 && point.X < this.Layer.Tiles[0].Length && point.Y < this.Layer.Tiles.Length)
+            if (point.X >= 0 && point.Y >= 0 && point.X < this._layer.Tiles[0].Length && point.Y < this._layer.Tiles.Length)
             {
-                return Layer.Tiles[point.Y][point.X] != 0xffff;
+                return _layer.Tiles[point.Y][point.X] != 0xffff;
             }
             return false;
         }
@@ -539,10 +548,10 @@ namespace ManiacEditor
         public ushort GetTileAt(Point point)
         {
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
-            if (point.X >= 0 && point.Y >= 0 && point.X < this.Layer.Tiles[0].Length && point.Y < this.Layer.Tiles.Length)
+            if (point.X >= 0 && point.Y >= 0 && point.X < this._layer.Tiles[0].Length && point.Y < this._layer.Tiles.Length)
             {
                 if (SelectedTilesValue.ContainsKey(point)) return SelectedTilesValue[point];
-                else return Layer.Tiles[point.Y][point.X];
+                else return _layer.Tiles[point.Y][point.X];
             }
             return 0xffff;
         }
@@ -550,10 +559,10 @@ namespace ManiacEditor
         private Rectangle GetTilesChunkArea(int x, int y)
         {
             int y_start = y * TILES_CHUNK_SIZE;
-            int y_end = Math.Min((y + 1) * TILES_CHUNK_SIZE, Layer.Height);
+            int y_end = Math.Min((y + 1) * TILES_CHUNK_SIZE, _layer.Height);
 
             int x_start = x * TILES_CHUNK_SIZE;
-            int x_end = Math.Min((x + 1) * TILES_CHUNK_SIZE, Layer.Width);
+            int x_end = Math.Min((x + 1) * TILES_CHUNK_SIZE, _layer.Width);
 
             return new Rectangle(x_start, y_start, x_end - x_start, y_end - y_start);
         }
@@ -583,13 +592,13 @@ namespace ManiacEditor
 
         public void Draw(Graphics g)
         {
-            for (int y = 0; y < Layer.Height; ++y)
+            for (int y = 0; y < _layer.Height; ++y)
             {
-                for (int x = 0; x < Layer.Width; ++x)
+                for (int x = 0; x < _layer.Width; ++x)
                 {
-                    if (this.Layer.Tiles[y][x] != 0xffff)
+                    if (this._layer.Tiles[y][x] != 0xffff)
                     {
-                        DrawTile(g, Layer.Tiles[y][x], x, y);
+                        DrawTile(g, _layer.Tiles[y][x], x, y);
                     }
                 }
             }
@@ -609,9 +618,9 @@ namespace ManiacEditor
                     {
                         for (int tx = rect.X; tx < rect.X + rect.Width; ++tx)
                         {
-                            if (this.Layer.Tiles[ty][tx] != 0xffff)
+                            if (this._layer.Tiles[ty][tx] != 0xffff)
                             {
-                                DrawTile(g, Layer.Tiles[ty][tx], tx - rect.X, ty - rect.Y);
+                                DrawTile(g, _layer.Tiles[ty][tx], tx - rect.X, ty - rect.Y);
                             }
                         }
                     }
@@ -633,9 +642,9 @@ namespace ManiacEditor
                     // We will draw those later
                     if (SelectedTiles.Contains(p) || TempSelectionTiles.Contains(p)) continue;
                     
-                    if (this.Layer.Tiles[ty][tx] != 0xffff)
+                    if (this._layer.Tiles[ty][tx] != 0xffff)
                     {
-                        DrawTile(d, this.Layer.Tiles[ty][tx], tx, ty, false, Transperncy);
+                        DrawTile(d, this._layer.Tiles[ty][tx], tx, ty, false, Transperncy);
                     }
                 }
             }
@@ -647,11 +656,11 @@ namespace ManiacEditor
                 if (SelectedTilesValue.ContainsKey(p))
                     DrawTile(d, SelectedTilesValue[p], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
                 else // It is still in the original place
-                    DrawTile(d, Layer.Tiles[p.Y][p.X], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
+                    DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
 
             foreach (Point p in TempSelectionTiles.GetChunkPoint(x, y)) {
                 if (SelectedTiles.Contains(p)) continue;
-                DrawTile(d, Layer.Tiles[p.Y][p.X], p.X, p.Y, true, Transperncy);
+                DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, true, Transperncy);
             }
         }
 
