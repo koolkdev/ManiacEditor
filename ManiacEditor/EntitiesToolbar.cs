@@ -49,15 +49,7 @@ namespace ManiacEditor
         {
             InitializeComponent();
 
-            sceneObjects.Sort((x, y) => x.Name.Name.CompareTo(y.Name.Name));
-            var bindingSceneObjectsList = new BindingList<RSDKv5.SceneObject>(sceneObjects);
-            _bindingSceneObjectsSource.DataSource = bindingSceneObjectsList;
-
-            if (_bindingSceneObjectsSource != null && _bindingSceneObjectsSource.Count > 0)
-            {
-                cbSpawn.DataSource = _bindingSceneObjectsSource;
-                cbSpawn.SelectedIndex = 0;
-            }
+            RefreshObjects(sceneObjects);
         }
 
         private void UpdateEntitiesList()
@@ -67,6 +59,19 @@ namespace ManiacEditor
             if (currentEntity != null && _entities.Contains(currentEntity))
             {
                 entitiesList.SelectedText = String.Format("{0} - {1}", currentEntity.SlotID, currentEntity.Object.Name);
+            }
+        }
+
+        public void RefreshObjects(List<RSDKv5.SceneObject> sceneObjects)
+        {
+            sceneObjects.Sort((x, y) => x.Name.Name.CompareTo(y.Name.Name));
+            var bindingSceneObjectsList = new BindingList<RSDKv5.SceneObject>(sceneObjects);
+            _bindingSceneObjectsSource.DataSource = bindingSceneObjectsList;
+
+            if (_bindingSceneObjectsSource != null && _bindingSceneObjectsSource.Count > 0)
+            {
+                cbSpawn.DataSource = _bindingSceneObjectsSource;
+                cbSpawn.SelectedIndex = 0;
             }
         }
 

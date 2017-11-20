@@ -94,6 +94,12 @@
     <Compile Include="EditorEntities.cs" />
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorLayer.cs" />
+    <Compile Include="ObjectImporter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectImporter.Designer.cs">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
+    </Compile>
     <Compile Include="Reflector.cs" />
     <Compile Include="SceneSelect.cs">
       <SubType>Form</SubType>
@@ -134,6 +140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectImporter.resx">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SceneSelect.resx">
       <DependentUpon>SceneSelect.cs</DependentUpon>

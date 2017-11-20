@@ -47,6 +47,7 @@ namespace RSDKv5
             base.WriteMagic(writer);
 
             writer.Write(UseGameObjects);
+            base.WriteCommonConfig(writer);
 
         }
     }

@@ -45,8 +45,10 @@ namespace ManiacEditor
 
         internal StageTiles StageTiles;
         internal Scene Scene;
+        internal StageConfig StageConfig;
 
         string SceneFilename = null;
+        string StageConfigFileName = null;
 
         internal EditorLayer FGHigh;
         internal EditorLayer FGLow;
@@ -165,6 +167,7 @@ namespace ManiacEditor
             EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
             EditEntities.Enabled = enabled;
+            importObjectsToolStripMenuItem.Enabled = enabled;
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
@@ -1054,6 +1057,8 @@ namespace ManiacEditor
         {
             Scene = null;
             SceneFilename = null;
+            StageConfig = null;
+            StageConfigFileName = null;
 
             SelectedScene = null;
             SelectedZone = null;
@@ -1126,6 +1131,11 @@ namespace ManiacEditor
                     SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                 }
                 Scene = new Scene(SceneFilename);
+                StageConfigFileName = Path.Combine(DataDirectory, "Stages", SelectedZone, "StageConfig.bin");
+                if (File.Exists(StageConfigFileName))
+                {
+                    StageConfig = new StageConfig(StageConfigFileName);
+                }
 
                 SceneLayer low_layer = null, high_layer = null;
 
@@ -1328,9 +1338,7 @@ namespace ManiacEditor
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
                 if (EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
-
-                
+                    entities.Draw(GraphicPanel);               
             }
             if (draggingSelection)
             {
@@ -1468,6 +1476,7 @@ namespace ManiacEditor
             }
 
             Scene.Write(SceneFilename);
+            StageConfig?.Write(StageConfigFileName);
         }
 
         private void MagnetMode_Click(object sender, EventArgs e)
@@ -1810,6 +1819,41 @@ namespace ManiacEditor
             if (save.ShowDialog() != DialogResult.Cancel)
             {
                 Scene.Write(save.FileName);
+            }
+        }
+
+        private void importObjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string selectedScene;
+            using (SceneSelect select = new SceneSelect(GameConfig))
+            {
+                select.ShowDialog();
+
+                if (select.Result == null)
+                    return;
+
+                selectedScene = select.Result;
+            }
+
+            if (!File.Exists(selectedScene))
+            {
+                string[] splitted = selectedScene.Split('/');
+
+                string part1 = splitted[0];
+                string part2 = splitted[1];
+
+                selectedScene = Path.Combine(DataDirectory, "Stages", part1, part2);
+            }
+            var sourceScene = new Scene(selectedScene);
+
+            using (var objectImporter = new ObjectImporter(sourceScene.Objects, Scene.Objects, StageConfig))
+            {
+                if (objectImporter.ShowDialog() != DialogResult.OK)
+                    return; // nothing to do
+
+                // user clicked Import, get to it!
+                UpdateControls();
+                entitiesToolbar?.RefreshObjects(Scene.Objects);
             }
         }
 
