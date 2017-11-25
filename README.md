@@ -1,7 +1,8 @@
 # Maniac Editor - Sonic Mania Scene Editor
 
-Find the original here:
-### [Download (BETA)](https://github.com/koolkdev/ManiacEditor/releases/latest)
+Find my latest version [here](https://github.com/OtherworldBob/ManiacEditor/releases/latest), yes, it's still a Beta!
+
+Find the original by **koolkdev** over [there](https://github.com/koolkdev/ManiacEditor/releases/latest).
 
 ## Tiles editing
 
@@ -37,4 +38,12 @@ You can remove tile by doing the same with the right mouse button.
 You can hold **Ctrl** and/or **Shift** to mirror/flip the placed tile.  
 You can choose which properties the placed tiles will have by clicking on the checkboxes below the tiles selection window.
 
-
+## New Features
+* Flip a collection of selected tiles as one cohesive block.
+* Paste new tiles and entities next to the mouse cursor, not the top left.
+* Edit background layers.
+* Spawn brand new entities without needing to find one to copy. (They appear in the top left!)
+* Import level objects from one level to another. It works quite well for invisible things, like the WarpDoor; less well (not really at all) for badniks and the like.
+  * Pro tip: Be sensible with this one!
+* Extra crashes! Save often, backup well.
+* Non-descript Undo/Redo helpers that don't tell you much most of the time.
