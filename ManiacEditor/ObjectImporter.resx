@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="rtbWarning.Text" xml:space="preserve">
+    <value>This feature is highly expieremental.
+It will make changes to the StageConfig.bin file which belongs to the Scene you are currently editting.
+Some Objects will require you to import sounds, or make other changes; but those are not automatically handled...
+you must do that bit!</value>
+  </data>
 </root>

@@ -19,7 +19,7 @@ namespace ManiacEditor.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -77,6 +77,19 @@ namespace ManiacEditor.Properties {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red255\green0\blue0;}
+        ///\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 .\par
+        ///\pard It will make changes to the \i StageConfig.bin\i0  file which belongs to the Scene you are currently editing. Some Objects will require you to import sounds, or make other changes; but those are not automatically handled...\par
+        ///\pard\qc\b you \b0 must do that b [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ObjectWarning {
+            get {
+                return ResourceManager.GetString("ObjectWarning", resourceCulture);
             }
         }
     }

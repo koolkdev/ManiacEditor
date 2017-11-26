@@ -1,4 +1,5 @@
-﻿using RSDKv5;
+﻿using ManiacEditor.Properties;
+using RSDKv5;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace ManiacEditor
         public ObjectImporter(IList<SceneObject> sourceSceneObjects, IList<SceneObject> targetSceneObjects, StageConfig stageConfig)
         {
             InitializeComponent();
+            rtbWarning.Rtf = Resources.ObjectWarning;
             _sourceSceneObjects = sourceSceneObjects;
             _targetSceneObjects = targetSceneObjects;
             _stageConfig = stageConfig;
