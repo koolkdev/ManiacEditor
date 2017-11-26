@@ -169,6 +169,7 @@ namespace ManiacEditor
             EditEntities.Enabled = enabled;
             importObjectsToolStripMenuItem.Enabled = enabled;
             importSoundsToolStripMenuItem.Enabled = enabled;
+            layerManagerToolStripMenuItem.Enabled = enabled;
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
@@ -1902,6 +1903,14 @@ namespace ManiacEditor
                 selectedScene = Path.Combine(DataDirectory, "Stages", part1, part2);
             }
             return new Scene(selectedScene);
+        }
+
+        private void layerManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var lm = new LayerManager(Scene.Layers))
+            {
+                lm.ShowDialog();
+            }
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)

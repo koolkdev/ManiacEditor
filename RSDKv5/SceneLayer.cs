@@ -10,13 +10,13 @@ namespace RSDKv5
     public class SceneLayer
     {
         byte IgnoredByte;
-        public string Name;
+        private string _name;
 
         public byte IsScrollingVertical;
         public byte UnknownByte2;
 
-        public ushort Width;
-        public ushort Height;
+        private ushort _width;
+        private ushort _height;
 
         public ushort UnknownWord1;
         public ushort UnknownWord2;
@@ -62,6 +62,9 @@ namespace RSDKv5
 
         public ushort[][] Tiles;
 
+        public string Name { get => _name; set => _name = value; }
+        public ushort Width { get => _width; set => _width = value; }
+        public ushort Height { get => _height; set => _height = value; }
 
         public SceneLayer(string name, ushort Width, ushort Height)
         {

@@ -83,6 +83,12 @@
     <Compile Include="ImageViewer.designer.cs">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="LayerManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LayerManager.Designer.cs">
+      <DependentUpon>LayerManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="LocalProperty.cs" />
     <Compile Include="LocalPropertyGrid.cs" />
     <Compile Include="Editor.cs">
@@ -146,6 +152,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayerManager.resx">
+      <DependentUpon>LayerManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectImporter.resx">
       <DependentUpon>ObjectImporter.cs</DependentUpon>
