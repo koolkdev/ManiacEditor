@@ -107,6 +107,12 @@
     <Compile Include="SceneSelect.Designer.cs">
       <DependentUpon>SceneSelect.cs</DependentUpon>
     </Compile>
+    <Compile Include="SoundImporter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SoundImporter.Designer.cs">
+      <DependentUpon>SoundImporter.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextureCreator.cs" />
     <Compile Include="ThumbnailFlowLayoutPanel.cs">
       <SubType>Component</SubType>
@@ -147,6 +153,9 @@
     <EmbeddedResource Include="SceneSelect.resx">
       <DependentUpon>SceneSelect.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SoundImporter.resx">
+      <DependentUpon>SoundImporter.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TilesList.resx">
       <DependentUpon>TilesList.cs</DependentUpon>
     </EmbeddedResource>
@@ -175,6 +184,7 @@
     </Compile>
     <EmbeddedResource Include="Resources\objects_attributes.ini" />
     <None Include="Resources\ObjectWarning.rtf" />
+    <None Include="Resources\SoundWarning.rtf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

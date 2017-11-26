@@ -92,5 +92,18 @@ namespace ManiacEditor.Properties {
                 return ResourceManager.GetString("ObjectWarning", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red255\green0\blue0;}
+        ///{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 .\par
+        ///\pard It will make changes to the \i StageConfig.bin\i0  file which belongs to the Scene you are currently editing, in order to make the Sounds you select available for use. But actually getting those sounds to play...\par
+        ///\pard\q [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SoundWarning {
+            get {
+                return ResourceManager.GetString("SoundWarning", resourceCulture);
+            }
+        }
     }
 }

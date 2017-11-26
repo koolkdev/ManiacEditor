@@ -25,11 +25,11 @@ namespace ManiacEditor
         int lastX, lastY, draggedX, draggedY;
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
 
-        int ClickedX=-1, ClickedY=-1;
+        int ClickedX = -1, ClickedY = -1;
 
         public Stack<IAction> undo = new Stack<IAction>();
         public Stack<IAction> redo = new Stack<IAction>();
-        
+
         bool draggingSelection;
         int selectingX, selectingY;
         bool zooming;
@@ -67,7 +67,7 @@ namespace ManiacEditor
 
         internal int SceneWidth;
         internal int SceneHeight;
-        
+
         bool scrolling = false;
         bool scrollingDragged = false, wheelClicked = false;
         Point scrollPosition;
@@ -85,7 +85,7 @@ namespace ManiacEditor
 
             GraphicPanel.GotFocus += new EventHandler(OnGotFocus);
             GraphicPanel.LostFocus += new EventHandler(OnLostFocus);
-            
+
             GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
 
@@ -145,7 +145,7 @@ namespace ManiacEditor
             UpdateTooltips();
         }
 
-        private void SetSelectOnlyButtonsState(bool enabled=true)
+        private void SetSelectOnlyButtonsState(bool enabled = true)
         {
             enabled &= IsSelected();
             deleteToolStripMenuItem.Enabled = enabled;
@@ -168,6 +168,7 @@ namespace ManiacEditor
             EditFGHigh.Enabled = enabled && FGHigh != null;
             EditEntities.Enabled = enabled;
             importObjectsToolStripMenuItem.Enabled = enabled;
+            importSoundsToolStripMenuItem.Enabled = enabled;
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
@@ -203,10 +204,10 @@ namespace ManiacEditor
                     {
                         EditorPlaceTile(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), x);
                     });
-                    TilesToolbar.TileOptionChanged = new Action<int, bool>( (option, state) =>
-                    {
-                        EditLayer.SetPropertySelected(option + 12, state);
-                    });
+                    TilesToolbar.TileOptionChanged = new Action<int, bool>((option, state) =>
+                   {
+                       EditLayer.SetPropertySelected(option + 12, state);
+                   });
                     splitContainer1.Panel2.Controls.Clear();
                     splitContainer1.Panel2.Controls.Add(TilesToolbar);
                     splitContainer1.Panel2Collapsed = false;
@@ -450,7 +451,7 @@ namespace ManiacEditor
                             entitiesToolbar.UpdateCurrentEntityProperites();
 
                             // Try to merge with last move
-                            if (undo.Count > 0 && undo.Peek() is ActionMoveEntities && (undo.Peek() as ActionMoveEntities).UpdateFromKey(entities.SelectedEntities, new Point(x,y))) { }
+                            if (undo.Count > 0 && undo.Peek() is ActionMoveEntities && (undo.Peek() as ActionMoveEntities).UpdateFromKey(entities.SelectedEntities, new Point(x, y))) { }
                             else
                             {
                                 undo.Push(new ActionMoveEntities(entities.SelectedEntities.ToList(), new Point(x, y), true));
@@ -584,7 +585,7 @@ namespace ManiacEditor
                 {
                     scrollingDragged = true;
                 }
-                
+
                 int xMove = (hScrollBar1.Visible) ? e.X - ShiftX - scrollPosition.X : 0;
                 int yMove = (vScrollBar1.Visible) ? e.Y - ShiftY - scrollPosition.Y : 0;
 
@@ -593,20 +594,20 @@ namespace ManiacEditor
 
                 if (xMove > 0)
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSE;
-                    else if(yMove < 0) Cursor = Cursors.PanNE;
+                    if (yMove > 0) Cursor = Cursors.PanSE;
+                    else if (yMove < 0) Cursor = Cursors.PanNE;
                     else Cursor = Cursors.PanEast;
                 }
                 else if (xMove < 0)
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSW;
-                    else if(yMove < 0) Cursor = Cursors.PanNW;
+                    if (yMove > 0) Cursor = Cursors.PanSW;
+                    else if (yMove < 0) Cursor = Cursors.PanNW;
                     else Cursor = Cursors.PanWest;
                 }
                 else
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSouth;
-                    else if(yMove < 0) Cursor = Cursors.PanNorth;
+                    if (yMove > 0) Cursor = Cursors.PanSouth;
+                    else if (yMove < 0) Cursor = Cursors.PanNorth;
                     else
                     {
                         if (vScrollBar1.Visible && hScrollBar1.Visible) Cursor = Cursors.NoMove2D;
@@ -623,7 +624,7 @@ namespace ManiacEditor
                 if (y < 0) y = 0;
                 if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
                 if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
-                
+
                 if (x != position.X || y != position.Y)
                 {
                     if (vScrollBar1.Visible)
@@ -755,7 +756,7 @@ namespace ManiacEditor
                         {
                             entities.MoveSelected(oldPoint, newPoint, CtrlPressed() && startDragged);
                         }
-                        catch(EditorEntities.TooManyEntitiesException)
+                        catch (EditorEntities.TooManyEntitiesException)
                         {
                             MessageBox.Show("Too many entities! (limit: 2048)");
                             dragged = false;
@@ -873,7 +874,8 @@ namespace ManiacEditor
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (IsEditing()) {
+                if (IsEditing())
+                {
                     MagnetDisable();
                     if (draggingSelection)
                     {
@@ -965,7 +967,7 @@ namespace ManiacEditor
                 ZoomLevel += change;
                 if (ZoomLevel > 5) ZoomLevel = 5;
                 if (ZoomLevel < -5) ZoomLevel = -5;
-                
+
                 SetZoomLevel(ZoomLevel, new Point(e.X - ShiftX, e.Y - ShiftY));
             }
             else
@@ -982,7 +984,7 @@ namespace ManiacEditor
         }
 
         public void SetZoomLevel(int zoom_level, Point zoom_point)
-        {            
+        {
             double old_zoom = Zoom;
 
             ZoomLevel = zoom_level;
@@ -1027,7 +1029,7 @@ namespace ManiacEditor
 
             UpdateControls();
         }
-        
+
         private bool load()
         {
             if (DataDirectory == null)
@@ -1079,7 +1081,7 @@ namespace ManiacEditor
             _extraLayerButtons.Clear();
 
             Background = null;
-            
+
             TilesClipboard = null;
             entitiesClipboard = null;
 
@@ -1298,7 +1300,7 @@ namespace ManiacEditor
             hScrollBar1.Value = Math.Max(0, Math.Min(hScrollBar1.Value, hScrollBar1.Maximum - hScrollBar1.LargeChange));
             vScrollBar1.Value = Math.Max(0, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange));
         }
-        
+
         private void ResizeGraphicPanel(int width = 0, int height = 0)
         {
             GraphicPanel.Width = width;
@@ -1338,7 +1340,7 @@ namespace ManiacEditor
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
                 if (EditEntities.Checked)
-                    entities.Draw(GraphicPanel);               
+                    entities.Draw(GraphicPanel);
             }
             if (draggingSelection)
             {
@@ -1425,7 +1427,7 @@ namespace ManiacEditor
                     UpdateEditLayerActions();
             }
             //MagnetDisable();
-        }        
+        }
 
         private void LayerEditButton_Click(ToolStripButton button)
         {
@@ -1442,7 +1444,7 @@ namespace ManiacEditor
                 button.Checked = true;
             }
 
-            foreach(var elb in _extraLayerButtons)
+            foreach (var elb in _extraLayerButtons)
             {
                 elb.Checked = false;
             }
@@ -1463,7 +1465,7 @@ namespace ManiacEditor
         {
             LayerEditButton_Click(EditEntities);
         }
-        
+
 
         private void Save_Click(object sender, EventArgs e)
         {
@@ -1482,7 +1484,7 @@ namespace ManiacEditor
         private void MagnetMode_Click(object sender, EventArgs e)
         {
         }
-        
+
 
         private void New_Click(object sender, EventArgs e)
         {
@@ -1606,7 +1608,7 @@ namespace ManiacEditor
                 {
                     // Deselect to apply the changes
                     Deselect();
-                } 
+                }
                 else if (IsEntitiesEdit())
                 {
                     if (undo.Peek() is ActionAddDeleteEntities)
@@ -1824,13 +1826,68 @@ namespace ManiacEditor
 
         private void importObjectsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            try
+            {
+                Scene sourceScene = GetSceneSelection();
+                if (null == sourceScene) return;
+
+                using (var objectImporter = new ObjectImporter(sourceScene.Objects, Scene.Objects, StageConfig))
+                {
+                    if (objectImporter.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // user clicked Import, get to it!
+                    UpdateControls();
+                    entitiesToolbar?.RefreshObjects(Scene.Objects);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import Objects. " + ex.Message);
+            }
+        }
+
+        private void importSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                StageConfig sourceStageConfig = null;
+                using (var fd = new OpenFileDialog())
+                {
+                    fd.Filter = "Stage Config File|*.bin";
+                    fd.DefaultExt = ".bin";
+                    fd.Title = "Select Stage Config File";
+                    fd.InitialDirectory = Path.Combine(DataDirectory, "Stages");
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        sourceStageConfig = new StageConfig(fd.FileName);
+                    }
+                }
+                if (null == sourceStageConfig) return;
+
+                using (var soundImporter = new SoundImporter(sourceStageConfig, StageConfig))
+                {
+                    if (soundImporter.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // changing the sound list doesn't require us to do anything either
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import sounds. " + ex.Message);
+            }
+        }
+
+        private Scene GetSceneSelection()
+        {
             string selectedScene;
             using (SceneSelect select = new SceneSelect(GameConfig))
             {
                 select.ShowDialog();
 
                 if (select.Result == null)
-                    return;
+                    return null;
 
                 selectedScene = select.Result;
             }
@@ -1844,17 +1901,7 @@ namespace ManiacEditor
 
                 selectedScene = Path.Combine(DataDirectory, "Stages", part1, part2);
             }
-            var sourceScene = new Scene(selectedScene);
-
-            using (var objectImporter = new ObjectImporter(sourceScene.Objects, Scene.Objects, StageConfig))
-            {
-                if (objectImporter.ShowDialog() != DialogResult.OK)
-                    return; // nothing to do
-
-                // user clicked Import, get to it!
-                UpdateControls();
-                entitiesToolbar?.RefreshObjects(Scene.Objects);
-            }
+            return new Scene(selectedScene);
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
@@ -1886,7 +1933,7 @@ namespace ManiacEditor
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftY = (sender as VScrollBar).Value;
-            if(!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
 
             if (draggingSelection)
             {
