@@ -192,6 +192,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Resources\objects_attributes.ini" />
+    <None Include="Resources\LayerManagerWarning.rtf" />
     <None Include="Resources\ObjectWarning.rtf" />
     <None Include="Resources\SoundWarning.rtf" />
   </ItemGroup>

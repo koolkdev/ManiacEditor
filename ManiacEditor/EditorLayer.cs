@@ -11,7 +11,7 @@ using ManiacEditor.Enums;
 
 namespace ManiacEditor
 {
-    class EditorLayer : IDrawable, IDisposable
+    public class EditorLayer : IDrawable, IDisposable
     {
         private SceneLayer _layer;
 
@@ -40,6 +40,9 @@ namespace ManiacEditor
                 return internalName?.TrimEnd('\0');
             }
         }
+
+        public ushort Height { get => _layer.Height; }
+        public ushort Width { get => _layer.Width; }
 
         static int DivideRoundUp(int number, int by)
         {
@@ -141,14 +144,14 @@ namespace ManiacEditor
 
         public EditorLayer(SceneLayer layer)
         {
-            this._layer = layer;
+            _layer = layer;
 
-            TileChunksTextures = new Texture[DivideRoundUp(this._layer.Height, TILES_CHUNK_SIZE)][];
+            TileChunksTextures = new Texture[DivideRoundUp(Height, TILES_CHUNK_SIZE)][];
             for (int i = 0; i < TileChunksTextures.Length; ++i)
-                TileChunksTextures[i] = new Texture[DivideRoundUp(this._layer.Width, TILES_CHUNK_SIZE)];
+                TileChunksTextures[i] = new Texture[DivideRoundUp(Width, TILES_CHUNK_SIZE)];
 
-            SelectedTiles = new PointsMap(this._layer.Width, this._layer.Height);
-            TempSelectionTiles = new PointsMap(this._layer.Width, this._layer.Height);
+            SelectedTiles = new PointsMap(Width, Height);
+            TempSelectionTiles = new PointsMap(Width, Height);
         }
 
         public void StartDrag()
@@ -692,6 +695,38 @@ namespace ManiacEditor
                     DrawSelectedTiles(d, x, y, Transperncy);
                 }
             }
+        }
+
+        /// <summary>
+        /// Resizes both this EditorLayer, and the underlying SceneLayer
+        /// </summary>
+        /// <param name="width">The new width of the layer</param>
+        /// <param name="height">The new height of the layer</param>
+        public void Resize(ushort width, ushort height)
+        {
+            ushort oldWidth = Width;
+            ushort oldHeight = Height;
+
+            // first resize the underlying SceneLayer
+            _layer.Resize(width, height);
+
+            int oldWidthChunkSize = DivideRoundUp(oldWidth, TILES_CHUNK_SIZE);
+            int newWidthChunkSize = DivideRoundUp(Width, TILES_CHUNK_SIZE);
+
+            // now resize ourselves
+            Array.Resize(ref TileChunksTextures, DivideRoundUp(Height, TILES_CHUNK_SIZE));
+            for (int i = DivideRoundUp(oldHeight, TILES_CHUNK_SIZE); i < TileChunksTextures.Length; i++)
+            {
+                TileChunksTextures[i] = new Texture[oldWidthChunkSize];
+            }
+
+            for (int i = 0; i < TileChunksTextures.Length; i++)
+            {
+                Array.Resize(ref TileChunksTextures[i], newWidthChunkSize);
+            }
+
+            SelectedTiles = new PointsMap(Width, Height);
+            TempSelectionTiles = new PointsMap(Width, Height);
         }
 
         public void Dispose()

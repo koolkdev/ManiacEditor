@@ -65,8 +65,8 @@ namespace ManiacEditor
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
 
-        internal int SceneWidth;
-        internal int SceneHeight;
+        internal int SceneWidth => Scene.Layers.Max(sl => sl.Width) * 16;
+        internal int SceneHeight => Scene.Layers.Max(sl => sl.Height) * 16;
 
         bool scrolling = false;
         bool scrollingDragged = false, wheelClicked = false;
@@ -1171,10 +1171,7 @@ namespace ManiacEditor
                 Background = new EditorBackground();
 
                 entities = new EditorEntities(Scene);
-
-                SceneWidth = Scene.Layers.Max(sl => sl.Width) * 16;
-                SceneHeight = Scene.Layers.Max(sl => sl.Height) * 16;
-
+                
                 SetViewSize(SceneWidth, SceneHeight);
 
                 UpdateControls();
@@ -1302,6 +1299,11 @@ namespace ManiacEditor
             vScrollBar1.Value = Math.Max(0, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange));
         }
 
+        private void ResetViewSize()
+        {
+            SetViewSize((int)(SceneWidth * Zoom), (int)(SceneHeight * Zoom));
+        }
+
         private void ResizeGraphicPanel(int width = 0, int height = 0)
         {
             GraphicPanel.Width = width;
@@ -1417,6 +1419,10 @@ namespace ManiacEditor
             LayerShowButton_Click(ShowEntities, "Entities");
         }
 
+        /// <summary>
+        /// Deselects all tiles and entities
+        /// </summary>
+        /// <param name="updateControls">Whether to update associated on-screen controls</param>
         public void Deselect(bool updateControls = true)
         {
             if (IsEditing())
@@ -1907,10 +1913,18 @@ namespace ManiacEditor
 
         private void layerManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var lm = new LayerManager(Scene.Layers))
+            Deselect(true);
+            IList<EditorLayer> allEditorLayers = _editorLayers.ToList();
+            if (FGLow != null) allEditorLayers.Add(FGLow);
+            if (FGHigh != null) allEditorLayers.Add(FGHigh);
+
+            using (var lm = new LayerManager(allEditorLayers))
             {
                 lm.ShowDialog();
             }
+
+            ResetViewSize();
+            UpdateControls();
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
