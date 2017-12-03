@@ -9,58 +9,43 @@ namespace ManiacEditor
 {
     class LinkedEditorEntity : EditorEntity
     {
+        private uint goProperty;
+        private uint destinationTag;
+        private byte tag;
+
         public LinkedEditorEntity(RSDKv5.SceneEntity entity) : base(entity)
         {
+            goProperty = Entity.GetAttribute("go").ValueVar;
+            destinationTag = Entity.GetAttribute("destinationTag").ValueVar;
+            tag = Entity.GetAttribute("tag").ValueUInt8;
         }
 
         public override void Draw(DevicePanel d)
         {
             base.Draw(d);
+            if (goProperty == 1 && destinationTag == 0) return; // probably just a destination
+            
+            // this is the start of a WarpDoor, find its partner(s)
+            var warpDoors = Entity.Object.Entities.Where(e => e.GetAttribute("tag").ValueUInt8 ==
+                                                                destinationTag);
 
-            if (Entity.GetAttribute("go").ValueVar == 0)
+            if (warpDoors != null
+                && warpDoors.Any())
             {
-                // this is the start of a WarpDoor, find its partner(s)
-                var warpDoors = Entity.Object.Entities.Where(e => e.GetAttribute("tag").ValueUInt8 ==
-                                                                  Entity.GetAttribute("destinationTag").ValueVar);
-
-                if (warpDoors != null
-                    && warpDoors.Any())
+                // some destinations seem to be duplicated, so we must loop
+                foreach (var wd in warpDoors)
                 {
-                    // some destinations seem to be duplicated, so we must loop
-                    foreach (var wd in warpDoors)
-                    {
-                        DrawLinkArrow(d, Entity, wd);
-                    }
+                    DrawLinkArrow(d, Entity, wd);
                 }
-            }
-            else
-            {
-                // this is the end of a WarpDoor, find its partner(s)
-                var warpDoors = Entity.Object.Entities.Where(e => e.GetAttribute("destinationTag").ValueVar ==
-                                                                  Entity.GetAttribute("tag").ValueUInt8);
-
-                if (warpDoors != null
-                    && warpDoors.Any())
-                {
-                    // some destinations are served by multiple entry points
-                    // so we must loop
-                    foreach (var wd in warpDoors)
-                    {
-                        DrawLinkArrow(d, wd, Entity, true);
-                    }
-                }
-
             }
         }
 
-        private void DrawLinkArrow(DevicePanel d, RSDKv5.SceneEntity start, RSDKv5.SceneEntity end, bool checkPartnerArrow = false)
+        private void DrawLinkArrow(DevicePanel d, RSDKv5.SceneEntity start, RSDKv5.SceneEntity end)
         {
             int startX = start.Position.X.High;
             int startY = start.Position.Y.High;
             int endX = end.Position.X.High;
             int endY = end.Position.Y.High;
-
-            if (checkPartnerArrow && d.IsObjectOnScreen(startX, startY, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
 
             int dx = endX - startX;
             int dy = endY - startY;
