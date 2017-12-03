@@ -26,13 +26,13 @@ namespace ManiacEditor
             _targetSceneObjects = targetSceneObjects;
             _stageConfig = stageConfig;
 
-            var targetNames = targetSceneObjects.Select(tso => tso.Name.Name);
-            var importableObjects = sourceSceneObjects.Where(sso => !targetNames.Contains(sso.Name.Name))
-                                                      .OrderBy(sso => sso.Name.Name);
+            var targetNames = targetSceneObjects.Select(tso => tso.Name.ToString());
+            var importableObjects = sourceSceneObjects.Where(sso => !targetNames.Contains(sso.Name.ToString()))
+                                                      .OrderBy(sso => sso.Name.ToString());
 
             foreach (var io in importableObjects)
             {
-                var lvi = new ListViewItem(io.Name.Name)
+                var lvi = new ListViewItem(io.Name.ToString())
                 {
                     Checked = false
                 };
@@ -54,9 +54,9 @@ namespace ManiacEditor
             foreach (var lvci in lvObjects.CheckedItems)
             {
                 var item = lvci as ListViewItem;
-                SceneObject objectToImport = _sourceSceneObjects.Single(sso => sso.Name.Name.Equals(item.Text));
+                SceneObject objectToImport = _sourceSceneObjects.Single(sso => sso.Name.ToString().Equals(item.Text));
                 objectToImport.Entities.Clear(); // ditch instances of the object from the imported level
-                _targetSceneObjects.Add(_sourceSceneObjects.Single(sso => sso.Name.Name.Equals(item.Text)));
+                _targetSceneObjects.Add(_sourceSceneObjects.Single(sso => sso.Name.ToString().Equals(item.Text)));
 
                 if (   _stageConfig != null 
                     && !_stageConfig.ObjectsNames.Contains(item.Text))

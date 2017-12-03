@@ -53,7 +53,7 @@ namespace ManiacEditor.Actions
             }
             else if (entities.Count == 1)
             {
-                name = entities[0]?.Entity?.Object?.Name?.Name;
+                name = entities[0]?.Entity?.Object?.Name?.ToString();
             }
             else
             {

@@ -64,7 +64,7 @@ namespace ManiacEditor
 
         public void RefreshObjects(List<RSDKv5.SceneObject> sceneObjects)
         {
-            sceneObjects.Sort((x, y) => x.Name.Name.CompareTo(y.Name.Name));
+            sceneObjects.Sort((x, y) => x.Name.ToString().CompareTo(y.Name.ToString()));
             var bindingSceneObjectsList = new BindingList<RSDKv5.SceneObject>(sceneObjects);
             _bindingSceneObjectsSource.DataSource = bindingSceneObjectsList;
 

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 
 namespace ManiacEditor
 {
     class EditorEntity : IDrawable
     {
-        const int NAME_BOX_WIDTH = 20;
-        const int NAME_BOX_HEIGHT = 20;
+        protected const int NAME_BOX_WIDTH  = 20;
+        protected const int NAME_BOX_HEIGHT = 20;
+
+        protected const int NAME_BOX_HALF_WIDTH  = NAME_BOX_WIDTH  / 2;
+        protected const int NAME_BOX_HALF_HEIGHT = NAME_BOX_HEIGHT / 2;
 
         public bool Selected;
 
@@ -48,7 +47,8 @@ namespace ManiacEditor
             return new Rectangle(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT);
         }
 
-        public void Draw(DevicePanel d)
+        // allow derived types to override the draw
+        public virtual void Draw(DevicePanel d)
         {
             if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
             Color color = Selected ? Color.MediumPurple : Color.MediumTurquoise;

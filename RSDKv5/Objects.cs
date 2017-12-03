@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace RSDKv5
                     if(!Enum.TryParse(key.Value, out type))
                     {
                         // unknown attribute, what to do?
+                        Debug.WriteLine($"Unknown type! [{key.Value}]");
                     }
                     
                     attributes.Add(new AttributeInfo(new NameIdentifier(key.KeyName), type));

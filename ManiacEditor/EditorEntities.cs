@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Linq;
 
 namespace ManiacEditor
 {
@@ -29,7 +27,7 @@ namespace ManiacEditor
         public EditorEntities(RSDKv5.Scene scene)
         {
             foreach (var obj in scene.Objects)
-                entities.AddRange(obj.Entities.Select(x => new EditorEntity(x)));
+                entities.AddRange(obj.Entities.Select(x => GenerateEditorEntity(x)));
             entitiesBySlot = entities.ToDictionary(x => x.Entity.SlotID);
         }
 
@@ -130,7 +128,7 @@ namespace ManiacEditor
 
         private void DuplicateEntities(List<EditorEntity> entities)
         {
-            var new_entities = entities.Select(x => new EditorEntity(new RSDKv5.SceneEntity(x.Entity, getFreeSlot(x.Entity)))).ToList();
+            var new_entities = entities.Select(x => GenerateEditorEntity(new RSDKv5.SceneEntity(x.Entity, getFreeSlot(x.Entity)))).ToList();
             if (new_entities.Count > 0)
                 LastAction = new Actions.ActionAddDeleteEntities(new_entities.ToList(), true, x => AddEntities(x), x => DeleteEntities(x));
             AddEntities(new_entities);
@@ -168,7 +166,7 @@ namespace ManiacEditor
             if (selectedEntities.Count == 0) return null;
             short minX = 0, minY = 0;
 
-            List<EditorEntity> copiedEntities = selectedEntities.Select(x => new EditorEntity(new RSDKv5.SceneEntity(x.Entity, x.Entity.SlotID))).ToList();
+            List<EditorEntity> copiedEntities = selectedEntities.Select(x => GenerateEditorEntity(new RSDKv5.SceneEntity(x.Entity, x.Entity.SlotID))).ToList();
             if (!keepPosition)
             {
                 minX = copiedEntities.Min(x => x.Entity.Position.X.High);
@@ -245,7 +243,7 @@ namespace ManiacEditor
         /// <param name="position">Location to insert into the scene.</param>
         public void Add(RSDKv5.SceneObject sceneObject, RSDKv5.Position position)
         {
-            var editorEntity = new EditorEntity(new RSDKv5.SceneEntity(sceneObject, getFreeSlot(null)));
+            var editorEntity = GenerateEditorEntity(new RSDKv5.SceneEntity(sceneObject, getFreeSlot(null)));
             editorEntity.Entity.Position = position;
             var newEntities = new List<EditorEntity> { editorEntity };
             LastAction = new Actions.ActionAddDeleteEntities(newEntities, true, x => AddEntities(x), x => DeleteEntities(x));
@@ -254,6 +252,24 @@ namespace ManiacEditor
             Deselect();
             editorEntity.Selected = true;
             selectedEntities.Add(editorEntity);
+        }
+
+        private EditorEntity GenerateEditorEntity(RSDKv5.SceneEntity sceneEntity)
+        {
+            try
+            {
+                // ideally this would be driven by configuration...one day
+                // or can we assume anything with a "Go" and "Tag" Attributes is linked to another?
+                if (sceneEntity.Object.Name.ToString().Equals("WarpDoor", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new LinkedEditorEntity(sceneEntity);
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to generate a LinkedEditorEntity, will create a basic one instead.");
+            }
+            return new EditorEntity(sceneEntity);
         }
 
     }

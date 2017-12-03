@@ -89,6 +89,7 @@
     <Compile Include="LayerManager.Designer.cs">
       <DependentUpon>LayerManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="LinkedEditorEntity.cs" />
     <Compile Include="LocalProperty.cs" />
     <Compile Include="LocalPropertyGrid.cs" />
     <Compile Include="Editor.cs">

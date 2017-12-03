@@ -11,7 +11,7 @@ namespace ManiacEditor.Actions
         object newValue;
         Action<SceneEntity, string, object, object> setValue;
 
-        public string Description => $"changing {tag} on {entity.Object.Name.Name} from {oldValue} to {newValue}";
+        public string Description => $"changing {tag} on {entity.Object.Name} from {oldValue} to {newValue}";
 
         public ActionEntityPropertyChange(SceneEntity entity, string tag, object oldValue, object newValue, Action<SceneEntity, string, object, object> setValue)
         {
