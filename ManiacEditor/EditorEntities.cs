@@ -130,6 +130,8 @@ namespace ManiacEditor
 
         private void DuplicateEntities(List<EditorEntity> entities)
         {
+            if (null == entities || !entities.Any()) return;
+            
             var new_entities = entities.Select(x => new EditorEntity(new RSDKv5.SceneEntity(x.Entity, getFreeSlot(x.Entity)))).ToList();
             if (new_entities.Count > 0)
                 LastAction = new Actions.ActionAddDeleteEntities(new_entities.ToList(), true, x => AddEntities(x), x => DeleteEntities(x));
