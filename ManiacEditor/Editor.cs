@@ -1927,6 +1927,14 @@ namespace ManiacEditor
             UpdateControls();
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var aboutBox = new AboutBox())
+            {
+                aboutBox.ShowDialog();
+            }
+        }
+
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
         {
             if (!GraphicPanel.Focused && e.Control)

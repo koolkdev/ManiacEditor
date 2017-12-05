@@ -57,6 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionAddDeleteEntities.cs" />
     <Compile Include="Actions\ActionDummy.cs" />
     <Compile Include="Actions\ActionEntityPropertyChange.cs" />
@@ -145,6 +151,9 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EntitiesToolbar.resx">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>
     </EmbeddedResource>
