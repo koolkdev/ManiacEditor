@@ -43,7 +43,11 @@ You can choose which properties the placed tiles will have by clicking on the ch
 * Paste new tiles and entities next to the mouse cursor, not the top left.
 * Edit background layers.
 * Spawn brand new entities without needing to find one to copy. (They appear in the top left!)
-* Import level objects from one level to another. It works quite well for invisible things, like the WarpDoor; less well (not really at all) for badniks and the like.
+* Import level objects from one level to another. It works quite well for invisible things, like the WarpDoor and BreakableWall; less well (not really at all) for badniks and the like.
   * Pro tip: Be sensible with this one!
+* Import sounds from one level to another.
+  * This goes hand-in-hand with importing objects. You'll want to import any applicable sounds too.
+* Layer reordering, creation, destruction and resizing (too big and the game will crash!); you can also edit some of the magic values assoicated with the layers too.
+  * You'll need to fix-up any BGSwitch entities to account for anything you change though.
 * Extra crashes! Save often, backup well.
 * Non-descript Undo/Redo helpers that don't tell you much most of the time.
