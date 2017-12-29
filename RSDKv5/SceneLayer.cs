@@ -66,8 +66,12 @@ namespace RSDKv5
         public ushort Width { get => _width; private set => _width = value; }
         public ushort Height { get => _height; private set => _height = value; }
 
-        public SceneLayer(string name, ushort Width, ushort Height)
+        public SceneLayer(string name, ushort width, ushort height)
         {
+            Name = name;
+            Width = width;
+            Height = height;
+
             ScrollingInfo.Add(new ScrollInfo());
             // Per pixel (of height or of width, depends if it scrolls horizontal or veritcal)
             ScrollIndexes = new byte[Height * 16];

@@ -74,6 +74,7 @@
     <Compile Include="ColorsCaching.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="EditorBackground.cs" />
+    <Compile Include="EditorScene.cs" />
     <Compile Include="EntitiesToolbar.cs">
       <SubType>UserControl</SubType>
     </Compile>

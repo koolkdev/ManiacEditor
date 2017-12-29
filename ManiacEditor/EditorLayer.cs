@@ -14,6 +14,7 @@ namespace ManiacEditor
     public class EditorLayer : IDrawable, IDisposable
     {
         private SceneLayer _layer;
+        internal SceneLayer Layer { get => _layer; }
 
         const int TILES_CHUNK_SIZE = 16;
 
@@ -39,6 +40,37 @@ namespace ManiacEditor
                 string internalName = _layer.Name;
                 return internalName?.TrimEnd('\0');
             }
+            set
+            {
+                string name = value;
+                if (name == null) name = "\0";
+                if (!name.EndsWith("\0")) name += "\0";
+                _layer.Name = name;
+            }
+        }
+
+        public byte ScrollingVertical
+        {
+            get => _layer.IsScrollingVertical;
+            set => _layer.IsScrollingVertical = value;
+        }
+
+        public byte UnknownByte2
+        {
+            get => _layer.UnknownByte2;
+            set => _layer.UnknownByte2 = value;
+        }
+
+        public ushort UnknownWord1
+        {
+            get => _layer.UnknownWord1;
+            set => _layer.UnknownWord1 = value;
+        }
+
+        public ushort UnknownWord2
+        {
+            get => _layer.UnknownWord2;
+            set => _layer.UnknownWord2 = value;
         }
 
         public ushort Height { get => _layer.Height; }

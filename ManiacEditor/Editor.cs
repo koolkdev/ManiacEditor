@@ -44,15 +44,14 @@ namespace ManiacEditor
         string SelectedScene;
 
         internal StageTiles StageTiles;
-        internal Scene Scene;
+        internal EditorScene EditorScene;
         internal StageConfig StageConfig;
 
         string SceneFilename = null;
         string StageConfigFileName = null;
 
-        internal EditorLayer FGHigh;
-        internal EditorLayer FGLow;
-        private IList<EditorLayer> _editorLayers;
+        internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
+        internal EditorLayer FGLow => EditorScene?.ForegroundLow;
         private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
@@ -65,8 +64,8 @@ namespace ManiacEditor
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
 
-        internal int SceneWidth => Scene.Layers.Max(sl => sl.Width) * 16;
-        internal int SceneHeight => Scene.Layers.Max(sl => sl.Height) * 16;
+        internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
+        internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
 
         bool scrolling = false;
         bool scrollingDragged = false, wheelClicked = false;
@@ -88,8 +87,7 @@ namespace ManiacEditor
 
             GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
-
-            _editorLayers = new List<EditorLayer>();
+            
             _extraLayerButtons = new List<ToolStripButton>();
 
             SetViewSize();
@@ -176,7 +174,7 @@ namespace ManiacEditor
             else if (enabled && _extraLayerButtons.Any(elb => elb.Checked))
             {
                 var selectedExtraLayerButton = _extraLayerButtons.Single(elb => elb.Checked);
-                var editorLayer = _editorLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
+                var editorLayer = EditorScene.OtherLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
                 EditLayer = editorLayer;
             }
             else EditLayer = null;
@@ -228,7 +226,7 @@ namespace ManiacEditor
             {
                 if (entitiesToolbar == null)
                 {
-                    entitiesToolbar = new EntitiesToolbar(Scene.Objects);
+                    entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
                     entitiesToolbar.SelectedEntity = new Action<int>(x =>
                     {
                         entities.SelectSlot(x);
@@ -308,7 +306,7 @@ namespace ManiacEditor
 
         private void UpdateControls()
         {
-            SetSceneOnlyButtonsState(Scene != null);
+            SetSceneOnlyButtonsState(EditorScene != null);
         }
 
         public void OnGotFocus(object sender, EventArgs e)
@@ -1010,7 +1008,7 @@ namespace ManiacEditor
             int oldShiftX = ShiftX;
             int oldShiftY = ShiftY;
 
-            if (Scene != null)
+            if (EditorScene != null)
                 SetViewSize((int)(SceneWidth * Zoom), (int)(SceneHeight * Zoom));
 
             if (hScrollBar1.Visible)
@@ -1058,7 +1056,8 @@ namespace ManiacEditor
 
         void UnloadScene()
         {
-            Scene = null;
+            EditorScene?.Dispose();
+            EditorScene = null;
             SceneFilename = null;
             StageConfig = null;
             StageConfigFileName = null;
@@ -1069,17 +1068,7 @@ namespace ManiacEditor
             if (StageTiles != null) StageTiles.Dispose();
             StageTiles = null;
 
-            if (FGHigh != null) FGHigh.Dispose();
-            FGHigh = null;
-            if (FGLow != null) FGLow.Dispose();
-            FGLow = null;
-            _editorLayers.Clear();
-            foreach (var elb in _extraLayerButtons)
-            {
-                elb.Click -= AdHocLayerEdit;
-                toolStrip1.Items.Remove(elb);
-            }
-            _extraLayerButtons.Clear();
+            TearDownExtraLayerButtons();
 
             Background = null;
 
@@ -1133,49 +1122,51 @@ namespace ManiacEditor
                     StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
                     SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                 }
-                Scene = new Scene(SceneFilename);
+                EditorScene = new EditorScene(SceneFilename);
                 StageConfigFileName = Path.Combine(DataDirectory, "Stages", SelectedZone, "StageConfig.bin");
                 if (File.Exists(StageConfigFileName))
                 {
                     StageConfig = new StageConfig(StageConfigFileName);
                 }
 
-                SceneLayer low_layer = null, high_layer = null;
-
-                foreach (SceneLayer layer in Scene.Layers)
-                {
-                    if (layer.Name == "FG Low\0" || layer.Name == "Playfield\0")
-                        low_layer = layer;
-                    else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
-                        high_layer = layer;
-                    else
-                    {
-                        var el = new EditorLayer(layer);
-                        _editorLayers.Add(el);
-                        ToolStripButton tsb = new ToolStripButton(el.Name);
-                        toolStrip1.Items.Add(tsb);
-                        tsb.ForeColor = Color.DarkGreen;
-                        tsb.CheckOnClick = true;
-                        tsb.Click += AdHocLayerEdit;
-
-                        _extraLayerButtons.Add(tsb);
-                    }
-                }
-
-                if (low_layer != null) FGLow = new EditorLayer(low_layer);
-                if (high_layer != null) FGHigh = new EditorLayer(high_layer);
-
-                UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
-                UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
+                SetupLayerButtons();
 
                 Background = new EditorBackground();
 
-                entities = new EditorEntities(Scene);
+                entities = new EditorEntities(EditorScene);
                 
                 SetViewSize(SceneWidth, SceneHeight);
 
                 UpdateControls();
             }
+        }
+
+        private void SetupLayerButtons()
+        {
+            TearDownExtraLayerButtons();
+            foreach (EditorLayer el in EditorScene.OtherLayers)
+            {
+                ToolStripButton tsb = new ToolStripButton(el.Name);
+                toolStrip1.Items.Add(tsb);
+                tsb.ForeColor = Color.DarkGreen;
+                tsb.CheckOnClick = true;
+                tsb.Click += AdHocLayerEdit;
+
+                _extraLayerButtons.Add(tsb);
+            }
+
+            UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
+            UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
+        }
+
+        private void TearDownExtraLayerButtons()
+        {
+            foreach (var elb in _extraLayerButtons)
+            {
+                elb.Click -= AdHocLayerEdit;
+                toolStrip1.Items.Remove(elb);
+            }
+            _extraLayerButtons.Clear();
         }
 
         /// <summary>
@@ -1330,11 +1321,11 @@ namespace ManiacEditor
             // hmm, if I call refresh when I update the values, for some reason it will stop to render until I stop calling refrsh
             // So I will refresh it here
             if (entitiesToolbar?.NeedRefresh ?? false) entitiesToolbar.PropertiesRefresh();
-            if (Scene != null)
+            if (EditorScene != null)
             {
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
-                if (_editorLayers.Contains(EditLayer))
+                if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
@@ -1476,7 +1467,7 @@ namespace ManiacEditor
 
         private void Save_Click(object sender, EventArgs e)
         {
-            if (Scene == null) return;
+            if (EditorScene == null) return;
 
             if (IsTilesEdit())
             {
@@ -1484,7 +1475,7 @@ namespace ManiacEditor
                 Deselect();
             }
 
-            Scene.Write(SceneFilename);
+            EditorScene.Save(SceneFilename);
             StageConfig?.Write(StageConfigFileName);
         }
 
@@ -1513,7 +1504,7 @@ namespace ManiacEditor
         }
         private void saveAspngToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Scene != null)
+            if (EditorScene != null)
             {
                 SaveFileDialog save = new SaveFileDialog();
                 save.Filter = ".png File|*.png";
@@ -1811,7 +1802,7 @@ namespace ManiacEditor
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Scene == null) return;
+            if (EditorScene == null) return;
 
             if (IsTilesEdit())
             {
@@ -1827,7 +1818,7 @@ namespace ManiacEditor
             save.FileName = Path.GetFileName(SceneFilename);
             if (save.ShowDialog() != DialogResult.Cancel)
             {
-                Scene.Write(save.FileName);
+                EditorScene.Write(save.FileName);
             }
         }
 
@@ -1838,14 +1829,14 @@ namespace ManiacEditor
                 Scene sourceScene = GetSceneSelection();
                 if (null == sourceScene) return;
 
-                using (var objectImporter = new ObjectImporter(sourceScene.Objects, Scene.Objects, StageConfig))
+                using (var objectImporter = new ObjectImporter(sourceScene.Objects, EditorScene.Objects, StageConfig))
                 {
                     if (objectImporter.ShowDialog() != DialogResult.OK)
                         return; // nothing to do
 
                     // user clicked Import, get to it!
                     UpdateControls();
-                    entitiesToolbar?.RefreshObjects(Scene.Objects);
+                    entitiesToolbar?.RefreshObjects(EditorScene.Objects);
                 }
             }
             catch (Exception ex)
@@ -1914,15 +1905,13 @@ namespace ManiacEditor
         private void layerManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Deselect(true);
-            IList<EditorLayer> allEditorLayers = _editorLayers.ToList();
-            if (FGLow != null) allEditorLayers.Add(FGLow);
-            if (FGHigh != null) allEditorLayers.Add(FGHigh);
 
-            using (var lm = new LayerManager(allEditorLayers))
+            using (var lm = new LayerManager(EditorScene))
             {
                 lm.ShowDialog();
             }
 
+            SetupLayerButtons();
             ResetViewSize();
             UpdateControls();
         }
