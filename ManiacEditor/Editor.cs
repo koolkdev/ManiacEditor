@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Drawing.Drawing2D;
-using ManiacEditor.Actions;
-using System.Collections;
-using System.Net;
-using SharpDX.Direct3D9;
-using RSDKv5;
+using System.Drawing.Imaging;
 using System.IO;
-using Color = System.Drawing.Color;
+using System.Linq;
+using System.Windows.Forms;
+using ManiacEditor.Actions;
 using ManiacEditor.Enums;
+using RSDKv5;
+using SharpDX.Direct3D9;
+using Color = System.Drawing.Color;
 
 namespace ManiacEditor
 {
@@ -128,7 +124,7 @@ namespace ManiacEditor
         {
             saveToolStripMenuItem.Enabled = enabled;
             saveAsToolStripMenuItem.Enabled = enabled;
-            saveAspngToolStripMenuItem.Enabled = enabled;
+            exportToolStripMenuItem.Enabled = enabled;
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled && FGLow != null;
@@ -1504,24 +1500,87 @@ namespace ManiacEditor
         }
         private void saveAspngToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (EditorScene != null)
+            if (EditorScene == null) return;
+
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = ".png File|*.png";
+            save.DefaultExt = "png";
+            if (save.ShowDialog() != DialogResult.Cancel)
             {
-                SaveFileDialog save = new SaveFileDialog();
-                save.Filter = ".png File|*.png";
-                save.DefaultExt = "png";
-                if (save.ShowDialog() != DialogResult.Cancel)
+                using (Bitmap bitmap = new Bitmap(SceneWidth, SceneHeight))
+                using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    using (Bitmap bitmap = new Bitmap(SceneWidth, SceneHeight))
-                    {
-                        using (Graphics g = Graphics.FromImage(bitmap))
-                        {
-                            FGLow.Draw(g);
-                            FGHigh.Draw(g);
-                        }
-                        bitmap.Save(save.FileName);
-                    }
+                    // not all scenes have both a Low and a High foreground
+                    // only attempt to render the ones we actually have
+                    FGLow?.Draw(g);
+                    FGHigh?.Draw(g);
+                    bitmap.Save(save.FileName);
                 }
             }
+        }
+
+        private void exportEachLayerAspngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (EditorScene?.Layers == null || !EditorScene.Layers.Any()) return;
+
+                var dialog = new FolderSelectDialog()
+                {
+                    Title = "Select folder to save each exported layer image to"
+                };
+
+                if (!dialog.ShowDialog()) return;
+
+                int fileCount = 0;
+
+                foreach (var editorLayer in EditorScene.AllLayers)
+                {
+                    string fileName = Path.Combine(dialog.FileName, editorLayer.Name + ".png");
+
+                    if (!CanWriteFile(fileName))
+                    {
+                        MessageBox.Show($"Layer export aborted. {fileCount} images saved.", "Error!",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    using (var bitmap = new Bitmap(editorLayer.Width * EditorLayer.TILE_SIZE, editorLayer.Height * EditorLayer.TILE_SIZE))
+                    using (var g = Graphics.FromImage(bitmap))
+                    {
+                        editorLayer.Draw(g);
+                        bitmap.Save(fileName, ImageFormat.Png);
+                        ++fileCount;
+                    }
+                }
+
+                MessageBox.Show($"Layer export succeeded. {fileCount} images saved.", "Success!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message, "Error!", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool CanWriteFile(string fullFilePath)
+        {
+            if (!File.Exists(fullFilePath)) return true;
+
+            if (File.GetAttributes(fullFilePath).HasFlag(FileAttributes.ReadOnly))
+            {
+                MessageBox.Show($"The file {fullFilePath} is Read Only.", "File is Read Only.",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            var result = MessageBox.Show($"The file {fullFilePath} already exists. Overwrite?", "Overwrite?",
+                                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes) return true;
+
+            return false;
         }
 
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)

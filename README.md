@@ -49,5 +49,6 @@ You can choose which properties the placed tiles will have by clicking on the ch
   * This goes hand-in-hand with importing objects. You'll want to import any applicable sounds too.
 * Layer reordering, creation, destruction and resizing (too big and the game will crash!); you can also edit some of the magic values assoicated with the layers too.
   * You'll need to fix-up any BGSwitch entities to account for anything you change though.
+* New export function to write each layer of a scene to its own file.
 * Extra crashes! Save often, backup well.
 * Non-descript Undo/Redo helpers that don't tell you much most of the time.
