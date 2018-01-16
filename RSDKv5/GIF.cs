@@ -19,6 +19,10 @@ namespace RSDKv5
 
         public GIF(string filename)
         {
+            if (!File.Exists(filename))
+            {
+                throw new FileNotFoundException("The GIF file was not found.", filename);
+            }
             bitmap = new Bitmap(filename);
             // TODO: Proper transparent (palette index 0)
             bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
