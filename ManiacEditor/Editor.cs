@@ -83,7 +83,7 @@ namespace ManiacEditor
 
             GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
-            
+
             _extraLayerButtons = new List<ToolStripButton>();
 
             SetViewSize();
@@ -161,8 +161,8 @@ namespace ManiacEditor
             EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
             EditEntities.Enabled = enabled;
-            importObjectsToolStripMenuItem.Enabled = enabled;
-            importSoundsToolStripMenuItem.Enabled = enabled;
+            importObjectsToolStripMenuItem.Enabled = enabled && StageConfig != null;
+            importSoundsToolStripMenuItem.Enabled = enabled && StageConfig != null;
             layerManagerToolStripMenuItem.Enabled = enabled;
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
@@ -1090,16 +1090,18 @@ namespace ManiacEditor
 
         private void Open_Click(object sender, EventArgs e)
         {
-            if (load())
+            if (!load()) return;
+
+            SceneSelect select = new SceneSelect(GameConfig);
+            select.ShowDialog();
+
+            if (select.Result == null)
+                return;
+
+            UnloadScene();
+
+            try
             {
-                SceneSelect select = new SceneSelect(GameConfig);
-                select.ShowDialog();
-
-                if (select.Result == null)
-                    return;
-
-                UnloadScene();
-
                 if (File.Exists(select.Result))
                 {
                     // Selected file
@@ -1114,27 +1116,32 @@ namespace ManiacEditor
                     SelectedZone = splitted[0];
                     SelectedScene = splitted[1];
 
-
                     StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
                     SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                 }
+
                 EditorScene = new EditorScene(SceneFilename);
-                StageConfigFileName = Path.Combine(DataDirectory, "Stages", SelectedZone, "StageConfig.bin");
+                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
                 if (File.Exists(StageConfigFileName))
                 {
                     StageConfig = new StageConfig(StageConfigFileName);
                 }
-
-                SetupLayerButtons();
-
-                Background = new EditorBackground();
-
-                entities = new EditorEntities(EditorScene);
-                
-                SetViewSize(SceneWidth, SceneHeight);
-
-                UpdateControls();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Load failed. Error: " + ex.ToString());
+                return;
+            }
+
+            SetupLayerButtons();
+
+            Background = new EditorBackground();
+
+            entities = new EditorEntities(EditorScene);
+
+            SetViewSize(SceneWidth, SceneHeight);
+
+            UpdateControls();
         }
 
         private void SetupLayerButtons()
@@ -1471,8 +1478,30 @@ namespace ManiacEditor
                 Deselect();
             }
 
-            EditorScene.Save(SceneFilename);
-            StageConfig?.Write(StageConfigFileName);
+            try
+            {
+                EditorScene.Save(SceneFilename);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to save the scene to file '{SceneFilename}'
+Error: {ex.Message}");
+            }
+
+            try
+            { 
+                StageConfig?.Write(StageConfigFileName);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to save the StageConfig to file '{StageConfigFileName}'
+Error: {ex.Message}");
+            }
+        }
+
+        private void ShowError(string message, string title = "Error!")
+        {
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void MagnetMode_Click(object sender, EventArgs e)
@@ -1540,8 +1569,7 @@ namespace ManiacEditor
 
                     if (!CanWriteFile(fileName))
                     {
-                        MessageBox.Show($"Layer export aborted. {fileCount} images saved.", "Error!",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ShowError($"Layer export aborted. {fileCount} images saved.");
                         return;
                     }
 
@@ -1559,8 +1587,7 @@ namespace ManiacEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred: " + ex.Message, "Error!", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("An error occurred: " + ex.Message);
             }
         }
 
@@ -1570,12 +1597,11 @@ namespace ManiacEditor
 
             if (File.GetAttributes(fullFilePath).HasFlag(FileAttributes.ReadOnly))
             {
-                MessageBox.Show($"The file {fullFilePath} is Read Only.", "File is Read Only.",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError($"The file '{fullFilePath}' is Read Only.", "File is Read Only.");
                 return false;
             }
 
-            var result = MessageBox.Show($"The file {fullFilePath} already exists. Overwrite?", "Overwrite?",
+            var result = MessageBox.Show($"The file '{fullFilePath}' already exists. Overwrite?", "Overwrite?",
                                          MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes) return true;
