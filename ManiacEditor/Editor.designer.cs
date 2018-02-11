@@ -35,6 +35,9 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAspngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportEachLayerAspngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,9 +92,7 @@
             this.pointerButton = new System.Windows.Forms.ToolStripButton();
             this.selectTool = new System.Windows.Forms.ToolStripButton();
             this.placeTilesButton = new System.Windows.Forms.ToolStripButton();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportEachLayerAspngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAspngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowAnimations = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -163,6 +164,29 @@
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveAspngToolStripMenuItem,
+            this.exportEachLayerAspngToolStripMenuItem});
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // saveAspngToolStripMenuItem
+            // 
+            this.saveAspngToolStripMenuItem.Name = "saveAspngToolStripMenuItem";
+            this.saveAspngToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.saveAspngToolStripMenuItem.Text = "Export as .png..";
+            this.saveAspngToolStripMenuItem.Click += new System.EventHandler(this.saveAspngToolStripMenuItem_Click);
+            // 
+            // exportEachLayerAspngToolStripMenuItem
+            // 
+            this.exportEachLayerAspngToolStripMenuItem.Name = "exportEachLayerAspngToolStripMenuItem";
+            this.exportEachLayerAspngToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.exportEachLayerAspngToolStripMenuItem.Text = "Export Each Layer as .png";
+            this.exportEachLayerAspngToolStripMenuItem.Click += new System.EventHandler(this.exportEachLayerAspngToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -628,6 +652,7 @@
             this.ShowFGLow,
             this.ShowFGHigh,
             this.ShowEntities,
+            this.ShowAnimations,
             this.toolStripSeparator5,
             this.EditFGLow,
             this.EditFGHigh,
@@ -723,28 +748,18 @@
             this.placeTilesButton.Text = "Place tiles (Right click [+drag] - place, Left click [+drag] - delete)";
             this.placeTilesButton.Click += new System.EventHandler(this.placeTilesButton_Click);
             // 
-            // exportToolStripMenuItem
+            // ShowAnimations
             // 
-            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAspngToolStripMenuItem,
-            this.exportEachLayerAspngToolStripMenuItem});
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.exportToolStripMenuItem.Text = "Export";
-            // 
-            // exportEachLayerAspngToolStripMenuItem
-            // 
-            this.exportEachLayerAspngToolStripMenuItem.Name = "exportEachLayerAspngToolStripMenuItem";
-            this.exportEachLayerAspngToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.exportEachLayerAspngToolStripMenuItem.Text = "Export Each Layer as .png";
-            this.exportEachLayerAspngToolStripMenuItem.Click += new System.EventHandler(this.exportEachLayerAspngToolStripMenuItem_Click);
-            // 
-            // saveAspngToolStripMenuItem
-            // 
-            this.saveAspngToolStripMenuItem.Name = "saveAspngToolStripMenuItem";
-            this.saveAspngToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.saveAspngToolStripMenuItem.Text = "Export as .png..";
-            this.saveAspngToolStripMenuItem.Click += new System.EventHandler(this.saveAspngToolStripMenuItem_Click);
+            this.ShowAnimations.Checked = true;
+            this.ShowAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowAnimations.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.ShowAnimations.Image = ((System.Drawing.Image)(resources.GetObject("ShowAnimations.Image")));
+            this.ShowAnimations.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowAnimations.Name = "ShowAnimations";
+            this.ShowAnimations.Size = new System.Drawing.Size(72, 22);
+            this.ShowAnimations.Text = "Animations";
+            this.ShowAnimations.ToolTipText = "Hide Animations";
+            this.ShowAnimations.Click += new System.EventHandler(this.ShowAnimations_Click);
             // 
             // Editor
             // 
@@ -847,6 +862,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAspngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportEachLayerAspngToolStripMenuItem;
+        public System.Windows.Forms.ToolStripButton ShowAnimations;
     }
 }
 

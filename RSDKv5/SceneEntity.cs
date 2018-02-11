@@ -13,7 +13,7 @@ namespace RSDKv5
         public Position Position;
         public readonly SceneObject Object;
         public List<AttributeValue> Attributes = new List<AttributeValue>();
-        private Dictionary<string, AttributeValue> attributesMap = new Dictionary<string, AttributeValue>();
+        public Dictionary<string, AttributeValue> attributesMap = new Dictionary<string, AttributeValue>();
 
         public SceneEntity(SceneObject obj, ushort slotID)
         {

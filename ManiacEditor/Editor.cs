@@ -32,11 +32,11 @@ namespace ManiacEditor
         double Zoom = 1;
         int ZoomLevel = 0;
 
-        string DataDirectory;
+        public static string DataDirectory;
 
         GameConfig GameConfig;
 
-        string SelectedZone;
+        public string SelectedZone;
         string SelectedScene;
 
         internal StageTiles StageTiles;
@@ -129,6 +129,7 @@ namespace ManiacEditor
             ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled && FGLow != null;
             ShowEntities.Enabled = enabled;
+            ShowAnimations.Enabled = enabled;
 
             Save.Enabled = enabled;
 
@@ -1047,6 +1048,8 @@ namespace ManiacEditor
 
                 GameConfig = new GameConfig(Path.Combine(DataDirectory, "Game", "GameConfig.bin"));
             }
+            // Clears all the Textures
+            EditorEntity.ReleaseResources();
             return true;
         }
 
@@ -1411,6 +1414,11 @@ namespace ManiacEditor
         private void ShowEntities_Click(object sender, EventArgs e)
         {
             LayerShowButton_Click(ShowEntities, "Entities");
+        }
+
+        private void ShowAnimations_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowAnimations, "Animations");
         }
 
         /// <summary>

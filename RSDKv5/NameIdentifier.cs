@@ -10,7 +10,7 @@ namespace RSDKv5
     public class NameIdentifier
     {
         private readonly byte[] Hash;
-        private readonly String Name = null;
+        public readonly String Name = null;
 
         public NameIdentifier(string name)
         {
