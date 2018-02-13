@@ -17,9 +17,11 @@ namespace ManiacEditor
             llAbout.Links.Clear();
             var koolkdevLink = new LinkLabel.Link(136, 8, "https://github.com/koolkdev/ManiacEditor") { Description = "koolkdev's GitHub page." };
             var otherworldbobLink = new LinkLabel.Link(197, 13, "https://github.com/OtherworldBob/ManiacEditor") { Description = "OtherworldBob's GitHub page." };
+            var thesupersonic16Link = new LinkLabel.Link(215, 12, "https://github.com/thesupersonic16") { Description = "SuperSonic16's GitHub page." };
 
             llAbout.Links.Add(koolkdevLink);
             llAbout.Links.Add(otherworldbobLink);
+            llAbout.Links.Add(thesupersonic16Link);
         }
 
         #region Assembly Attribute Accessors

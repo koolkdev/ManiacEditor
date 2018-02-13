@@ -141,6 +141,7 @@ namespace ManiacEditor
             if (!File.Exists(path2))
             {
                 // No Admination Found
+                Animations.Add(key, null); // don't look next time
                 return null;
             }
 
@@ -215,10 +216,26 @@ namespace ManiacEditor
                 var frame = editorAnim.Frames[index];
                 if (entity.attributesMap.ContainsKey("frameID"))
                 {
-                    if (entity.attributesMap["frameID"].ValueInt8 >= 0)
-                        frame = editorAnim.Frames[entity.attributesMap["frameID"].ValueInt8 % editorAnim.Frames.Count];
-                    else
-                        frame = null; // Don't Render the Animation
+                    // frameID can come in numerous Types, try to handle the ones we know about
+                    EditorAnimation.EditorFrame frameToDraw = null;
+                    AttributeValue frameIdAttribute = entity.attributesMap["frameID"];
+                    switch (frameIdAttribute.Type)
+                    {
+                        case AttributeTypes.UINT8:
+                            if (frameIdAttribute.ValueUInt8 >= 0)
+                                frameToDraw = editorAnim.Frames[frameIdAttribute.ValueUInt8 % editorAnim.Frames.Count];
+                            break;
+                        case AttributeTypes.INT8:
+                            if (frameIdAttribute.ValueInt8 >= 0)
+                                frameToDraw = editorAnim.Frames[frameIdAttribute.ValueInt8 % editorAnim.Frames.Count];
+                            break;
+                        case AttributeTypes.VAR:
+                            if (frameIdAttribute.ValueVar >= 0 && frameIdAttribute.ValueVar < Int32.MaxValue)
+                                frameToDraw = editorAnim.Frames[(int)(frameIdAttribute.ValueVar) % editorAnim.Frames.Count];
+                            break;
+                    }
+
+                    frame = frameToDraw;
                 }
 
                 // Playback
@@ -378,7 +395,7 @@ namespace ManiacEditor
                 pair.Value.Dispose();
             Sheets.Clear();
 
-            foreach (var pair in Animations)
+            foreach (var pair in Animations.Where(a => a.Value != null))
                 foreach (var pair2 in pair.Value.Frames)
                     pair2.Texture.Dispose();
 
