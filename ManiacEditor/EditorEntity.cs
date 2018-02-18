@@ -235,7 +235,8 @@ namespace ManiacEditor
                             break;
                     }
 
-                    frame = frameToDraw;
+                    // if we didn't find a frame, just use our original guess
+                    frame = frameToDraw ?? frame;
                 }
 
                 // Playback
