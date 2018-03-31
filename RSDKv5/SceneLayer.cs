@@ -21,41 +21,6 @@ namespace RSDKv5
         public ushort UnknownWord1;
         public ushort UnknownWord2;
 
-        public class ScrollInfo
-        {
-            ushort UnknownWord1;
-            ushort UnknownWord2;
-            byte UnknownByte1;
-            byte UnknownByte2;
-
-            public ScrollInfo(ushort word1 = 0x100, ushort word2 = 0, byte byte1 = 0, byte byte2 = 0)
-            {
-                this.UnknownWord1 = word1;
-                this.UnknownWord2 = word2;
-
-                this.UnknownByte1 = byte1;
-                this.UnknownByte2 = byte2;
-            }
-
-            internal ScrollInfo(Reader reader)
-            {
-                UnknownWord1 = reader.ReadUInt16();
-                UnknownWord2 = reader.ReadUInt16();
-
-                UnknownByte1 = reader.ReadByte();
-                UnknownByte2 = reader.ReadByte();
-            }
-
-            internal void Write(Writer writer)
-            {
-                writer.Write(UnknownWord1);
-                writer.Write(UnknownWord2);
-
-                writer.Write(UnknownByte1);
-                writer.Write(UnknownByte2);
-            }
-        }
-
         public List<ScrollInfo> ScrollingInfo = new List<ScrollInfo>();
 
         public byte[] ScrollIndexes;
