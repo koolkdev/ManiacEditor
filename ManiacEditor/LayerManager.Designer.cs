@@ -7,19 +7,6 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -75,6 +62,35 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.rtbWarn = new System.Windows.Forms.RichTextBox();
             this.toolTipProvider = new System.Windows.Forms.ToolTip(this.components);
+            this.label4 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.lbHorizontalRules = new System.Windows.Forms.ListBox();
+            this.btnAddHorizontalRule = new System.Windows.Forms.Button();
+            this.btnRemoveHorizontalRule = new System.Windows.Forms.Button();
+            this.btnAddHorizontalMapping = new System.Windows.Forms.Button();
+            this.btnRemoveHorizontalMapping = new System.Windows.Forms.Button();
+            this.nudHorizontalEffect = new System.Windows.Forms.NumericUpDown();
+            this.lbMappings = new System.Windows.Forms.ListBox();
+            this.gbHorizontalMappings = new System.Windows.Forms.GroupBox();
+            this.panelHorizMap = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.nudLineCount = new System.Windows.Forms.NumericUpDown();
+            this.lblLineCount = new System.Windows.Forms.Label();
+            this.nudStartLine = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.gbHorizRules = new System.Windows.Forms.GroupBox();
+            this.panelHorizRules = new System.Windows.Forms.Panel();
+            this.flpHorizRules = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblRuleToMaps = new System.Windows.Forms.Label();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.nudHorizByte2 = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.nudHorizVal1 = new System.Windows.Forms.NumericUpDown();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.nudHorizVal2 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.bsLayers)).BeginInit();
             this.gbRawSize.SuspendLayout();
             this.flpEffectiveSize.SuspendLayout();
@@ -97,6 +113,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudUnknownWord2)).BeginInit();
             this.panelLayers.SuspendLayout();
             this.flpLayerbuttons.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizontalEffect)).BeginInit();
+            this.gbHorizontalMappings.SuspendLayout();
+            this.panelHorizMap.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLineCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStartLine)).BeginInit();
+            this.gbHorizRules.SuspendLayout();
+            this.panelHorizRules.SuspendLayout();
+            this.flpHorizRules.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizByte2)).BeginInit();
+            this.panel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizVal1)).BeginInit();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizVal2)).BeginInit();
             this.SuspendLayout();
             // 
             // lbLayers
@@ -118,7 +150,7 @@
             this.gbRawSize.Controls.Add(this.flpCurrentSize);
             this.gbRawSize.Location = new System.Drawing.Point(129, 173);
             this.gbRawSize.Name = "gbRawSize";
-            this.gbRawSize.Size = new System.Drawing.Size(323, 63);
+            this.gbRawSize.Size = new System.Drawing.Size(324, 63);
             this.gbRawSize.TabIndex = 11;
             this.gbRawSize.TabStop = false;
             this.gbRawSize.Text = "Current Size";
@@ -131,7 +163,7 @@
             this.flpEffectiveSize.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flpEffectiveSize.Location = new System.Drawing.Point(3, 40);
             this.flpEffectiveSize.Name = "flpEffectiveSize";
-            this.flpEffectiveSize.Size = new System.Drawing.Size(317, 20);
+            this.flpEffectiveSize.Size = new System.Drawing.Size(318, 20);
             this.flpEffectiveSize.TabIndex = 12;
             // 
             // lblEffective
@@ -169,7 +201,7 @@
             this.flpCurrentSize.Dock = System.Windows.Forms.DockStyle.Top;
             this.flpCurrentSize.Location = new System.Drawing.Point(3, 16);
             this.flpCurrentSize.Name = "flpCurrentSize";
-            this.flpCurrentSize.Size = new System.Drawing.Size(317, 20);
+            this.flpCurrentSize.Size = new System.Drawing.Size(318, 20);
             this.flpCurrentSize.TabIndex = 6;
             // 
             // lblRaw
@@ -210,7 +242,7 @@
             this.gbResize.Controls.Add(this.btnResize);
             this.gbResize.Location = new System.Drawing.Point(129, 239);
             this.gbResize.Name = "gbResize";
-            this.gbResize.Size = new System.Drawing.Size(323, 141);
+            this.gbResize.Size = new System.Drawing.Size(324, 141);
             this.gbResize.TabIndex = 1;
             this.gbResize.TabStop = false;
             this.gbResize.Text = "Resize";
@@ -263,7 +295,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.Controls.Add(this.lblHeight);
             this.panel2.Controls.Add(this.nudHeight);
-            this.panel2.Location = new System.Drawing.Point(163, 19);
+            this.panel2.Location = new System.Drawing.Point(164, 19);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(151, 27);
             this.panel2.TabIndex = 0;
@@ -307,7 +339,7 @@
             this.btnResize.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.btnResize.Location = new System.Drawing.Point(3, 115);
             this.btnResize.Name = "btnResize";
-            this.btnResize.Size = new System.Drawing.Size(317, 23);
+            this.btnResize.Size = new System.Drawing.Size(318, 23);
             this.btnResize.TabIndex = 3;
             this.btnResize.Text = "Resize Layer";
             this.btnResize.UseVisualStyleBackColor = true;
@@ -320,7 +352,7 @@
             this.gbName.Controls.Add(this.flpAttributes);
             this.gbName.Location = new System.Drawing.Point(129, 54);
             this.gbName.Name = "gbName";
-            this.gbName.Size = new System.Drawing.Size(323, 116);
+            this.gbName.Size = new System.Drawing.Size(324, 116);
             this.gbName.TabIndex = 14;
             this.gbName.TabStop = false;
             this.gbName.Text = "Attributes";
@@ -336,7 +368,7 @@
             this.flpAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpAttributes.Location = new System.Drawing.Point(3, 16);
             this.flpAttributes.Name = "flpAttributes";
-            this.flpAttributes.Size = new System.Drawing.Size(317, 97);
+            this.flpAttributes.Size = new System.Drawing.Size(318, 97);
             this.flpAttributes.TabIndex = 0;
             // 
             // panelName
@@ -592,17 +624,361 @@
             this.rtbWarn.Location = new System.Drawing.Point(124, 0);
             this.rtbWarn.Name = "rtbWarn";
             this.rtbWarn.ReadOnly = true;
-            this.rtbWarn.Size = new System.Drawing.Size(340, 48);
+            this.rtbWarn.Size = new System.Drawing.Size(660, 48);
             this.rtbWarn.TabIndex = 15;
             this.rtbWarn.Text = "The feature is highly experimental! Any changes made will be reflected when this " +
-    "window is closed. Don\'t forget to save after! You did take that backup, didn\'t y" +
-    "ou?";
+    "window is closed. \nDon\'t forget to save after! You did take that backup, didn\'t " +
+    "you?";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1, 5);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 26);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Unknown\r\nByte 1:";
+            this.toolTipProvider.SetToolTip(this.label4, "0 = None\r\n1 = Fuzzing (some Zones)\r\nOther values = Unknown");
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(1, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(49, 26);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Relative \r\nSpeed:";
+            this.toolTipProvider.SetToolTip(this.label6, "This seems to control how fast this\r\nsection of the layer scrolls horizontally\r\ni" +
+        "n relation to the player.");
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(1, 5);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(49, 26);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Constant\r\nSpeed:";
+            this.toolTipProvider.SetToolTip(this.label7, "This seems to control how fast\r\nthis section of the layer scrolls,\r\neven when the" +
+        " player is not moving.");
+            // 
+            // lbHorizontalRules
+            // 
+            this.lbHorizontalRules.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbHorizontalRules.FormattingEnabled = true;
+            this.lbHorizontalRules.Location = new System.Drawing.Point(0, 0);
+            this.lbHorizontalRules.Name = "lbHorizontalRules";
+            this.lbHorizontalRules.Size = new System.Drawing.Size(62, 134);
+            this.lbHorizontalRules.TabIndex = 0;
+            this.toolTipProvider.SetToolTip(this.lbHorizontalRules, "These IDs may be reassigned when you hit save.\r\n\r\nDo NOT trust them!");
+            // 
+            // btnAddHorizontalRule
+            // 
+            this.btnAddHorizontalRule.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddHorizontalRule.BackColor = System.Drawing.Color.PaleGreen;
+            this.btnAddHorizontalRule.ForeColor = System.Drawing.Color.DarkGreen;
+            this.btnAddHorizontalRule.Location = new System.Drawing.Point(3, 3);
+            this.btnAddHorizontalRule.Name = "btnAddHorizontalRule";
+            this.btnAddHorizontalRule.Size = new System.Drawing.Size(23, 23);
+            this.btnAddHorizontalRule.TabIndex = 4;
+            this.btnAddHorizontalRule.Text = "+";
+            this.toolTipProvider.SetToolTip(this.btnAddHorizontalRule, "Add new horizontal rule.");
+            this.btnAddHorizontalRule.UseVisualStyleBackColor = false;
+            this.btnAddHorizontalRule.Click += new System.EventHandler(this.btnAddHorizontalRule_Click);
+            // 
+            // btnRemoveHorizontalRule
+            // 
+            this.btnRemoveHorizontalRule.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemoveHorizontalRule.BackColor = System.Drawing.Color.LightCoral;
+            this.btnRemoveHorizontalRule.ForeColor = System.Drawing.Color.Red;
+            this.btnRemoveHorizontalRule.Location = new System.Drawing.Point(32, 3);
+            this.btnRemoveHorizontalRule.Name = "btnRemoveHorizontalRule";
+            this.btnRemoveHorizontalRule.Size = new System.Drawing.Size(23, 23);
+            this.btnRemoveHorizontalRule.TabIndex = 5;
+            this.btnRemoveHorizontalRule.Text = "-";
+            this.toolTipProvider.SetToolTip(this.btnRemoveHorizontalRule, "Delete selected horizontal rule.");
+            this.btnRemoveHorizontalRule.UseVisualStyleBackColor = false;
+            this.btnRemoveHorizontalRule.Click += new System.EventHandler(this.btnRemoveHorizontalRule_Click);
+            // 
+            // btnAddHorizontalMapping
+            // 
+            this.btnAddHorizontalMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddHorizontalMapping.BackColor = System.Drawing.Color.PaleGreen;
+            this.btnAddHorizontalMapping.ForeColor = System.Drawing.Color.DarkGreen;
+            this.btnAddHorizontalMapping.Location = new System.Drawing.Point(3, 3);
+            this.btnAddHorizontalMapping.Name = "btnAddHorizontalMapping";
+            this.btnAddHorizontalMapping.Size = new System.Drawing.Size(23, 23);
+            this.btnAddHorizontalMapping.TabIndex = 4;
+            this.btnAddHorizontalMapping.Text = "+";
+            this.toolTipProvider.SetToolTip(this.btnAddHorizontalMapping, "Add new mapping.");
+            this.btnAddHorizontalMapping.UseVisualStyleBackColor = false;
+            this.btnAddHorizontalMapping.Click += new System.EventHandler(this.btnAddHorizontalMapping_Click);
+            // 
+            // btnRemoveHorizontalMapping
+            // 
+            this.btnRemoveHorizontalMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemoveHorizontalMapping.BackColor = System.Drawing.Color.LightCoral;
+            this.btnRemoveHorizontalMapping.ForeColor = System.Drawing.Color.Red;
+            this.btnRemoveHorizontalMapping.Location = new System.Drawing.Point(32, 3);
+            this.btnRemoveHorizontalMapping.Name = "btnRemoveHorizontalMapping";
+            this.btnRemoveHorizontalMapping.Size = new System.Drawing.Size(23, 23);
+            this.btnRemoveHorizontalMapping.TabIndex = 5;
+            this.btnRemoveHorizontalMapping.Text = "-";
+            this.toolTipProvider.SetToolTip(this.btnRemoveHorizontalMapping, "Delete selected mapping.");
+            this.btnRemoveHorizontalMapping.UseVisualStyleBackColor = false;
+            this.btnRemoveHorizontalMapping.Click += new System.EventHandler(this.btnRemoveHorizontalMapping_Click);
+            // 
+            // nudHorizontalEffect
+            // 
+            this.nudHorizontalEffect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudHorizontalEffect.Location = new System.Drawing.Point(60, 6);
+            this.nudHorizontalEffect.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudHorizontalEffect.Name = "nudHorizontalEffect";
+            this.nudHorizontalEffect.Size = new System.Drawing.Size(50, 20);
+            this.nudHorizontalEffect.TabIndex = 1;
+            // 
+            // lbMappings
+            // 
+            this.lbMappings.DataSource = this.bsLayers;
+            this.lbMappings.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbMappings.FormattingEnabled = true;
+            this.lbMappings.Location = new System.Drawing.Point(0, 0);
+            this.lbMappings.Name = "lbMappings";
+            this.lbMappings.Size = new System.Drawing.Size(156, 95);
+            this.lbMappings.TabIndex = 16;
+            // 
+            // gbHorizontalMappings
+            // 
+            this.gbHorizontalMappings.Controls.Add(this.panelHorizMap);
+            this.gbHorizontalMappings.Controls.Add(this.nudLineCount);
+            this.gbHorizontalMappings.Controls.Add(this.lblLineCount);
+            this.gbHorizontalMappings.Controls.Add(this.nudStartLine);
+            this.gbHorizontalMappings.Controls.Add(this.label3);
+            this.gbHorizontalMappings.Location = new System.Drawing.Point(459, 239);
+            this.gbHorizontalMappings.Name = "gbHorizontalMappings";
+            this.gbHorizontalMappings.Size = new System.Drawing.Size(313, 141);
+            this.gbHorizontalMappings.TabIndex = 17;
+            this.gbHorizontalMappings.TabStop = false;
+            this.gbHorizontalMappings.Text = "Horizontal Mappings";
+            // 
+            // panelHorizMap
+            // 
+            this.panelHorizMap.Controls.Add(this.flowLayoutPanel1);
+            this.panelHorizMap.Controls.Add(this.lbMappings);
+            this.panelHorizMap.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelHorizMap.Location = new System.Drawing.Point(3, 16);
+            this.panelHorizMap.Name = "panelHorizMap";
+            this.panelHorizMap.Size = new System.Drawing.Size(156, 122);
+            this.panelHorizMap.TabIndex = 21;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.btnAddHorizontalMapping);
+            this.flowLayoutPanel1.Controls.Add(this.btnRemoveHorizontalMapping);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 95);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 27);
+            this.flowLayoutPanel1.TabIndex = 17;
+            // 
+            // nudLineCount
+            // 
+            this.nudLineCount.Location = new System.Drawing.Point(227, 73);
+            this.nudLineCount.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.nudLineCount.Name = "nudLineCount";
+            this.nudLineCount.Size = new System.Drawing.Size(80, 20);
+            this.nudLineCount.TabIndex = 20;
+            // 
+            // lblLineCount
+            // 
+            this.lblLineCount.AutoSize = true;
+            this.lblLineCount.Location = new System.Drawing.Point(165, 76);
+            this.lblLineCount.Name = "lblLineCount";
+            this.lblLineCount.Size = new System.Drawing.Size(61, 13);
+            this.lblLineCount.TabIndex = 19;
+            this.lblLineCount.Text = "Line Count:";
+            // 
+            // nudStartLine
+            // 
+            this.nudStartLine.Location = new System.Drawing.Point(227, 47);
+            this.nudStartLine.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.nudStartLine.Name = "nudStartLine";
+            this.nudStartLine.Size = new System.Drawing.Size(80, 20);
+            this.nudStartLine.TabIndex = 18;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(165, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 13);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "Start Line:";
+            // 
+            // gbHorizRules
+            // 
+            this.gbHorizRules.Controls.Add(this.panelHorizRules);
+            this.gbHorizRules.Controls.Add(this.lblRuleToMaps);
+            this.gbHorizRules.Controls.Add(this.panel7);
+            this.gbHorizRules.Controls.Add(this.panel8);
+            this.gbHorizRules.Controls.Add(this.panel9);
+            this.gbHorizRules.Controls.Add(this.panel10);
+            this.gbHorizRules.Location = new System.Drawing.Point(459, 54);
+            this.gbHorizRules.Name = "gbHorizRules";
+            this.gbHorizRules.Size = new System.Drawing.Size(313, 182);
+            this.gbHorizRules.TabIndex = 18;
+            this.gbHorizRules.TabStop = false;
+            this.gbHorizRules.Text = "Horizontal Rules";
+            // 
+            // panelHorizRules
+            // 
+            this.panelHorizRules.Controls.Add(this.flpHorizRules);
+            this.panelHorizRules.Controls.Add(this.lbHorizontalRules);
+            this.panelHorizRules.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelHorizRules.Location = new System.Drawing.Point(3, 16);
+            this.panelHorizRules.Name = "panelHorizRules";
+            this.panelHorizRules.Size = new System.Drawing.Size(62, 163);
+            this.panelHorizRules.TabIndex = 12;
+            // 
+            // flpHorizRules
+            // 
+            this.flpHorizRules.Controls.Add(this.btnAddHorizontalRule);
+            this.flpHorizRules.Controls.Add(this.btnRemoveHorizontalRule);
+            this.flpHorizRules.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flpHorizRules.Location = new System.Drawing.Point(0, 136);
+            this.flpHorizRules.Name = "flpHorizRules";
+            this.flpHorizRules.Size = new System.Drawing.Size(62, 27);
+            this.flpHorizRules.TabIndex = 0;
+            // 
+            // lblRuleToMaps
+            // 
+            this.lblRuleToMaps.AutoSize = true;
+            this.lblRuleToMaps.Location = new System.Drawing.Point(83, 152);
+            this.lblRuleToMaps.Name = "lblRuleToMaps";
+            this.lblRuleToMaps.Size = new System.Drawing.Size(198, 26);
+            this.lblRuleToMaps.TabIndex = 11;
+            this.lblRuleToMaps.Text = "These rules are applied to rows of pixels \r\nby the below mappings.";
+            this.lblRuleToMaps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panel7
+            // 
+            this.panel7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel7.Controls.Add(this.nudHorizontalEffect);
+            this.panel7.Controls.Add(this.label4);
+            this.panel7.Location = new System.Drawing.Point(70, 53);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(113, 33);
+            this.panel7.TabIndex = 7;
+            // 
+            // panel8
+            // 
+            this.panel8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel8.Controls.Add(this.nudHorizByte2);
+            this.panel8.Controls.Add(this.label5);
+            this.panel8.Location = new System.Drawing.Point(194, 53);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(113, 33);
+            this.panel8.TabIndex = 8;
+            // 
+            // nudHorizByte2
+            // 
+            this.nudHorizByte2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudHorizByte2.Location = new System.Drawing.Point(60, 6);
+            this.nudHorizByte2.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudHorizByte2.Name = "nudHorizByte2";
+            this.nudHorizByte2.Size = new System.Drawing.Size(50, 20);
+            this.nudHorizByte2.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(1, 5);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 26);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Unknown\r\nByte 2:";
+            // 
+            // panel9
+            // 
+            this.panel9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel9.Controls.Add(this.nudHorizVal1);
+            this.panel9.Controls.Add(this.label6);
+            this.panel9.Location = new System.Drawing.Point(70, 97);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(113, 33);
+            this.panel9.TabIndex = 9;
+            // 
+            // nudHorizVal1
+            // 
+            this.nudHorizVal1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudHorizVal1.Location = new System.Drawing.Point(60, 6);
+            this.nudHorizVal1.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.nudHorizVal1.Name = "nudHorizVal1";
+            this.nudHorizVal1.Size = new System.Drawing.Size(50, 20);
+            this.nudHorizVal1.TabIndex = 1;
+            // 
+            // panel10
+            // 
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel10.Controls.Add(this.nudHorizVal2);
+            this.panel10.Controls.Add(this.label7);
+            this.panel10.Location = new System.Drawing.Point(194, 97);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(113, 33);
+            this.panel10.TabIndex = 10;
+            // 
+            // nudHorizVal2
+            // 
+            this.nudHorizVal2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudHorizVal2.Location = new System.Drawing.Point(60, 6);
+            this.nudHorizVal2.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.nudHorizVal2.Name = "nudHorizVal2";
+            this.nudHorizVal2.Size = new System.Drawing.Size(50, 20);
+            this.nudHorizVal2.TabIndex = 1;
             // 
             // LayerManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 387);
+            this.ClientSize = new System.Drawing.Size(784, 387);
+            this.Controls.Add(this.gbHorizRules);
+            this.Controls.Add(this.gbHorizontalMappings);
             this.Controls.Add(this.rtbWarn);
             this.Controls.Add(this.panelLayers);
             this.Controls.Add(this.gbName);
@@ -649,6 +1025,28 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudUnknownWord2)).EndInit();
             this.panelLayers.ResumeLayout(false);
             this.flpLayerbuttons.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizontalEffect)).EndInit();
+            this.gbHorizontalMappings.ResumeLayout(false);
+            this.gbHorizontalMappings.PerformLayout();
+            this.panelHorizMap.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudLineCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStartLine)).EndInit();
+            this.gbHorizRules.ResumeLayout(false);
+            this.gbHorizRules.PerformLayout();
+            this.panelHorizRules.ResumeLayout(false);
+            this.flpHorizRules.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizByte2)).EndInit();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizVal1)).EndInit();
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHorizVal2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -701,5 +1099,34 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.RichTextBox rtbWarn;
         private System.Windows.Forms.ToolTip toolTipProvider;
+        private System.Windows.Forms.ListBox lbMappings;
+        private System.Windows.Forms.GroupBox gbHorizontalMappings;
+        private System.Windows.Forms.NumericUpDown nudLineCount;
+        private System.Windows.Forms.Label lblLineCount;
+        private System.Windows.Forms.NumericUpDown nudStartLine;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.GroupBox gbHorizRules;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.NumericUpDown nudHorizontalEffect;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.NumericUpDown nudHorizByte2;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.NumericUpDown nudHorizVal1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel panel10;
+        private System.Windows.Forms.NumericUpDown nudHorizVal2;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ListBox lbHorizontalRules;
+        private System.Windows.Forms.Label lblRuleToMaps;
+        private System.Windows.Forms.Panel panelHorizRules;
+        private System.Windows.Forms.FlowLayoutPanel flpHorizRules;
+        private System.Windows.Forms.Button btnAddHorizontalRule;
+        private System.Windows.Forms.Button btnRemoveHorizontalRule;
+        private System.Windows.Forms.Panel panelHorizMap;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button btnAddHorizontalMapping;
+        private System.Windows.Forms.Button btnRemoveHorizontalMapping;
     }
 }

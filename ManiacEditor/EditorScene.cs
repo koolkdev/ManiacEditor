@@ -62,6 +62,11 @@ namespace ManiacEditor
 
         public void Save(string filename)
         {
+            // save any changes made to the scrolling horizontal rules
+            foreach (var el in _editorLayers)
+            {
+                el.WriteHorizontalLineRules();
+            }
             Layers = _editorLayers.Select(el => el.Layer).ToList();
             Write(filename);
         }

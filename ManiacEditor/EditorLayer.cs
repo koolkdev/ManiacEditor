@@ -75,6 +75,15 @@ namespace ManiacEditor
 
         public ushort Height { get => _layer.Height; }
         public ushort Width { get => _layer.Width; }
+        public int HeightPixels { get => _layer.Height * TILE_SIZE; }
+        public int WidthPixels { get => _layer.Height * TILE_SIZE; }
+
+        /// <summary>
+        /// Collection of rules and mappings representing the horizontal scrolling info
+        /// and other rules affecting lines of pixels in this layer
+        /// </summary>
+        public IList<HorizontalLayerScroll> HorizontalLayerScroll { get => _horizontalLayerRules; }
+        private IList<HorizontalLayerScroll> _horizontalLayerRules;
 
         static int DivideRoundUp(int number, int by)
         {
@@ -184,6 +193,88 @@ namespace ManiacEditor
 
             SelectedTiles = new PointsMap(Width, Height);
             TempSelectionTiles = new PointsMap(Width, Height);
+
+            _horizontalLayerRules = ReadHorizontalLineRules();
+        }
+
+        /// <summary>
+        /// Interpret the layer's set of horizontal scroll rules (ScrollInfo),
+        /// and the line level map (ScrollIndexes) into that set of rules.
+        /// </summary>
+        /// <returns>List of HorizontalLayerScroll objects containing the scrolling rules</returns>
+        private IList<HorizontalLayerScroll> ReadHorizontalLineRules()
+        {
+            var tempList = new List<HorizontalLayerScroll>();
+            byte generatedId = 0;
+            foreach (var scrollInfo in _layer.ScrollingInfo)
+            {
+                tempList.Add(new HorizontalLayerScroll(generatedId, scrollInfo));
+                ++generatedId;
+            }
+
+            var ruleMapCount = _layer.ScrollIndexes.Count();
+            int i = 0;
+            while (i < ruleMapCount)
+            {
+                var currentValue = _layer.ScrollIndexes[i];
+                var currentRule = _layer.ScrollingInfo[currentValue];
+                var currentCount = 0;
+                var start = i;
+                while (   i < ruleMapCount 
+                       && currentValue == _layer.ScrollIndexes[i])
+                {
+                    ++currentCount;
+                    ++i;
+                }
+
+                tempList.First(hlr => hlr.Id == currentValue).AddMapping(start, currentCount);
+            }
+
+            return tempList;
+        }
+
+        /// <summary>
+        /// Persist the contents of the HorizontalLayerRules collection,
+        /// to the Layer's RSDKv5 backing objects and arrays.
+        /// </summary>
+        public void WriteHorizontalLineRules()
+        {
+            var newIndexes = new byte[_layer.ScrollIndexes.Length];
+            _layer.ScrollingInfo = _horizontalLayerRules.Select(hlr => hlr.ScrollInfo).ToList();
+
+            // the internal ID may now be inaccurate
+            // we were only using it for display purposes anyway
+            // generate some correct ones, and use those!
+            byte newIndex = 0;
+            foreach (var hlr in _horizontalLayerRules)
+            {
+                foreach (var lml in hlr.LinesMapList)
+                {
+                    var count = lml.LineCount;
+                    int index = lml.StartIndex;
+                    for (int i = 0; i < count; i++)
+                    {
+                        newIndexes[index + i] = newIndex;
+                    }
+                }
+                ++newIndex;
+            }
+
+            _layer.ScrollIndexes = newIndexes;
+        }
+
+        /// <summary>
+        /// Creates a new HorizontalLayerScroll object with backing ScrollInfo object.
+        /// Adding it to the HorizontalLayerRules collection.
+        /// </summary>
+        public void ProduceHorizontalLayerScroll()
+        {
+            var id = (byte)(_horizontalLayerRules.Select(hlr => hlr.Id).Max() + 1);
+            var info = new ScrollInfo();
+
+            _layer.ScrollingInfo.Add(info);
+            var hls = new HorizontalLayerScroll(id, info);
+            _horizontalLayerRules.Add(hls);
         }
 
         public void StartDrag()

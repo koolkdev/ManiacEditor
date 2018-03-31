@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="Enums\FlipDirection.cs" />
     <Compile Include="FolderSelectDialog.cs" />
+    <Compile Include="HorizontalLayerScroll.cs" />
     <Compile Include="IDrawArea.cs" />
     <Compile Include="ImageViewer.cs">
       <SubType>UserControl</SubType>
@@ -122,6 +123,7 @@
     <Compile Include="SceneSelect.Designer.cs">
       <DependentUpon>SceneSelect.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScrollInfoLines.cs" />
     <Compile Include="SoundImporter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,5 +225,6 @@
       <Name>RSDKv5</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

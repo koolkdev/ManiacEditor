@@ -11,10 +11,17 @@ namespace ManiacEditor
     public partial class LayerManager : Form
     {
         private EditorScene _editorScene;
-        private IEnumerable<EditorLayer> Layers => _editorScene?.AllLayers;
+        private IEnumerable<EditorLayer> Layers
+        {
+            get => _editorScene?.AllLayers;
+        }
 
         private bool _layerArrangementChanged = false;
 
+        private BindingSource _bsHorizontal;
+        private BindingSource _bsHorizontalMap;
+        
+        // I clearly have no understanding of WinForms Data Binding
         public LayerManager(EditorScene editorScene)
         {
             InitializeComponent();
@@ -32,12 +39,26 @@ namespace ManiacEditor
             nudWidth.DataBindings.Add(new Binding("Value", bsLayers, "Width"));
             nudHeight.DataBindings.Add(new Binding("Value", bsLayers, "Height"));
 
-            tbName.DataBindings.Add(CreateBinding("Text", "Name"));
+            tbName.DataBindings.Add(CreateBinding("Text", bsLayers, "Name"));
 
-            nudVerticalScroll.DataBindings.Add(CreateBinding("Value", "ScrollingVertical"));
-            nudUnknownByte2.DataBindings.Add(CreateBinding("Value", "UnknownByte2"));
-            nudUnknownWord1.DataBindings.Add(CreateBinding("Value", "UnknownWord1"));
-            nudUnknownWord2.DataBindings.Add(CreateBinding("Value", "UnknownWord2"));
+            nudVerticalScroll.DataBindings.Add(CreateBinding("Value", bsLayers, "ScrollingVertical"));
+            nudUnknownByte2.DataBindings.Add(CreateBinding("Value", bsLayers, "UnknownByte2"));
+            nudUnknownWord1.DataBindings.Add(CreateBinding("Value", bsLayers, "UnknownWord1"));
+            nudUnknownWord2.DataBindings.Add(CreateBinding("Value", bsLayers, "UnknownWord2"));
+
+            _bsHorizontal = new BindingSource(bsLayers, "HorizontalLayerScroll");
+            lbHorizontalRules.DataSource = _bsHorizontal;
+            lbHorizontalRules.DisplayMember = "Id";
+
+            nudHorizontalEffect.DataBindings.Add(CreateBinding("Value", _bsHorizontal, "UnknownByte1"));
+            nudHorizByte2.DataBindings.Add(CreateBinding("Value", _bsHorizontal, "UnknownByte2"));
+            nudHorizVal1.DataBindings.Add(CreateBinding("Value", _bsHorizontal, "UnknownWord1"));
+            nudHorizVal2.DataBindings.Add(CreateBinding("Value", _bsHorizontal, "UnknownWord2"));
+
+            _bsHorizontalMap = new BindingSource(_bsHorizontal, "LinesMapList");
+            lbMappings.DataSource = _bsHorizontalMap;
+            nudStartLine.DataBindings.Add(CreateBinding("Value", _bsHorizontalMap, "StartIndex"));
+            nudLineCount.DataBindings.Add(CreateBinding("Value", _bsHorizontalMap, "LineCount"));
         }
 
         private Binding CreateTextBinding(string property, ConvertEventHandler formatHandler)
@@ -47,9 +68,9 @@ namespace ManiacEditor
             return b;
         }
 
-        private Binding CreateBinding(string targetControlProperty, string sourceDataProperty)
+        private Binding CreateBinding(string targetControlProperty, BindingSource bindingSource, string sourceDataProperty)
         {
-            return new Binding(targetControlProperty, bsLayers, sourceDataProperty, false, DataSourceUpdateMode.OnPropertyChanged);
+            return new Binding(targetControlProperty, bindingSource, sourceDataProperty, false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void FormatBasicNumber(object sender, ConvertEventArgs e)
@@ -155,6 +176,95 @@ They may well happen anway, this is all experimental!",
                             "Don't forget!",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
+        }
+
+        
+        private void btnAddHorizontalRule_Click(object sender, EventArgs e)
+        {
+            // create the horizontal rule set
+            var layer = bsLayers.Current as EditorLayer;
+            layer.ProduceHorizontalLayerScroll();
+
+            // make sure our view of the underlying set of rules is refreshed
+            _bsHorizontal.CurrencyManager.Refresh();
+
+            // and select the one we just made
+            _bsHorizontal.Position = _bsHorizontal.Count - 1;
+        }
+
+
+        private void btnRemoveHorizontalRule_Click(object sender, EventArgs e)
+        {
+            if (_bsHorizontal.Count == 1)
+            {
+                MessageBox.Show("There must be at least one set of horizontal scrolling rules.",
+                                "Delete not allowed.",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                return;
+            }
+
+            var current = _bsHorizontal.Current as HorizontalLayerScroll;
+            if (null == current) return;
+
+            var check = MessageBox.Show($@"Deleting a set of horizontal scrolling rules can not be undone!
+Are you sure you want to delete the set of rules with id '{current.Id}'?
+All mappings for this rule will be deleted too!",
+                                        "Confirm Deletion",
+                                        MessageBoxButtons.YesNo,
+                                        MessageBoxIcon.Warning,
+                                        MessageBoxDefaultButton.Button2);
+
+            if (check == DialogResult.Yes)
+            {
+                _bsHorizontal.Remove(current);
+            }
+        }
+
+
+        private void btnAddHorizontalMapping_Click(object sender, EventArgs e)
+        {
+            var hls = _bsHorizontal.Current as HorizontalLayerScroll;
+            if (null == hls) return;
+
+            hls.AddMapping();
+            _bsHorizontalMap.CurrencyManager.Refresh();
+        }
+
+
+        private void btnRemoveHorizontalMapping_Click(object sender, EventArgs e)
+        {
+            var current = _bsHorizontalMap.Current as ScrollInfoLines;
+            if (null == current) return;
+
+            var check = MessageBox.Show($@"Deleting a set of horizontal scrolling rule mappings can not be undone!
+Are you sure you want to delete this mapping?",
+                                        "Confirm Deletion",
+                                        MessageBoxButtons.YesNo,
+                                        MessageBoxIcon.Warning,
+                                        MessageBoxDefaultButton.Button2);
+
+            if (check == DialogResult.Yes)
+            {
+                _bsHorizontalMap.Remove(current);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+
+            // clean up our bindings
+            if (_bsHorizontal != null) _bsHorizontal.Dispose();
+            if (_bsHorizontalMap != null) _bsHorizontal.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }
