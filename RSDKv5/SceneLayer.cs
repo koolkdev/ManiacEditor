@@ -18,8 +18,8 @@ namespace RSDKv5
         private ushort _width;
         private ushort _height;
 
-        public ushort UnknownWord1;
-        public ushort UnknownWord2;
+        public short UnknownWord1;
+        public short UnknownWord2;
 
         public List<ScrollInfo> ScrollingInfo = new List<ScrollInfo>();
 
@@ -61,8 +61,8 @@ namespace RSDKv5
             Width = reader.ReadUInt16();
             Height = reader.ReadUInt16();
 
-            UnknownWord1 = reader.ReadUInt16();
-            UnknownWord2 = reader.ReadUInt16();
+            UnknownWord1 = reader.ReadInt16();
+            UnknownWord2 = reader.ReadInt16();
 
             ushort scrolling_info_count = reader.ReadUInt16();
             for (int i = 0; i < scrolling_info_count; ++i)

@@ -139,7 +139,7 @@
             this.lbLayers.FormattingEnabled = true;
             this.lbLayers.Location = new System.Drawing.Point(0, 0);
             this.lbLayers.Name = "lbLayers";
-            this.lbLayers.Size = new System.Drawing.Size(124, 355);
+            this.lbLayers.Size = new System.Drawing.Size(124, 368);
             this.lbLayers.TabIndex = 0;
             // 
             // gbRawSize
@@ -148,7 +148,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbRawSize.Controls.Add(this.flpEffectiveSize);
             this.gbRawSize.Controls.Add(this.flpCurrentSize);
-            this.gbRawSize.Location = new System.Drawing.Point(129, 173);
+            this.gbRawSize.Location = new System.Drawing.Point(129, 187);
             this.gbRawSize.Name = "gbRawSize";
             this.gbRawSize.Size = new System.Drawing.Size(324, 63);
             this.gbRawSize.TabIndex = 11;
@@ -240,7 +240,7 @@
             this.gbResize.Controls.Add(this.panel2);
             this.gbResize.Controls.Add(this.lblResizedEffective);
             this.gbResize.Controls.Add(this.btnResize);
-            this.gbResize.Location = new System.Drawing.Point(129, 239);
+            this.gbResize.Location = new System.Drawing.Point(129, 253);
             this.gbResize.Name = "gbResize";
             this.gbResize.Size = new System.Drawing.Size(324, 141);
             this.gbResize.TabIndex = 1;
@@ -352,7 +352,7 @@
             this.gbName.Controls.Add(this.flpAttributes);
             this.gbName.Location = new System.Drawing.Point(129, 54);
             this.gbName.Name = "gbName";
-            this.gbName.Size = new System.Drawing.Size(324, 116);
+            this.gbName.Size = new System.Drawing.Size(324, 130);
             this.gbName.TabIndex = 14;
             this.gbName.TabStop = false;
             this.gbName.Text = "Attributes";
@@ -368,7 +368,7 @@
             this.flpAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpAttributes.Location = new System.Drawing.Point(3, 16);
             this.flpAttributes.Name = "flpAttributes";
-            this.flpAttributes.Size = new System.Drawing.Size(318, 97);
+            this.flpAttributes.Size = new System.Drawing.Size(318, 111);
             this.flpAttributes.TabIndex = 0;
             // 
             // panelName
@@ -429,11 +429,13 @@
             // lblVertical
             // 
             this.lblVertical.AutoSize = true;
-            this.lblVertical.Location = new System.Drawing.Point(1, 5);
+            this.lblVertical.Location = new System.Drawing.Point(1, 7);
             this.lblVertical.Name = "lblVertical";
-            this.lblVertical.Size = new System.Drawing.Size(88, 13);
+            this.lblVertical.Size = new System.Drawing.Size(58, 13);
             this.lblVertical.TabIndex = 0;
-            this.lblVertical.Text = "Vertical Scrolling:";
+            this.lblVertical.Text = "Behaviour:";
+            this.toolTipProvider.SetToolTip(this.lblVertical, "Triggers special behaviours. \r\n0 = None.\r\n1, 2 & 3 are other valid values...\r\nbut" +
+        " most will only work on certain stages.");
             // 
             // panel4
             // 
@@ -464,11 +466,13 @@
             // lblUnknownByte2
             // 
             this.lblUnknownByte2.AutoSize = true;
-            this.lblUnknownByte2.Location = new System.Drawing.Point(1, 5);
+            this.lblUnknownByte2.Location = new System.Drawing.Point(1, 7);
             this.lblUnknownByte2.Name = "lblUnknownByte2";
-            this.lblUnknownByte2.Size = new System.Drawing.Size(89, 13);
+            this.lblUnknownByte2.Size = new System.Drawing.Size(78, 13);
             this.lblUnknownByte2.TabIndex = 0;
-            this.lblUnknownByte2.Text = "Unknown Byte 2:";
+            this.lblUnknownByte2.Text = "Drawing Order:";
+            this.toolTipProvider.SetToolTip(this.lblUnknownByte2, "Order in which layers are drawn.\r\n0 = Backmost\r\nBGSwitch entities and Behaviour v" +
+        "alues\r\ndo special things, so take care.");
             // 
             // panel5
             // 
@@ -478,19 +482,24 @@
             this.panel5.Controls.Add(this.label1);
             this.panel5.Location = new System.Drawing.Point(3, 70);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(151, 26);
+            this.panel5.Size = new System.Drawing.Size(151, 37);
             this.panel5.TabIndex = 5;
             // 
             // nudUnknownWord1
             // 
             this.nudUnknownWord1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudUnknownWord1.Location = new System.Drawing.Point(95, 3);
+            this.nudUnknownWord1.Location = new System.Drawing.Point(95, 8);
             this.nudUnknownWord1.Maximum = new decimal(new int[] {
-            65535,
+            32767,
             0,
             0,
             0});
+            this.nudUnknownWord1.Minimum = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            -2147483648});
             this.nudUnknownWord1.Name = "nudUnknownWord1";
             this.nudUnknownWord1.Size = new System.Drawing.Size(53, 20);
             this.nudUnknownWord1.TabIndex = 1;
@@ -500,9 +509,11 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(1, 5);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 13);
+            this.label1.Size = new System.Drawing.Size(79, 26);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Unknown Value 1:";
+            this.label1.Text = "Relative\r\nVertical Speed:";
+            this.toolTipProvider.SetToolTip(this.label1, "This seems to control how fast this\r\nlayer scrolls vertically in relation to \r\nth" +
+        "e player.\r\n\r\nIf the player can walk on this layer,\r\nthis should be set to 256.");
             // 
             // panel6
             // 
@@ -513,19 +524,24 @@
             this.flpAttributes.SetFlowBreak(this.panel6, true);
             this.panel6.Location = new System.Drawing.Point(160, 70);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(151, 26);
+            this.panel6.Size = new System.Drawing.Size(151, 37);
             this.panel6.TabIndex = 6;
             // 
             // nudUnknownWord2
             // 
             this.nudUnknownWord2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudUnknownWord2.Location = new System.Drawing.Point(95, 3);
+            this.nudUnknownWord2.Location = new System.Drawing.Point(95, 8);
             this.nudUnknownWord2.Maximum = new decimal(new int[] {
-            65535,
+            32767,
             0,
             0,
             0});
+            this.nudUnknownWord2.Minimum = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            -2147483648});
             this.nudUnknownWord2.Name = "nudUnknownWord2";
             this.nudUnknownWord2.Size = new System.Drawing.Size(53, 20);
             this.nudUnknownWord2.TabIndex = 1;
@@ -535,9 +551,12 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(1, 5);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 13);
+            this.label2.Size = new System.Drawing.Size(79, 26);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Unknown Value 2:";
+            this.label2.Text = "Constant\r\nVertical Speed:";
+            this.toolTipProvider.SetToolTip(this.label2, "This seems to control how fast\r\nlayer scrolls vertically, even when \r\nthe player " +
+        "is not moving.\r\n\r\nIf the player can walk on this layer,\r\nthis should be set to 0" +
+        ".");
             // 
             // panelLayers
             // 
@@ -546,7 +565,7 @@
             this.panelLayers.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLayers.Location = new System.Drawing.Point(0, 0);
             this.panelLayers.Name = "panelLayers";
-            this.panelLayers.Size = new System.Drawing.Size(124, 387);
+            this.panelLayers.Size = new System.Drawing.Size(124, 402);
             this.panelLayers.TabIndex = 1;
             // 
             // flpLayerbuttons
@@ -556,7 +575,7 @@
             this.flpLayerbuttons.Controls.Add(this.btnAdd);
             this.flpLayerbuttons.Controls.Add(this.btnDelete);
             this.flpLayerbuttons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flpLayerbuttons.Location = new System.Drawing.Point(0, 358);
+            this.flpLayerbuttons.Location = new System.Drawing.Point(0, 373);
             this.flpLayerbuttons.Name = "flpLayerbuttons";
             this.flpLayerbuttons.Size = new System.Drawing.Size(124, 29);
             this.flpLayerbuttons.TabIndex = 4;
@@ -570,7 +589,8 @@
             this.btnUp.Size = new System.Drawing.Size(23, 23);
             this.btnUp.TabIndex = 0;
             this.btnUp.Text = "↑";
-            this.toolTipProvider.SetToolTip(this.btnUp, "Move layer further into background.");
+            this.toolTipProvider.SetToolTip(this.btnUp, "Move layer earlier in list.\r\nIn the event of a draw order tie, later\r\nlayers seem" +
+        " to get drawn on top.");
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
@@ -583,7 +603,8 @@
             this.btnDown.Size = new System.Drawing.Size(23, 23);
             this.btnDown.TabIndex = 1;
             this.btnDown.Text = "↓";
-            this.toolTipProvider.SetToolTip(this.btnDown, "Move layer further into foreground.");
+            this.toolTipProvider.SetToolTip(this.btnDown, "Move layer later in list.\r\nIn the event of a draw order tie, later\r\nlayers seem t" +
+        "o get drawn on top.");
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
             // 
@@ -633,11 +654,11 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 5);
+            this.label4.Location = new System.Drawing.Point(1, 10);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 26);
+            this.label4.Size = new System.Drawing.Size(58, 13);
             this.label4.TabIndex = 0;
-            this.label4.Text = "Unknown\r\nByte 1:";
+            this.label4.Text = "Behaviour:";
             this.toolTipProvider.SetToolTip(this.label4, "0 = None\r\n1 = Fuzzing (some Zones)\r\nOther values = Unknown");
             // 
             // label6
@@ -649,7 +670,8 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "Relative \r\nSpeed:";
             this.toolTipProvider.SetToolTip(this.label6, "This seems to control how fast this\r\nsection of the layer scrolls horizontally\r\ni" +
-        "n relation to the player.");
+        "n relation to the player.\r\n\r\nIf the player can walk on this layer,\r\nthis should " +
+        "be set to 256.");
             // 
             // label7
             // 
@@ -660,7 +682,8 @@
             this.label7.TabIndex = 0;
             this.label7.Text = "Constant\r\nSpeed:";
             this.toolTipProvider.SetToolTip(this.label7, "This seems to control how fast\r\nthis section of the layer scrolls,\r\neven when the" +
-        " player is not moving.");
+        " player is not moving.\r\n\r\nIf the player can walk on this layer,\r\nthis should be " +
+        "set to 0.");
             // 
             // lbHorizontalRules
             // 
@@ -668,7 +691,7 @@
             this.lbHorizontalRules.FormattingEnabled = true;
             this.lbHorizontalRules.Location = new System.Drawing.Point(0, 0);
             this.lbHorizontalRules.Name = "lbHorizontalRules";
-            this.lbHorizontalRules.Size = new System.Drawing.Size(62, 134);
+            this.lbHorizontalRules.Size = new System.Drawing.Size(62, 147);
             this.lbHorizontalRules.TabIndex = 0;
             this.toolTipProvider.SetToolTip(this.lbHorizontalRules, "These IDs may be reassigned when you hit save.\r\n\r\nDo NOT trust them!");
             // 
@@ -763,7 +786,7 @@
             this.gbHorizontalMappings.Controls.Add(this.lblLineCount);
             this.gbHorizontalMappings.Controls.Add(this.nudStartLine);
             this.gbHorizontalMappings.Controls.Add(this.label3);
-            this.gbHorizontalMappings.Location = new System.Drawing.Point(459, 239);
+            this.gbHorizontalMappings.Location = new System.Drawing.Point(459, 253);
             this.gbHorizontalMappings.Name = "gbHorizontalMappings";
             this.gbHorizontalMappings.Size = new System.Drawing.Size(313, 141);
             this.gbHorizontalMappings.TabIndex = 17;
@@ -842,7 +865,7 @@
             this.gbHorizRules.Controls.Add(this.panel10);
             this.gbHorizRules.Location = new System.Drawing.Point(459, 54);
             this.gbHorizRules.Name = "gbHorizRules";
-            this.gbHorizRules.Size = new System.Drawing.Size(313, 182);
+            this.gbHorizRules.Size = new System.Drawing.Size(313, 196);
             this.gbHorizRules.TabIndex = 18;
             this.gbHorizRules.TabStop = false;
             this.gbHorizRules.Text = "Horizontal Rules";
@@ -854,7 +877,7 @@
             this.panelHorizRules.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelHorizRules.Location = new System.Drawing.Point(3, 16);
             this.panelHorizRules.Name = "panelHorizRules";
-            this.panelHorizRules.Size = new System.Drawing.Size(62, 163);
+            this.panelHorizRules.Size = new System.Drawing.Size(62, 177);
             this.panelHorizRules.TabIndex = 12;
             // 
             // flpHorizRules
@@ -862,7 +885,7 @@
             this.flpHorizRules.Controls.Add(this.btnAddHorizontalRule);
             this.flpHorizRules.Controls.Add(this.btnRemoveHorizontalRule);
             this.flpHorizRules.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flpHorizRules.Location = new System.Drawing.Point(0, 136);
+            this.flpHorizRules.Location = new System.Drawing.Point(0, 150);
             this.flpHorizRules.Name = "flpHorizRules";
             this.flpHorizRules.Size = new System.Drawing.Size(62, 27);
             this.flpHorizRules.TabIndex = 0;
@@ -939,10 +962,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.nudHorizVal1.Location = new System.Drawing.Point(60, 6);
             this.nudHorizVal1.Maximum = new decimal(new int[] {
-            65535,
+            32767,
             0,
             0,
             0});
+            this.nudHorizVal1.Minimum = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            -2147483648});
             this.nudHorizVal1.Name = "nudHorizVal1";
             this.nudHorizVal1.Size = new System.Drawing.Size(50, 20);
             this.nudHorizVal1.TabIndex = 1;
@@ -964,10 +992,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.nudHorizVal2.Location = new System.Drawing.Point(60, 6);
             this.nudHorizVal2.Maximum = new decimal(new int[] {
-            65535,
+            32767,
             0,
             0,
             0});
+            this.nudHorizVal2.Minimum = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            -2147483648});
             this.nudHorizVal2.Name = "nudHorizVal2";
             this.nudHorizVal2.Size = new System.Drawing.Size(50, 20);
             this.nudHorizVal2.TabIndex = 1;
@@ -976,7 +1009,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 387);
+            this.ClientSize = new System.Drawing.Size(784, 402);
             this.Controls.Add(this.gbHorizRules);
             this.Controls.Add(this.gbHorizontalMappings);
             this.Controls.Add(this.rtbWarn);
@@ -984,6 +1017,7 @@
             this.Controls.Add(this.gbName);
             this.Controls.Add(this.gbResize);
             this.Controls.Add(this.gbRawSize);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(480, 425);

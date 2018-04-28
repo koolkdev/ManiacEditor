@@ -61,13 +61,13 @@ namespace ManiacEditor
             set => _layer.UnknownByte2 = value;
         }
 
-        public ushort UnknownWord1
+        public short UnknownWord1
         {
             get => _layer.UnknownWord1;
             set => _layer.UnknownWord1 = value;
         }
 
-        public ushort UnknownWord2
+        public short UnknownWord2
         {
             get => _layer.UnknownWord2;
             set => _layer.UnknownWord2 = value;

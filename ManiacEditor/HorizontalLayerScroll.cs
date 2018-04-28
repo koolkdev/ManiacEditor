@@ -43,8 +43,8 @@ namespace ManiacEditor
 
         public byte UnknownByte1 { get => _scrollInfo.UnknownByte1; set => _scrollInfo.UnknownByte1 = value; }
         public byte UnknownByte2 { get => _scrollInfo.UnknownByte2; set => _scrollInfo.UnknownByte2 = value; }
-        public ushort UnknownWord1 { get => _scrollInfo.UnknownWord1; set => _scrollInfo.UnknownWord1 = value; }
-        public ushort UnknownWord2 { get => _scrollInfo.UnknownWord2; set => _scrollInfo.UnknownWord2 = value; }
+        public short UnknownWord1 { get => _scrollInfo.UnknownWord1; set => _scrollInfo.UnknownWord1 = value; }
+        public short UnknownWord2 { get => _scrollInfo.UnknownWord2; set => _scrollInfo.UnknownWord2 = value; }
 
         public IList<ScrollInfoLines> LinesMapList { get => _linesMapList; }
         public ScrollInfo ScrollInfo { get => _scrollInfo; }
