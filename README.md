@@ -2,7 +2,9 @@
 
 Find my latest version [here](https://github.com/OtherworldBob/ManiacEditor/releases/latest), yes, it's still a Beta!
 
-Find the original by **koolkdev** over [there](https://github.com/koolkdev/ManiacEditor/releases/latest).
+Find the original by **koolkdev** over [there](https://github.com/koolkdev/ManiacEditor/releases/latest), from which this version derives. None of this would be possible without the work done in the original!
+
+[![Build status](https://ci.appveyor.com/api/projects/status/pubh9p6k0ti8muk4/branch/master?svg=true)](https://ci.appveyor.com/project/OtherworldBob/maniaceditor/branch/master)
 
 ## Tiles editing
 
@@ -51,5 +53,6 @@ You can choose which properties the placed tiles will have by clicking on the ch
 * Layer reordering, creation, destruction and resizing (too big and the game will crash!); you can also edit some of the magic values assoicated with the layers too.
   * You'll need to fix-up any BGSwitch entities to account for anything you change though.
 * New export function to write each layer of a scene to its own file.
+* Data Directory switching. You can now switch parent Data directories without closing the application.
 * Extra crashes! Save often, backup well.
 * Non-descript Undo/Redo helpers that don't tell you much most of the time.
