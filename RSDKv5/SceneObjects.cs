@@ -18,13 +18,13 @@ namespace RSDKv5
         public List<SceneEntity> Entities = new List<SceneEntity>();
 
 
-        /*public SceneObjects(NameIdentifier name, List<AttributeInfo> attributes)
+        public SceneObject(NameIdentifier name, List<AttributeInfo> attributes)
         {
-            this.Name = name;
-            this.Attributes = attributes;
+            Name = name;
+            Attributes = attributes;
         }
 
-        public SceneObjects(string name, List<AttributeInfo> attributes) : this(new NameIdentifier(name), attributes) { }*/
+        /*public SceneObjects(string name, List<AttributeInfo> attributes) : this(new NameIdentifier(name), attributes) { }*/
 
         internal SceneObject(Reader reader)
         {

@@ -132,7 +132,7 @@ namespace ManiacEditor
 
             LocalProperties objProperties = new LocalProperties();
             int category_index = 2 + entity.Attributes.Count;
-            addProperty(objProperties, category_index, "object", "name", "string", entity.Object.Name.ToString(), true);
+            addProperty(objProperties, category_index, "object", "name", "string", entity.Object.Name.ToString(), false);
             addProperty(objProperties, category_index, "object", "entitySlot", "ushort", entity.SlotID, true);
             --category_index;
             addProperty(objProperties, category_index, "position", "x", "float", entity.Position.X.High + ((float)entity.Position.X.Low / 0x10000));
@@ -276,6 +276,55 @@ namespace ManiacEditor
                 entity.Position = pos;
                 if (entity == currentEntity)
                     UpdateCurrentEntityProperites();
+            }
+            else if (category == "object")
+            {
+                if (name == "name" && oldValue != value)
+                {
+                    var info = RSDKv5.Objects.GetObjectInfo(new RSDKv5.NameIdentifier(value as string));
+                    if (info == null)
+                    {
+                        MessageBox.Show("Unknown Object", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    var objects = ((BindingList<RSDKv5.SceneObject>)_bindingSceneObjectsSource.DataSource).ToList();
+                    var obj = objects.FirstOrDefault(t => t.Name.Name == value as string);
+                    if (obj != null)
+                    {
+                        entity.Attributes.Clear();
+                        entity.attributesMap.Clear();
+                        foreach (var attb in info.Attributes)
+                        {
+                            var attributeValue = new RSDKv5.AttributeValue(attb.Type);
+                            entity.Attributes.Add(attributeValue);
+                            entity.attributesMap.Add(attb.Name.Name, attributeValue);
+                        }
+                        entity.Object.Entities.Remove(entity);
+                        entity.Object = obj;
+                        obj.Entities.Add(entity);
+                    }
+                    else
+                    {
+                        // The new object
+                        var sobj = new RSDKv5.SceneObject(info.Name, info.Attributes);
+
+                        entity.Attributes.Clear();
+                        entity.attributesMap.Clear();
+                        foreach (var attb in info.Attributes)
+                        {
+                            var attributeValue = new RSDKv5.AttributeValue(attb.Type);
+                            entity.Attributes.Add(attributeValue);
+                            entity.attributesMap.Add(attb.Name.Name, attributeValue);
+                        }
+                        entity.Object.Entities.Remove(entity);
+                        entity.Object = sobj;
+                        sobj.Entities.Add(entity);
+                        objects.Add(sobj);
+                    }
+                }
+                // Update Properties
+                currentEntity = null;
+                UpdateEntitiesProperties(new List<RSDKv5.SceneEntity>() { entity });
             }
             else
             {

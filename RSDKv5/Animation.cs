@@ -73,8 +73,8 @@ namespace RSDKv5
             public List<HitBox> HitBoxes = new List<HitBox>();
             public int SpriteSheet = 0;
             public int CollisionBox = 0;
-            public int Unknown0 = 0;
-            public int Unknown1 = 0;
+            public int Duration = 0;
+            public int ID = 0;
             public int X = 0;
             public int Y = 0;
             public int Width = 0;
@@ -87,8 +87,8 @@ namespace RSDKv5
                 var frame = new Frame();
                 frame.SpriteSheet = reader.ReadByte();
                 frame.CollisionBox = 0;
-                frame.Unknown0 = reader.ReadInt16();
-                frame.Unknown1 = reader.ReadInt16();
+                frame.Duration = reader.ReadInt16();
+                frame.ID = reader.ReadInt16();
                 frame.X = reader.ReadInt16();
                 frame.Y = reader.ReadInt16();
                 frame.Width = reader.ReadInt16();

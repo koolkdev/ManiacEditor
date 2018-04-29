@@ -11,7 +11,7 @@ namespace RSDKv5
     {
         public readonly ushort SlotID;
         public Position Position;
-        public readonly SceneObject Object;
+        public SceneObject Object;
         public List<AttributeValue> Attributes = new List<AttributeValue>();
         public Dictionary<string, AttributeValue> attributesMap = new Dictionary<string, AttributeValue>();
 
