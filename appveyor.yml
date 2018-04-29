@@ -8,7 +8,12 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
+before_build:
+- cmd: nuget restore
 build:
   verbosity: minimal
 after_build:
-- cmd: 7z a ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\LICENSE
+- cmd: 7z a ManiacEditor-OBE-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\LICENSE
+artifacts:
+- path: ManiacEditor-OBE-%APPVEYOR_BUILD_VERSION%.zip
+  name: ManiacEditor-OBE
