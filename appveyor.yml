@@ -1,16 +1,14 @@
-os:
-  - Visual Studio 2017
-
-shallow_clone: true
-
-configuration:
-  - Release
-
-before_build:
-  - nuget restore
-
+version: 0.2.23.{build}
+skip_tags: true
+image: Visual Studio 2017
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+build:
+  verbosity: minimal
 after_build:
-  - 7z a ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll
-
-artifacts:
-  - path: ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip
+- cmd: 7z a ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\LICENSE
