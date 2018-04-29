@@ -15,13 +15,10 @@ namespace ManiacEditor
             labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             labelCopyright.Text = AssemblyCopyright;
             llAbout.Links.Clear();
-            var koolkdevLink = new LinkLabel.Link(136, 8, "https://github.com/koolkdev/ManiacEditor") { Description = "koolkdev's GitHub page." };
-            var otherworldbobLink = new LinkLabel.Link(197, 13, "https://github.com/OtherworldBob/ManiacEditor") { Description = "OtherworldBob's GitHub page." };
-            var thesupersonic16Link = new LinkLabel.Link(215, 12, "https://github.com/thesupersonic16") { Description = "SuperSonic16's GitHub page." };
 
-            llAbout.Links.Add(koolkdevLink);
-            llAbout.Links.Add(otherworldbobLink);
-            llAbout.Links.Add(thesupersonic16Link);
+            AddClickableLink("koolkdev", "https://github.com/koolkdev/ManiacEditor");
+            AddClickableLink("OtherworldBob", "https://github.com/OtherworldBob/ManiacEditor");
+            AddClickableLink("SuperSonic16", "https://github.com/thesupersonic16");
         }
 
         #region Assembly Attribute Accessors
@@ -77,6 +74,15 @@ namespace ManiacEditor
             }
         }
         #endregion
+
+        private void AddClickableLink(string sourceText, string linkTargetUrl)
+        {
+            var link = new LinkLabel.Link(llAbout.Text.IndexOf(sourceText),
+                                          sourceText.Length,
+                                          linkTargetUrl);
+
+            llAbout.Links.Add(link);
+        }
 
         private void llAbout_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
