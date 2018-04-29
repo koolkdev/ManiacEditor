@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -71,6 +73,8 @@ namespace ManiacEditor
 
         public static Editor Instance;
 
+        private IList<ToolStripMenuItem> _recentDataItems;
+
         public Editor()
         {
             Instance = this;
@@ -85,10 +89,119 @@ namespace ManiacEditor
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
 
             _extraLayerButtons = new List<ToolStripButton>();
+            _recentDataItems = new List<ToolStripMenuItem>();
 
             SetViewSize();
 
             UpdateControls();
+
+            TryLoadSettings();
+        }
+
+
+        /// <summary>
+        /// Try to load settings from the Application Settings file(s).
+        /// This includes User specific settings.
+        /// </summary>
+        private void TryLoadSettings()
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                if (mySettings.UpgradeRequired)
+                {
+                    mySettings.Upgrade();
+                    mySettings.UpgradeRequired = false;
+                    mySettings.Save();
+                }
+                
+                WindowState = mySettings.IsMaximized ? FormWindowState.Maximized : WindowState;
+
+                if (mySettings.DataDirectories?.Count > 0)
+                {
+                    RefreshDataDirectories(mySettings.DataDirectories);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to load settings: " + ex);
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the Data directories displayed in the recent list under the File menu.
+        /// </summary>
+        /// <param name="settings">The settings file containing the </param>
+        private void RefreshDataDirectories(StringCollection recentDataDirectories)
+        {
+            recentDataDirectoriesToolStripMenuItem.Visible = false;
+            CleanUpRecentList();
+
+            var startRecentItems = fileToolStripMenuItem.DropDownItems.IndexOf(recentDataDirectoriesToolStripMenuItem);
+
+            foreach (var dataDirectory in recentDataDirectories)
+            {
+                _recentDataItems.Add(CreateDataDirectoryMenuLink(dataDirectory));
+            }
+
+            foreach (var menuItem in _recentDataItems.Reverse())
+            {
+                fileToolStripMenuItem.DropDownItems.Insert(startRecentItems,
+                                                           menuItem);
+            }
+        }
+
+        /// <summary>
+        /// Removes any recent Data directories from the File menu.
+        /// </summary>
+        private void CleanUpRecentList()
+        {
+            foreach (var menuItem in _recentDataItems)
+            {
+                menuItem.Click -= RecentDataDirectoryClicked;
+                fileToolStripMenuItem.DropDownItems.Remove(menuItem);
+            }
+            _recentDataItems.Clear();
+        }
+
+        private ToolStripMenuItem CreateDataDirectoryMenuLink(string target)
+        {
+            ToolStripMenuItem newItem = new ToolStripMenuItem(target)
+            {
+                Tag = target
+            };
+            newItem.Click += RecentDataDirectoryClicked;
+            return newItem;
+        }
+
+        private void RecentDataDirectoryClicked(object sender, EventArgs e)
+        {
+            var menuItem = sender as ToolStripMenuItem;
+            string dataDirectory = menuItem.Tag.ToString();
+            var dataDirectories = Properties.Settings.Default.DataDirectories;
+            if (IsDataDirectoryValid(dataDirectory))
+            {
+                ResetDataDirectoryToAndResetScene(dataDirectory);
+            }
+            else
+            {
+                MessageBox.Show($"The specified Data Directory {dataDirectory} is not valid.",
+                                "Invalid Data Directory!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                dataDirectories.Remove(dataDirectory);
+                RefreshDataDirectories(dataDirectories);
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
+        {
+            UnloadScene();
+            DataDirectory = newDataDirectory;
+            AddRecentDataFolder(newDataDirectory);
+            SetGameConfig();
+            OpenScene();
         }
 
         private bool IsEditing()
@@ -391,7 +504,14 @@ namespace ManiacEditor
             }
             else if (e.Control && e.KeyCode == Keys.O)
             {
-                Open_Click(null, null);
+                if (e.Alt)
+                {
+                    openDataDirectoryToolStripMenuItem_Click(null, null);
+                }
+                else
+	            {
+                    Open_Click(null, null); 
+                }
             }
             else if (e.Control && e.KeyCode == Keys.N)
             {
@@ -399,7 +519,14 @@ namespace ManiacEditor
             }
             else if (e.Control && e.KeyCode == Keys.S)
             {
-                Save_Click(null, null);
+                if (e.Alt)
+                {
+                    saveAsToolStripMenuItem_Click(null, null);
+                }
+                else
+                {
+                    Save_Click(null, null);
+                }
             }
             else if (e.Control && (e.KeyCode == Keys.D0 || e.KeyCode == Keys.NumPad0))
             {
@@ -1033,24 +1160,97 @@ namespace ManiacEditor
                 do
                 {
                     MessageBox.Show("Please select the \"Data\" folder", "Message");
+                    string newDataDirectory = GetDataDirectory();
 
-                    using (var folderBrowserDialog = new FolderSelectDialog())
-                    {
-                        folderBrowserDialog.Title = "Select Data Folder";
-
-                        if (!folderBrowserDialog.ShowDialog())
-                            return false;
-
-                        DataDirectory = folderBrowserDialog.FileName;
-                    }
+                    if (IsDataDirectoryValid(newDataDirectory))
+                        DataDirectory = newDataDirectory;
                 }
-                while (!File.Exists(Path.Combine(DataDirectory, "Game", "GameConfig.bin")));
+                while (null == DataDirectory);
 
-                GameConfig = new GameConfig(Path.Combine(DataDirectory, "Game", "GameConfig.bin"));
+                SetGameConfig();
+
+                AddRecentDataFolder(DataDirectory);
+                
             }
             // Clears all the Textures
             EditorEntity.ReleaseResources();
             return true;
+        }
+
+        private string GetDataDirectory()
+        {
+            using (var folderBrowserDialog = new FolderSelectDialog())
+            {
+                folderBrowserDialog.Title = "Select Data Folder";
+
+                if (!folderBrowserDialog.ShowDialog())
+                    return null;
+
+                return folderBrowserDialog.FileName;
+            }
+        }
+
+        private bool IsDataDirectoryValid()
+        {
+            return IsDataDirectoryValid(DataDirectory);
+        }
+
+        private bool IsDataDirectoryValid(string directoryToCheck)
+        {
+            return File.Exists(Path.Combine(directoryToCheck, "Game", "GameConfig.bin"));
+        }
+
+        /// <summary>
+        /// Sets the GameConfig property in relation to the DataDirectory property.
+        /// </summary>
+        private void SetGameConfig()
+        {
+            GameConfig = new GameConfig(Path.Combine(DataDirectory, "Game", "GameConfig.bin"));
+        }
+
+        /// <summary>
+        /// Adds a Data directory to the persisted list, and refreshes the UI.
+        /// </summary>
+        /// <param name="dataDirectory">Path to the Data directory</param>
+        private void AddRecentDataFolder(string dataDirectory)
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                var dataDirectories = mySettings.DataDirectories;
+
+                if (dataDirectories == null)
+                {
+                    dataDirectories = new StringCollection();
+                    mySettings.DataDirectories = dataDirectories;
+                }
+
+                if (dataDirectories.Contains(dataDirectory))
+                {
+                    dataDirectories.Remove(dataDirectory);
+                }
+
+                if (dataDirectories.Count >= 10)
+                {
+                    for (int i = 9; i < dataDirectories.Count; i++)
+                    {
+                        dataDirectories.RemoveAt(i);
+                    }
+                }
+
+                dataDirectories.Insert(0, dataDirectory);
+
+                mySettings.Save();
+
+                RefreshDataDirectories(dataDirectories);
+
+                _baseDataDirectoryLabel.Text = string.Format(_baseDataDirectoryLabel.Tag.ToString(), 
+                                                             dataDirectory);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to add data folder to recent list: " + ex);
+            }
         }
 
         void UnloadScene()
@@ -1089,12 +1289,20 @@ namespace ManiacEditor
             SetViewSize();
 
             UpdateControls();
+
+            // clear memory a little more aggressively 
+            EditorEntity.ReleaseResources();
+            GC.Collect();
         }
 
         private void Open_Click(object sender, EventArgs e)
         {
             if (!load()) return;
+            OpenScene();
+        }
 
+        private void OpenScene()
+        {
             SceneSelect select = new SceneSelect(GameConfig);
             select.ShowDialog();
 
@@ -1315,6 +1523,22 @@ namespace ManiacEditor
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Open_Click(sender, e);
+        }
+
+        private void openDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string newDataDirectory = GetDataDirectory();
+            if (null == newDataDirectory) return;
+            if (newDataDirectory.Equals(DataDirectory)) return;
+
+            if (IsDataDirectoryValid(newDataDirectory))
+                ResetDataDirectoryToAndResetScene(newDataDirectory);
+            else
+                MessageBox.Show($@"{newDataDirectory} is not
+a valid Data Directory.",
+                                "Invalid Data Directory!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
         }
 
         public void OnResetDevice(object sender, DeviceEventArgs e)
@@ -2014,6 +2238,20 @@ Error: {ex.Message}");
             using (var aboutBox = new AboutBox())
             {
                 aboutBox.ShowDialog();
+            }
+        }
+
+        private void Editor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                mySettings.IsMaximized = WindowState == FormWindowState.Maximized;
+                mySettings.Save();
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to write settings: " + ex);
             }
         }
 
