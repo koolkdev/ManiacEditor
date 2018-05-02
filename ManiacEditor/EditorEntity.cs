@@ -107,9 +107,17 @@ namespace ManiacEditor
                 {
                     if (!Working)
                     {
-                        LoadAnimation(val.name, val.d, val.AnimId, val.frameId, val.fliph, val.flipv, val.rotate, false);
+                        try
+                        {
+                            LoadAnimation(val.name, val.d, val.AnimId, val.frameId, val.fliph, val.flipv, val.rotate, false);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new ApplicationException($"Pop loading next animiation. {val.name}, {val.AnimId}, {val.frameId}, {val.fliph}, {val.flipv}, {val.rotate}", e);
+                        }
                     }
-                }else
+                }
+                else
                 {
                     val.anim = Animations[key];
                 }
@@ -263,7 +271,6 @@ namespace ManiacEditor
             }
             if (AnimId == -1)
             {
-
                 if (rsdkAnim.Animations.Any(t => t.AnimName.Contains("Normal")))
                     AnimId = rsdkAnim.Animations.FindIndex(t => t.AnimName.Contains("Normal"));
                 else AnimId = 0;
@@ -275,9 +282,13 @@ namespace ManiacEditor
                 AnimId = rsdkAnim.Animations.Count - 1;
             for (int i = 0; i < rsdkAnim.Animations[AnimId].Frames.Count; ++i)
             {
-                var frame = rsdkAnim.Animations[AnimId].Frames[i];
-                if (frameId != -1)
-                    frame = rsdkAnim.Animations[AnimId].Frames[frameId];
+                // check we don't stray outside our loaded animations/frames
+                // if user enters a value that would take us there, just show
+                // a valid frame instead
+                var animiation = rsdkAnim.Animations[AnimId];
+                var frame = animiation.Frames[i];
+                if (frameId >= 0 && frameId < animiation.Frames.Count)
+                    frame = animiation.Frames[frameId];
                 Bitmap map;
                 if (!Sheets.ContainsKey(rsdkAnim.SpriteSheets[frame.SpriteSheet]))
                 {
@@ -334,15 +345,16 @@ namespace ManiacEditor
             bool flipv = false;
             bool rotate = false;
             var offset = GetRotationFromAttributes(ref fliph, ref flipv, ref rotate);
-            var editorAnim = LoadAnimation2(entity.Object.Name.Name, d, -1, -1, fliph, flipv, rotate);
-            if (entity.Object.Name.Name == "Spring" || entity.Object.Name.Name == "Player" || entity.Object.Name.Name == "Platform" ||
-                entity.Object.Name.Name == "TimeAttackGate" || entity.Object.Name.Name == "Spikes" || entity.Object.Name.Name == "ItemBox" ||
-                entity.Object.Name.Name == "Bridge" || entity.Object.Name.Name == "TeeterTotter" || entity.Object.Name.Name == "HUD" ||
-                entity.Object.Name.Name == "Music" || entity.Object.Name.Name == "BoundsMarker" || entity.Object.Name.Name == "TitleCard" ||
-                entity.Object.Name.Name == "CorkscrewPath" || entity.Object.Name.Name == "BGSwitch" || entity.Object.Name.Name == "ForceSpin" ||
-                entity.Object.Name.Name == "UIControl" || entity.Object.Name.Name == "SignPost" || entity.Object.Name.Name == "UFO_Ring" ||
-                entity.Object.Name.Name == "UFO_Sphere" || entity.Object.Name.Name == "UFO_Player" || entity.Object.Name.Name == "UFO_ItemBox" ||
-                entity.Object.Name.Name == "UFO_Springboard")
+            string name = entity.Object.Name.Name;
+            var editorAnim = LoadAnimation2(name, d, -1, -1, fliph, flipv, rotate);
+            if (name == "Spring"         || name == "Player"        || name == "Platform" ||
+                name == "TimeAttackGate" || name == "Spikes"        || name == "ItemBox" ||
+                name == "Bridge"         || name == "TeeterTotter"  || name == "HUD" ||
+                name == "Music"          || name == "BoundsMarker"  || name == "TitleCard" ||
+                name == "CorkscrewPath"  || name == "BGSwitch"      || name == "ForceSpin" ||
+                name == "UIControl"      || name == "SignPost"      || name == "UFO_Ring" ||
+                name == "UFO_Sphere"     || name == "UFO_Player"    || name == "UFO_ItemBox" ||
+                name == "UFO_Springboard")
             {
                 DrawOthers(d);
             }
@@ -867,15 +879,22 @@ namespace ManiacEditor
                 EditorAnimation editorAnim = null;
                 while (true)
                 {
-                    editorAnim = LoadAnimation("Platform", d, aminID, -1, false, false, false);
-                    frameID += editorAnim.Frames.Count;
-                    if (targetFrameID < frameID)
+                    try
                     {
-                        int aminStart = (frameID - editorAnim.Frames.Count);
-                        frameID = targetFrameID - aminStart;
-                        break;
+                        editorAnim = LoadAnimation("Platform", d, aminID, -1, false, false, false);
+                        frameID += editorAnim.Frames.Count;
+                        if (targetFrameID < frameID)
+                        {
+                            int aminStart = (frameID - editorAnim.Frames.Count);
+                            frameID = targetFrameID - aminStart;
+                            break;
+                        }
+                        aminID++;
                     }
-                    aminID++;
+                    catch (Exception e)
+                    {
+                        throw new ApplicationException($"Pop Loading Platforms! {aminID}", e);
+                    }
                 }
                 if (editorAnim.Frames.Count != 0)
                 {

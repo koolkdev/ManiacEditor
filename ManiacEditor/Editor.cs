@@ -1162,15 +1162,17 @@ namespace ManiacEditor
                     MessageBox.Show("Please select the \"Data\" folder", "Message");
                     string newDataDirectory = GetDataDirectory();
 
+                    // allow user to quit gracefully
+                    if (string.IsNullOrWhiteSpace(newDataDirectory)) return false;
                     if (IsDataDirectoryValid(newDataDirectory))
+                    {
                         DataDirectory = newDataDirectory;
+                    }
                 }
                 while (null == DataDirectory);
 
                 SetGameConfig();
-
                 AddRecentDataFolder(DataDirectory);
-                
             }
             // Clears all the Textures
             EditorEntity.ReleaseResources();
@@ -1316,8 +1318,12 @@ namespace ManiacEditor
                 if (File.Exists(select.Result))
                 {
                     // Selected file
+                    // Don't forget to populate these Members
+                    string directoryPath = Path.GetDirectoryName(select.Result);
+                    SelectedZone = new DirectoryInfo(directoryPath).Name;
+                    SelectedScene = Path.GetFileName(select.Result);
 
-                    StageTiles = new StageTiles(Path.GetDirectoryName(select.Result));
+                    StageTiles = new StageTiles(directoryPath);
                     SceneFilename = select.Result;
                 }
                 else
