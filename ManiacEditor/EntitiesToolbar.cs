@@ -319,7 +319,7 @@ namespace ManiacEditor
                         entity.Object.Entities.Remove(entity);
                         entity.Object = sobj;
                         sobj.Entities.Add(entity);
-                        objects.Add(sobj);
+                        _bindingSceneObjectsSource.Add(sobj);
                     }
                 }
                 // Update Properties
