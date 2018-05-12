@@ -227,16 +227,23 @@ namespace ManiacEditor
 
 
             // Checks Global frist
-            string path = "Global\\" + name + ".bin";
+            string path = Editor.Instance.SelectedZone + "\\" + name + ".bin";
             string path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
             if (!File.Exists(path2))
             {
-                // Checks Global frist
-                path = Editor.Instance.SelectedZone + "\\" + name + ".bin";
+                // Checks without last character
+                path = path = Editor.Instance.SelectedZone.Substring(0, Editor.Instance.SelectedZone.Length - 1) + "\\" + name + ".bin";
                 path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
             }
             if (!File.Exists(path2))
             {
+                // Checks Global
+                path = "Global\\" + name + ".bin";
+                path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
+            }
+            if (!File.Exists(path2))
+            {
+                // Checks the Stage folder 
                 foreach (string dir in Directory.GetDirectories(Path.Combine(Editor.DataDirectory, "Sprites"), $"*", SearchOption.TopDirectoryOnly))
                 {
                     path = Path.GetFileName(dir) + "\\" + name + ".bin";
@@ -347,14 +354,15 @@ namespace ManiacEditor
             var offset = GetRotationFromAttributes(ref fliph, ref flipv, ref rotate);
             string name = entity.Object.Name.Name;
             var editorAnim = LoadAnimation2(name, d, -1, -1, fliph, flipv, rotate);
-            if (name == "Spring"         || name == "Player"        || name == "Platform" ||
-                name == "TimeAttackGate" || name == "Spikes"        || name == "ItemBox" ||
-                name == "Bridge"         || name == "TeeterTotter"  || name == "HUD" ||
-                name == "Music"          || name == "BoundsMarker"  || name == "TitleCard" ||
-                name == "CorkscrewPath"  || name == "BGSwitch"      || name == "ForceSpin" ||
-                name == "UIControl"      || name == "SignPost"      || name == "UFO_Ring" ||
-                name == "UFO_Sphere"     || name == "UFO_Player"    || name == "UFO_ItemBox" ||
-                name == "UFO_Springboard")
+            if (name == "Spring"          || name == "Player"         || name == "Platform"    ||
+                name == "TimeAttackGate"  || name == "Spikes"         || name == "ItemBox"     ||
+                name == "Bridge"          || name == "TeeterTotter"   || name == "HUD"         ||
+                name == "Music"           || name == "BoundsMarker"   || name == "TitleCard"   ||
+                name == "CorkscrewPath"   || name == "BGSwitch"       || name == "ForceSpin"   ||
+                name == "UIControl"       || name == "SignPost"       || name == "UFO_Ring"    ||
+                name == "UFO_Sphere"      || name == "UFO_Player"     || name == "UFO_ItemBox" ||
+                name == "UFO_Springboard" || name == "Decoration"     || name == "WaterGush"   ||
+                name == "BreakBar"        || name == "InvisibleBlock")
             {
                 DrawOthers(d);
             }
@@ -792,6 +800,87 @@ namespace ManiacEditor
                     ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
                     d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY,
                         frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "WaterGush")
+            {
+                var length = (int)(entity.attributesMap["length"].ValueUInt32);
+                var editorAnim = LoadAnimation2("WaterGush", d, 0, -1, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    for (int i = -length + 1; i <= 0; ++i)
+                    {
+                        d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + i * frame.Frame.Height,
+                            frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "InvisibleBlock")
+            {
+                var width = (int)(entity.attributesMap["width"].ValueUInt8);
+                var height = (int)(entity.attributesMap["height"].ValueUInt8);
+                var editorAnim = LoadAnimation2("ItemBox", d, 2, 10, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool wEven = width % 2 == 0;
+                    bool hEven = height % 2 == 0;
+                    for (int xx = 0; xx <= width; ++xx)
+                    {
+                        for (int yy = 0; yy <= height; ++yy)
+                        {
+                            d.DrawBitmap(frame.Texture,
+                                x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width/2 + xx) * frame.Frame.Width,
+                                y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height/2 + yy) * frame.Frame.Height,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "Decoration")
+            {
+                var type = entity.attributesMap["type"].ValueUInt8;
+                var editorAnim = LoadAnimation2("Decoration", d, type, -1, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    if (index >= editorAnim.Frames.Count)
+                        index = 0;
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY,
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "BreakBar")
+            {
+                var length = (short)(entity.attributesMap["length"].ValueUInt16);
+                var orientation = entity.attributesMap["orientation"].ValueUInt8;
+                if (orientation > 1)
+                {
+                    orientation = 0;
+                }
+                var editorAnim = LoadAnimation2("BreakBar", d, orientation, -1, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frameTop = editorAnim.Frames[0];
+                    var frameBase = editorAnim.Frames[1];
+                    var frameBottom = editorAnim.Frames[2];
+                    for (int i = -length/2; i <= length / 2; ++i)
+                    {
+                        d.DrawBitmap(frameBase.Texture, x + frameBase.Frame.CenterX,
+                            y + frameBase.Frame.CenterY + i * frameBase.Frame.Height,
+                            frameBase.Frame.Width, frameBase.Frame.Height, false, Transparency);
+                    }
+                    d.DrawBitmap(frameTop.Texture, x + frameTop.Frame.CenterX,
+                        y + frameTop.Frame.CenterY - (length / 2 + 1) * frameBase.Frame.Height,
+                        frameTop.Frame.Width, frameTop.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frameBottom.Texture, x + frameBottom.Frame.CenterX,
+                        y + frameBottom.Frame.CenterY + (length / 2 + 1) * frameBottom.Frame.Height,
+                        frameBottom.Frame.Width, frameBottom.Frame.Height, false, Transparency);
+
                 }
             }
             else if (entity.Object.Name.Name == "UFO_Ring")
