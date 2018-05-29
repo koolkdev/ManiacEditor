@@ -1,4 +1,4 @@
-version: 0.2.23.{build}
+version: 0.2.24.{build}
 skip_tags: true
 image: Visual Studio 2017
 configuration: Release
@@ -13,7 +13,7 @@ before_build:
 build:
   verbosity: minimal
 after_build:
-- cmd: 7z a ManiacEditor-OBE-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\LICENSE
+- cmd: 7z a ManiacEditor-Beta-OBE-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\LICENSE
 artifacts:
-- path: ManiacEditor-OBE-%APPVEYOR_BUILD_VERSION%.zip
+- path: ManiacEditor-Beta-OBE-v%APPVEYOR_BUILD_VERSION%.zip
   name: ManiacEditor-OBE
