@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDataDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,7 +98,8 @@
             this.selectTool = new System.Windows.Forms.ToolStripButton();
             this.placeTilesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowAnimations = new System.Windows.Forms.ToolStripButton();
-            this.openDataDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.ReloadToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -155,6 +157,15 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
             this.openToolStripMenuItem.Text = "Open..";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // openDataDirectoryToolStripMenuItem
+            // 
+            this.openDataDirectoryToolStripMenuItem.Name = "openDataDirectoryToolStripMenuItem";
+            this.openDataDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.O)));
+            this.openDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+            this.openDataDirectoryToolStripMenuItem.Text = "Open Data Directory";
+            this.openDataDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openDataDirectoryToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -675,6 +686,8 @@
             this.toolStripSeparator8,
             this.undoButton,
             this.redoButton,
+            this.toolStripSeparator10,
+            this.ReloadToolStripButton,
             this.toolStripSeparator9,
             this.pointerButton,
             this.selectTool,
@@ -793,14 +806,21 @@
             this.ShowAnimations.ToolTipText = "Hide Animations";
             this.ShowAnimations.Click += new System.EventHandler(this.ShowAnimations_Click);
             // 
-            // openDataDirectoryToolStripMenuItem
+            // toolStripSeparator10
             // 
-            this.openDataDirectoryToolStripMenuItem.Name = "openDataDirectoryToolStripMenuItem";
-            this.openDataDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
-            | System.Windows.Forms.Keys.O)));
-            this.openDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
-            this.openDataDirectoryToolStripMenuItem.Text = "Open Data Directory";
-            this.openDataDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openDataDirectoryToolStripMenuItem_Click);
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // ReloadToolStripButton
+            // 
+            this.ReloadToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ReloadToolStripButton.Enabled = false;
+            this.ReloadToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("ReloadToolStripButton.Image")));
+            this.ReloadToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ReloadToolStripButton.Name = "ReloadToolStripButton";
+            this.ReloadToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.ReloadToolStripButton.Text = "Reload Tiles and Sprites";
+            this.ReloadToolStripButton.Click += new System.EventHandler(this.ReloadToolStripButton_Click);
             // 
             // Editor
             // 
@@ -910,6 +930,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorRecentEnd;
         private System.Windows.Forms.ToolStripStatusLabel _baseDataDirectoryLabel;
         private System.Windows.Forms.ToolStripMenuItem openDataDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripButton ReloadToolStripButton;
     }
 }
 

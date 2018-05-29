@@ -108,6 +108,11 @@ namespace ManiacEditor
             tilesList.TileScale = 1 << trackBar1.Value;
         }
 
+        public void Reload()
+        {
+            tilesList.Reload();
+        }
+
         public new void Dispose()
         {
             tilesList.Dispose();

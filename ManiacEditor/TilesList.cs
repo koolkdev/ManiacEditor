@@ -13,7 +13,7 @@ namespace ManiacEditor
 {
     public partial class TilesList : UserControl, IDrawArea
     {
-        public GIF TilesImage;
+        public GIF TilesImage = null;
 
         const int TILE_SIZE = 16;
 
@@ -45,6 +45,12 @@ namespace ManiacEditor
         {
             graphicPanel.Width = width;
             graphicPanel.Height = height;
+        }
+
+        public void Reload()
+        {
+            TilesImage.Reload();
+            graphicPanel.Refresh();
         }
         
         public void DisposeTextures()
@@ -229,6 +235,7 @@ namespace ManiacEditor
 
         public new void Dispose()
         {
+            TilesImage?.Dispose();
             graphicPanel.Dispose();
             base.Dispose();
         }
