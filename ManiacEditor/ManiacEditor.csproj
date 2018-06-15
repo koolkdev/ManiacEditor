@@ -116,6 +116,7 @@
     <Compile Include="ObjectImporter.Designer.cs">
       <DependentUpon>ObjectImporter.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProcessMemory.cs" />
     <Compile Include="Reflector.cs" />
     <Compile Include="SceneSelect.cs">
       <SubType>Form</SubType>
