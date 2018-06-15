@@ -55,7 +55,16 @@ namespace ManiacEditor
         {
             entity.Position.X.High += (short)diff.X;
             entity.Position.Y.High += (short)diff.Y;
-        }
+            if (Editor.GameRunning)
+            {
+                // TODO: Find out if this is constent
+                int ObjectStart = 0x00A5DCC0;
+                int ObjectSize = 0x458;
+                int ObbjectAddress = ObjectStart + (ObjectSize * entity.SlotID);
+                Editor.GameMemory.WriteInt16(ObbjectAddress + 2, entity.Position.X.High);
+                Editor.GameMemory.WriteInt16(ObbjectAddress + 6, entity.Position.Y.High);
+            }
+        } 
 
         public Rectangle GetDimensions()
         {

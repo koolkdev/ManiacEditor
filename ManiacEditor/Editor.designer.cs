@@ -93,13 +93,13 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.undoButton = new System.Windows.Forms.ToolStripButton();
             this.redoButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.ReloadToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.pointerButton = new System.Windows.Forms.ToolStripButton();
             this.selectTool = new System.Windows.Forms.ToolStripButton();
             this.placeTilesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowAnimations = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.ReloadToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -553,13 +553,13 @@
             // RunScene
             // 
             this.RunScene.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.RunScene.Enabled = false;
             this.RunScene.Image = ((System.Drawing.Image)(resources.GetObject("RunScene.Image")));
             this.RunScene.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RunScene.Name = "RunScene";
             this.RunScene.Size = new System.Drawing.Size(23, 22);
             this.RunScene.Text = "Run Scene";
             this.RunScene.ToolTipText = "Run Scene";
+            this.RunScene.Click += new System.EventHandler(this.RunScene_Click);
             // 
             // toolStripSeparator2
             // 
@@ -756,6 +756,22 @@
             this.redoButton.ToolTipText = "Redo (Ctrl + Y)";
             this.redoButton.Click += new System.EventHandler(this.redoButton_Click);
             // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // ReloadToolStripButton
+            // 
+            this.ReloadToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ReloadToolStripButton.Enabled = false;
+            this.ReloadToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("ReloadToolStripButton.Image")));
+            this.ReloadToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ReloadToolStripButton.Name = "ReloadToolStripButton";
+            this.ReloadToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.ReloadToolStripButton.Text = "Reload Tiles and Sprites";
+            this.ReloadToolStripButton.Click += new System.EventHandler(this.ReloadToolStripButton_Click);
+            // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
@@ -805,22 +821,6 @@
             this.ShowAnimations.Text = "Animations";
             this.ShowAnimations.ToolTipText = "Hide Animations";
             this.ShowAnimations.Click += new System.EventHandler(this.ShowAnimations_Click);
-            // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
-            // 
-            // ReloadToolStripButton
-            // 
-            this.ReloadToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ReloadToolStripButton.Enabled = false;
-            this.ReloadToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("ReloadToolStripButton.Image")));
-            this.ReloadToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ReloadToolStripButton.Name = "ReloadToolStripButton";
-            this.ReloadToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.ReloadToolStripButton.Text = "Reload Tiles and Sprites";
-            this.ReloadToolStripButton.Click += new System.EventHandler(this.ReloadToolStripButton_Click);
             // 
             // Editor
             // 
