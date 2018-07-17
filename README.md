@@ -40,7 +40,12 @@ You can remove tile by doing the same with the right mouse button.
 You can hold **Ctrl** and/or **Shift** to mirror/flip the placed tile.  
 You can choose which properties the placed tiles will have by clicking on the checkboxes below the tiles selection window.
 
+## Plus Compatibility
+With help from [SuperSonic16](https://github.com/thesupersonic16) and [Axanery](https://github.com/Axanery), we've got some support for Plus.
+Lots still do here!
+
 ## New Features
+
 * In-editor visual entities! You can see spikes, rings and many more things! (Contributed by [supersonic16](https://github.com/thesupersonic16))
 * Flip a collection of selected tiles as one cohesive block.
 * Paste new tiles and entities next to the mouse cursor, not the top left.

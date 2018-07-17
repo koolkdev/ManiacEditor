@@ -122,7 +122,8 @@ namespace ManiacEditor
                         }
                         catch (Exception e)
                         {
-                            throw new ApplicationException($"Pop loading next animiation. {val.name}, {val.AnimId}, {val.frameId}, {val.fliph}, {val.flipv}, {val.rotate}", e);
+                            // lots of changes introduced by Plus, just hide errors for now (evil I know!)
+                            // Console.WriteLine($"Pop loading next animiation. {val.name}, {val.AnimId}, {val.frameId}, {val.fliph}, {val.flipv}, {val.rotate}", e);
                         }
                     }
                 }

@@ -835,7 +835,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "Editor";
-            this.Text = "Maniac Editor - BETA (OtherworldBob Edition)";
+            this.Text = "Maniac Editor - BETA (Positivity)";
             this.Activated += new System.EventHandler(this.MapEditor_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Editor_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
