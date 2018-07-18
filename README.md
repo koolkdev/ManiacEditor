@@ -41,7 +41,7 @@ You can hold **Ctrl** and/or **Shift** to mirror/flip the placed tile.
 You can choose which properties the placed tiles will have by clicking on the checkboxes below the tiles selection window.
 
 ## Plus Compatibility
-With help from [SuperSonic16](https://github.com/thesupersonic16) and [Axanery](https://github.com/Axanery), we've got some support for Plus.
+With help from [SuperSonic16](https://github.com/thesupersonic16) and [Axanery](https://www.youtube.com/channel/UCIsXoOHibP8wpjcha3bSbMQ), we've got some support for Plus.
 Lots still do here!
 
 ## New Features
