@@ -63,6 +63,10 @@ namespace ManiacEditor
 
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
+        internal int SelectedTilesCount;
+        internal int SelectedTileX;
+        internal int SelectedTileY;
+        internal bool forceCopyUnlock;
 
         internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
         internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
@@ -774,6 +778,10 @@ namespace ManiacEditor
             }
 
             toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
+            toolStripStatusLabel2.Text = "Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ")";
+            toolStripStatusLabel3.Text = "Selection Count: " + (int)SelectedTilesCount;
+            toolStripStatusLabel4.Text = ""; //Reserved for More Useful Info
+            toolStripStatusLabel5.Text = ""; //Reserved for More Useful Info
 
             if (IsEditing())
             {
@@ -1283,8 +1291,12 @@ namespace ManiacEditor
 
             Background = null;
 
-            TilesClipboard = null;
-            entitiesClipboard = null;
+            if (!Properties.Settings.Default.forceCopyUnlock)
+            {
+                TilesClipboard = null;
+                entitiesClipboard = null;
+            }
+
 
             entities = null;
 
@@ -1423,8 +1435,8 @@ namespace ManiacEditor
             Deselect(false);
             if (tsb.Checked)
             {
-                ShowFGLow.Checked = false;
-                ShowFGHigh.Checked = false;
+                //ShowFGLow.Checked = false;
+                //ShowFGHigh.Checked = false;
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
                 EditEntities.Checked = false;
@@ -2353,6 +2365,16 @@ Error: {ex.Message}");
                 GameRunning = false;
                 Invoke(new Action(() => UpdateControls()));
             }).Start();
+
+        }
+
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void toolStripStatusLabel2_Click(object sender, EventArgs e)
+        {
 
         }
 

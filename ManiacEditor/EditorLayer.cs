@@ -19,10 +19,13 @@ namespace ManiacEditor
         const int TILES_CHUNK_SIZE = 16;
 
         public const int TILE_SIZE = 16;
+
         
         Texture[][] TileChunksTextures;
 
         public PointsMap SelectedTiles;
+        
+
         public Dictionary<Point, ushort> SelectedTilesValue = new Dictionary<Point, ushort>();
 
         public PointsMap TempSelectionTiles;
@@ -109,6 +112,7 @@ namespace ManiacEditor
 
             public void Add(Point point)
             {
+
                 HashSet<Point> h;
                 if (point.Y < 0 || point.X < 0 || point.Y / TILES_CHUNK_SIZE >= PointsChunks.Length || point.X / TILES_CHUNK_SIZE >= PointsChunks[0].Length)
                     h = OutOfBoundsPoints;
@@ -552,6 +556,7 @@ namespace ManiacEditor
                             {
                                 // Deselect
                                 DeselectPoint(p);
+                                Editor.Instance.SelectedTilesCount = 0;
                             }
                             // Don't add already selected tile, or if it was just deslected
                             continue;
@@ -560,6 +565,7 @@ namespace ManiacEditor
                     if (_layer.Tiles[y][x] != 0xffff)
                     {
                         SelectedTiles.Add(new Point(x, y));
+                        Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                     }
                 }
             }
@@ -569,17 +575,21 @@ namespace ManiacEditor
         {
             if (!addSelection) Deselect();
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
+            Editor.Instance.SelectedTileX = point.X;
+            Editor.Instance.SelectedTileY = point.Y;
             if (point.X >= 0 && point.Y >= 0 && point.X < this._layer.Tiles[0].Length && point.Y < this._layer.Tiles.Length)
             {
                 if (deselectIfSelected && SelectedTiles.Contains(point))
                 {
                     // Deselect
                     DeselectPoint(point);
+                    Editor.Instance.SelectedTilesCount = 0;
                 }
                 else if (this._layer.Tiles[point.Y][point.X] != 0xffff)
                 {
                     // Just add the point
                     SelectedTiles.Add(point);
+                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                 }
             }
         }
@@ -595,6 +605,7 @@ namespace ManiacEditor
                     if (SelectedTiles.Contains(new Point(x, y)) || _layer.Tiles[y][x] != 0xffff)
                     {
                         TempSelectionTiles.Add(new Point(x, y));
+                        Editor.Instance.SelectedTilesCount = TempSelectionTiles.Count;
                     }
                 }
             }
@@ -613,7 +624,9 @@ namespace ManiacEditor
 
         private ushort GetTile(Point point)
         {
+            
             return _layer.Tiles[point.Y][point.X];
+            
         }
 
         private void SetTile(Point point, ushort value, bool addAction = true)
@@ -654,6 +667,7 @@ namespace ManiacEditor
 
             SelectedTiles.Clear();
             SelectedTilesValue.Clear();
+            Editor.Instance.SelectedTilesCount = 0;
         }
 
         public bool IsPointSelected(Point point)
@@ -689,6 +703,7 @@ namespace ManiacEditor
 
             int x_start = x * TILES_CHUNK_SIZE;
             int x_end = Math.Min((x + 1) * TILES_CHUNK_SIZE, _layer.Width);
+
 
             return new Rectangle(x_start, y_start, x_end - x_start, y_end - y_start);
         }
@@ -848,6 +863,7 @@ namespace ManiacEditor
                 Array.Resize(ref TileChunksTextures[i], newWidthChunkSize);
             }
 
+            
             SelectedTiles = new PointsMap(Width, Height);
             TempSelectionTiles = new PointsMap(Width, Height);
         }

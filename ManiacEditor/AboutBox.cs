@@ -96,5 +96,15 @@ namespace ManiacEditor
                 MessageBox.Show("Failed to open the link. " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void option2CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
