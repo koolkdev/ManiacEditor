@@ -19,6 +19,7 @@ namespace ManiacEditor
             AddClickableLink("koolkdev", "https://github.com/koolkdev/ManiacEditor");
             AddClickableLink("OtherworldBob", "https://github.com/OtherworldBob/ManiacEditor");
             AddClickableLink("SuperSonic16", "https://github.com/thesupersonic16");
+            AddClickableLink("CarJem Generations", "https://github.com/CarJem");
         }
 
         #region Assembly Attribute Accessors
