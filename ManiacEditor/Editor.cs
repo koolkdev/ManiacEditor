@@ -66,7 +66,6 @@ namespace ManiacEditor
         internal int SelectedTilesCount;
         internal int SelectedTileX;
         internal int SelectedTileY;
-        internal bool forceCopyUnlock;
 
         internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
         internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
