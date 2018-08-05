@@ -70,11 +70,11 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this._baseDataDirectoryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+            this._baseDataDirectoryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.New = new System.Windows.Forms.ToolStripButton();
             this.Open = new System.Windows.Forms.ToolStripButton();
             this.Save = new System.Windows.Forms.ToolStripButton();
@@ -514,13 +514,6 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // _baseDataDirectoryLabel
-            // 
-            this._baseDataDirectoryLabel.Name = "_baseDataDirectoryLabel";
-            this._baseDataDirectoryLabel.Size = new System.Drawing.Size(0, 17);
-            this._baseDataDirectoryLabel.Tag = "Data Directory: {0}";
-            this._baseDataDirectoryLabel.ToolTipText = "This is the base Data Directory";
-            // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
@@ -547,6 +540,15 @@
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             this.toolStripStatusLabel5.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel5.Text = "toolStripStatusLabel5";
+            // 
+            // _baseDataDirectoryLabel
+            // 
+            this._baseDataDirectoryLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this._baseDataDirectoryLabel.Name = "_baseDataDirectoryLabel";
+            this._baseDataDirectoryLabel.Size = new System.Drawing.Size(0, 17);
+            this._baseDataDirectoryLabel.Tag = "Data Directory: {0}";
+            this._baseDataDirectoryLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this._baseDataDirectoryLabel.ToolTipText = "This is the base Data Directory";
             // 
             // New
             // 

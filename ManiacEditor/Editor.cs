@@ -1435,8 +1435,11 @@ namespace ManiacEditor
             Deselect(false);
             if (tsb.Checked)
             {
-                //ShowFGLow.Checked = false;
-                //ShowFGHigh.Checked = false;
+                if (!Properties.Settings.Default.keepLayersVisible)
+                {
+                    ShowFGLow.Checked = false;
+                    ShowFGHigh.Checked = false;
+                }
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
                 EditEntities.Checked = false;
