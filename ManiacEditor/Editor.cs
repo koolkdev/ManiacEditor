@@ -778,10 +778,8 @@ namespace ManiacEditor
             }
 
             toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
-            toolStripStatusLabel2.Text = "Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ")";
-            toolStripStatusLabel3.Text = "Selection Count: " + (int)SelectedTilesCount;
-            toolStripStatusLabel4.Text = ""; //Reserved for More Useful Info
-            toolStripStatusLabel5.Text = ""; //Reserved for More Useful Info
+            selectedTilePositionLabel.Text = "Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ")";
+            amountOfTilesInSelection.Text = "Selection Count: " + (int)SelectedTilesCount;
 
             if (IsEditing())
             {
