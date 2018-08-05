@@ -74,12 +74,12 @@ namespace ManiacEditor.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
-        public bool forceCopyUnlock {
+        public bool ForceCopyUnlock {
             get {
-                return ((bool)(this["forceCopyUnlock"]));
+                return ((bool)(this["ForceCopyUnlock"]));
             }
             set {
-                this["forceCopyUnlock"] = value;
+                this["ForceCopyUnlock"] = value;
             }
         }
         
@@ -87,12 +87,12 @@ namespace ManiacEditor.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
-        public bool keepLayersVisible {
+        public bool KeepLayersVisible {
             get {
-                return ((bool)(this["keepLayersVisible"]));
+                return ((bool)(this["KeepLayersVisible"]));
             }
             set {
-                this["keepLayersVisible"] = value;
+                this["KeepLayersVisible"] = value;
             }
         }
     }

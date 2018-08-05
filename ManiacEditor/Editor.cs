@@ -1288,7 +1288,7 @@ namespace ManiacEditor
 
             Background = null;
 
-            if (!Properties.Settings.Default.forceCopyUnlock)
+            if (!Properties.Settings.Default.ForceCopyUnlock)
             {
                 TilesClipboard = null;
                 entitiesClipboard = null;
@@ -1432,7 +1432,7 @@ namespace ManiacEditor
             Deselect(false);
             if (tsb.Checked)
             {
-                if (!Properties.Settings.Default.keepLayersVisible)
+                if (!Properties.Settings.Default.KeepLayersVisible)
                 {
                     ShowFGLow.Checked = false;
                     ShowFGHigh.Checked = false;

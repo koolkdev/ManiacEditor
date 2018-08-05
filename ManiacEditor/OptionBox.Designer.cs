@@ -35,7 +35,7 @@
             // layerHide
             // 
             this.layerHide.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.layerHide.Checked = global::ManiacEditor.Properties.Settings.Default.keepLayersVisible;
+            this.layerHide.Checked = global::ManiacEditor.Properties.Settings.Default.KeepLayersVisible;
             this.layerHide.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "keepLayersVisible", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.layerHide.Location = new System.Drawing.Point(14, 14);
             this.layerHide.Margin = new System.Windows.Forms.Padding(5);
@@ -49,7 +49,7 @@
             // copyUnlock
             // 
             this.copyUnlock.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.copyUnlock.Checked = global::ManiacEditor.Properties.Settings.Default.forceCopyUnlock;
+            this.copyUnlock.Checked = global::ManiacEditor.Properties.Settings.Default.ForceCopyUnlock;
             this.copyUnlock.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceCopyUnlock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.copyUnlock.Location = new System.Drawing.Point(14, 67);
             this.copyUnlock.Name = "copyUnlock";
