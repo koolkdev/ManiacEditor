@@ -338,6 +338,7 @@ namespace ManiacEditor
                 FirstDrag = false;
                 Dictionary<Point, ushort> newDict = new Dictionary<Point, ushort>();
                 List<Point> newPoints = new List<Point>(SelectedTiles.Count);
+                Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                 foreach (Point point in SelectedTiles.PopAll())
                 {
                     Point newPoint = new Point(point.X + (newPos.X - oldPos.X), point.Y + (newPos.Y - oldPos.Y));
@@ -358,6 +359,7 @@ namespace ManiacEditor
                     Deselect();
                     // Create new actions group
                     Actions.Add(new ActionDummy());
+                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                 }
                 SelectedTilesValue = newDict;
                 SelectedTiles.AddPoints(newPoints);
@@ -383,6 +385,8 @@ namespace ManiacEditor
             if (removedSomething)
                 Actions.Add(new ActionsGroupCloseMarker());
             SelectedTilesValue.Clear();
+            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+
         }
 
         public void FlipPropertySelected(FlipDirection direction)
@@ -538,6 +542,7 @@ namespace ManiacEditor
             }
             // Create new actions group
             Actions.Add(new ActionDummy());
+            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
         }
 
         public void Select(Rectangle area, bool addSelection = false, bool deselectIfSelected = false)
@@ -556,7 +561,7 @@ namespace ManiacEditor
                             {
                                 // Deselect
                                 DeselectPoint(p);
-                                Editor.Instance.SelectedTilesCount = 0;
+                                Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                             }
                             // Don't add already selected tile, or if it was just deslected
                             continue;
@@ -583,7 +588,7 @@ namespace ManiacEditor
                 {
                     // Deselect
                     DeselectPoint(point);
-                    Editor.Instance.SelectedTilesCount = 0;
+                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                 }
                 else if (this._layer.Tiles[point.Y][point.X] != 0xffff)
                 {
@@ -640,6 +645,7 @@ namespace ManiacEditor
         private void RemoveTile(Point point)
         {
             SetTile(point, 0xffff);
+            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
         }
 
         private void DeselectPoint(Point p)

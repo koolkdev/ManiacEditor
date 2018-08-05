@@ -2272,6 +2272,14 @@ Error: {ex.Message}");
             }
         }
 
+        private void optionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var optionBox = new OptionBox())
+            {
+                optionBox.ShowDialog();
+            }
+        }
+
         private void Editor_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -2377,6 +2385,11 @@ Error: {ex.Message}");
         }
 
         private void toolStripStatusLabel2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
