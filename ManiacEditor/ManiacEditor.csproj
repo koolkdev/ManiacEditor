@@ -235,15 +235,5 @@
       <Name>RSDKv5</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\128x128.ico" />
-    <Content Include="Resources\256x256.ico" />
-    <Content Include="Resources\32x32.ico" />
-    <Content Include="Resources\32x32_2.ico" />
-    <Content Include="Resources\64x64.ico" />
-    <Content Include="Resources\64x64_2.ico" />
-    <Content Include="Resources\Maniac Editor About Image.png" />
-    <Content Include="Resources\Maniac Editor About.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

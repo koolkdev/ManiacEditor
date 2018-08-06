@@ -778,7 +778,7 @@ namespace ManiacEditor
 
             toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
             selectedTilePositionLabel.Text = "Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ")" + " Pixel Position: " + "(X: " + (int)SelectedTileX*16 + ", Y: " + (int)SelectedTileY*16 + ")";
-            amountOfTilesInSelection.Text = "Selection Count: " + (int)SelectedTilesCount + " (Pixel Size: " + (int)SelectedTilesCount*16 + ")";
+            amountOfTilesInSelection.Text = "Selection Count: " + SelectedTilesCount;
 
             if (IsEditing())
             {
