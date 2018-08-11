@@ -369,7 +369,10 @@ namespace ManiacEditor
             System.Drawing.Color color = Selected ? System.Drawing.Color.MediumPurple : System.Drawing.Color.MediumTurquoise;
             System.Drawing.Color color2 = System.Drawing.Color.DarkBlue;
             int Transparency = (Editor.Instance.EditLayer == null) ? 0xff : 0x32;
-            LoadNextAnimation();
+            if (!Properties.Settings.Default.NeverLoadEntityTextures)
+            {
+                LoadNextAnimation();
+            }
             int x = entity.Position.X.High;
             int y = entity.Position.Y.High;
             bool fliph = false;
@@ -388,7 +391,11 @@ namespace ManiacEditor
                 name == "UFO_Springboard" || name == "Decoration"     || name == "WaterGush"   ||
                 name == "BreakBar"        || name == "InvisibleBlock")
             {
-                DrawOthers(d);
+                if (!Properties.Settings.Default.NeverLoadEntityTextures)
+                {
+                    DrawOthers(d);
+                }
+
             }
             else if (editorAnim != null && editorAnim.Frames.Count > 0)
             {

@@ -95,5 +95,17 @@ namespace ManiacEditor.Properties {
                 this["KeepLayersVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NeverLoadEntityTextures {
+            get {
+                return ((bool)(this["NeverLoadEntityTextures"]));
+            }
+            set {
+                this["NeverLoadEntityTextures"] = value;
+            }
+        }
     }
 }

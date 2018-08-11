@@ -510,6 +510,7 @@
             this._baseDataDirectoryLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 737);
             this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(1184, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip1";
@@ -525,13 +526,15 @@
             this.selectedTilePositionLabel.Name = "selectedTilePositionLabel";
             this.selectedTilePositionLabel.Size = new System.Drawing.Size(0, 17);
             this.selectedTilePositionLabel.Tag = "Selected Tiles: {1}";
-            this.selectedTilePositionLabel.ToolTipText = "Selected Tiles:";
+            this.selectedTilePositionLabel.ToolTipText = "This is the position of where you clicked last in relationship to the scene\'s til" +
+    "es";
             this.selectedTilePositionLabel.Click += new System.EventHandler(this.toolStripStatusLabel2_Click);
             // 
             // amountOfTilesInSelection
             // 
             this.amountOfTilesInSelection.Name = "amountOfTilesInSelection";
             this.amountOfTilesInSelection.Size = new System.Drawing.Size(0, 17);
+            this.amountOfTilesInSelection.ToolTipText = "This is the amount of tiles/length of pixels in your selection";
             // 
             // _baseDataDirectoryLabel
             // 

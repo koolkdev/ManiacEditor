@@ -28,9 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.layerHide = new System.Windows.Forms.CheckBox();
+            this.neverLoadEntityTextures = new System.Windows.Forms.CheckBox();
             this.copyUnlock = new System.Windows.Forms.CheckBox();
+            this.layerHide = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
+            // 
+            // neverLoadEntityTextures
+            // 
+            this.neverLoadEntityTextures.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.neverLoadEntityTextures.Checked = global::ManiacEditor.Properties.Settings.Default.NeverLoadEntityTextures;
+            this.neverLoadEntityTextures.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "NeverLoadEntityTextures", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.neverLoadEntityTextures.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.neverLoadEntityTextures.Location = new System.Drawing.Point(14, 138);
+            this.neverLoadEntityTextures.Margin = new System.Windows.Forms.Padding(5);
+            this.neverLoadEntityTextures.Name = "neverLoadEntityTextures";
+            this.neverLoadEntityTextures.Size = new System.Drawing.Size(137, 89);
+            this.neverLoadEntityTextures.TabIndex = 30;
+            this.neverLoadEntityTextures.Text = "Never load Entity Textures/Annimations (NOTE: Must reload textures to see changes" +
+    ")\r\n";
+            this.neverLoadEntityTextures.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.neverLoadEntityTextures.UseVisualStyleBackColor = true;
+            this.neverLoadEntityTextures.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // copyUnlock
+            // 
+            this.copyUnlock.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.copyUnlock.Checked = global::ManiacEditor.Properties.Settings.Default.ForceCopyUnlock;
+            this.copyUnlock.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceCopyUnlock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.copyUnlock.Location = new System.Drawing.Point(14, 67);
+            this.copyUnlock.Name = "copyUnlock";
+            this.copyUnlock.Size = new System.Drawing.Size(120, 63);
+            this.copyUnlock.TabIndex = 29;
+            this.copyUnlock.Text = "Enable Copy between Scenes (WARNING: Use at your own risk)";
+            this.copyUnlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.copyUnlock.UseVisualStyleBackColor = true;
             // 
             // layerHide
             // 
@@ -46,24 +77,12 @@
             this.layerHide.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.layerHide.UseVisualStyleBackColor = true;
             // 
-            // copyUnlock
-            // 
-            this.copyUnlock.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.copyUnlock.Checked = global::ManiacEditor.Properties.Settings.Default.ForceCopyUnlock;
-            this.copyUnlock.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceCopyUnlock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.copyUnlock.Location = new System.Drawing.Point(14, 67);
-            this.copyUnlock.Name = "copyUnlock";
-            this.copyUnlock.Size = new System.Drawing.Size(120, 63);
-            this.copyUnlock.TabIndex = 29;
-            this.copyUnlock.Text = "Enable Copy between Scenes (WARNING: Use at your own risk)";
-            this.copyUnlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.copyUnlock.UseVisualStyleBackColor = true;
-            // 
             // OptionBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.neverLoadEntityTextures);
             this.Controls.Add(this.copyUnlock);
             this.Controls.Add(this.layerHide);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -82,5 +101,6 @@
 
         private System.Windows.Forms.CheckBox layerHide;
         private System.Windows.Forms.CheckBox copyUnlock;
+        private System.Windows.Forms.CheckBox neverLoadEntityTextures;
     }
 }
