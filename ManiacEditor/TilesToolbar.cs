@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RSDKv5;
+using System.Diagnostics;
+
 
 namespace ManiacEditor
 {
@@ -121,6 +123,7 @@ namespace ManiacEditor
 
         private void TilesToolbar_Load(object sender, EventArgs e)
         {
+            Debug.WriteLine("Send to debug output.");
 
         }
 

@@ -107,5 +107,53 @@ namespace ManiacEditor.Properties {
                 this["NeverLoadEntityTextures"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SolidTopDefault {
+            get {
+                return ((bool)(this["SolidTopDefault"]));
+            }
+            set {
+                this["SolidTopDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SolidAllButTopDefault {
+            get {
+                return ((bool)(this["SolidAllButTopDefault"]));
+            }
+            set {
+                this["SolidAllButTopDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Unkown1Default {
+            get {
+                return ((bool)(this["Unkown1Default"]));
+            }
+            set {
+                this["Unkown1Default"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Unkown2Default {
+            get {
+                return ((bool)(this["Unkown2Default"]));
+            }
+            set {
+                this["Unkown2Default"] = value;
+            }
+        }
     }
 }
