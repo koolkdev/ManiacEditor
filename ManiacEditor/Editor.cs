@@ -50,8 +50,11 @@ namespace ManiacEditor
         string SceneFilename = null;
         string StageConfigFileName = null;
 
+        internal EditorLayer FGHigher => EditorScene?.HighDetails;
         internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
         internal EditorLayer FGLow => EditorScene?.ForegroundLow;
+        internal EditorLayer FGLower => EditorScene?.LowDetails;
+
         private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
@@ -66,6 +69,7 @@ namespace ManiacEditor
         internal int SelectedTilesCount;
         internal int SelectedTileX;
         internal int SelectedTileY;
+        internal bool controlWindowOpen;
 
         internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
         internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
@@ -251,6 +255,8 @@ namespace ManiacEditor
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled && FGLow != null;
+            ShowFGHigher.Enabled = enabled && FGHigher != null;
+            ShowFGLower.Enabled = enabled && FGLower != null;
             ShowEntities.Enabled = enabled;
             ShowAnimations.Enabled = enabled;
             ReloadToolStripButton.Enabled = enabled;
@@ -287,6 +293,8 @@ namespace ManiacEditor
         {
             EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
+            EditFGLower.Enabled = enabled && FGLower != null;
+            EditFGHigher.Enabled = enabled && FGHigher != null;
             EditEntities.Enabled = enabled;
             importObjectsToolStripMenuItem.Enabled = enabled && StageConfig != null;
             importSoundsToolStripMenuItem.Enabled = enabled && StageConfig != null;
@@ -294,10 +302,13 @@ namespace ManiacEditor
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
+            else if (enabled && EditFGHigher.Checked) EditLayer = FGHigher;
+            else if (enabled && EditFGLower.Checked) EditLayer = FGLower;
             else if (enabled && _extraLayerButtons.Any(elb => elb.Checked))
             {
                 var selectedExtraLayerButton = _extraLayerButtons.Single(elb => elb.Checked);
                 var editorLayer = EditorScene.OtherLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
+
                 EditLayer = editorLayer;
             }
             else EditLayer = null;
@@ -1305,6 +1316,8 @@ namespace ManiacEditor
 
             EditFGLow.Checked = false;
             EditFGHigh.Checked = false;
+            EditFGLower.Checked = false;
+            EditFGHigher.Checked = false;
             EditEntities.Checked = false;
 
             SetViewSize();
@@ -1396,6 +1409,8 @@ namespace ManiacEditor
 
             UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
             UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
+            UpdateDualButtonsControlsForLayer(FGLower, ShowFGLower, EditFGLower);
+            UpdateDualButtonsControlsForLayer(FGHigher, ShowFGHigher, EditFGHigher);
         }
 
         private void TearDownExtraLayerButtons()
@@ -1407,6 +1422,8 @@ namespace ManiacEditor
             }
             _extraLayerButtons.Clear();
         }
+
+
 
         /// <summary>
         /// Given a scene layer, configure the given visibiltiy and edit buttons which will control that layer.
@@ -1436,9 +1453,13 @@ namespace ManiacEditor
                 {
                     ShowFGLow.Checked = false;
                     ShowFGHigh.Checked = false;
+                    ShowFGLower.Checked = false;
+                    ShowFGHigher.Checked = false;
                 }
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
+                EditFGLower.Checked = false;
+                EditFGHigher.Checked = false;
                 EditEntities.Checked = false;
 
                 foreach (var elb in _extraLayerButtons)
@@ -1585,6 +1606,8 @@ a valid Data Directory.",
                     Background.Draw(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
+                if (ShowFGLower.Checked)
+                    FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
                 if (ShowEntities.Checked && !EditEntities.Checked)
@@ -1593,6 +1616,9 @@ a valid Data Directory.",
                     FGHigh.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
+                if (ShowFGHigher.Checked)
+                    FGHigher.Draw(GraphicPanel);
+
             }
             if (draggingSelection)
             {
@@ -1663,6 +1689,16 @@ a valid Data Directory.",
             LayerShowButton_Click(ShowFGHigh, "Layer FG High");
         }
 
+        private void ShowFGHigher_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowFGHigher, "Layer FG Higher");
+        }
+
+        private void ShowFGLower_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowFGLower, "Layer FG Lower");
+        }
+
         private void ShowEntities_Click(object sender, EventArgs e)
         {
             LayerShowButton_Click(ShowEntities, "Entities");
@@ -1701,6 +1737,8 @@ a valid Data Directory.",
             {
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
+                EditFGLower.Checked = false;
+                EditFGHigher.Checked = false;
                 EditEntities.Checked = false;
                 button.Checked = true;
             }
@@ -1720,6 +1758,16 @@ a valid Data Directory.",
         private void EditFGHigh_Click(object sender, EventArgs e)
         {
             LayerEditButton_Click(EditFGHigh);
+        }
+
+        private void EditFGLower_Click(object sender, EventArgs e)
+        {
+            LayerEditButton_Click(EditFGLower);
+        }
+
+        private void EditFGHigher_Click(object sender, EventArgs e)
+        {
+            LayerEditButton_Click(EditFGHigher);
         }
 
         private void EditEntities_Click(object sender, EventArgs e)
@@ -1803,6 +1851,8 @@ Error: {ex.Message}");
                     // only attempt to render the ones we actually have
                     FGLow?.Draw(g);
                     FGHigh?.Draw(g);
+                    FGLower?.Draw(g);
+                    FGHigher?.Draw(g);
                     bitmap.Save(save.FileName);
                 }
             }
@@ -2314,6 +2364,7 @@ Error: {ex.Message}");
             {
                 lm.ShowDialog();
             }
+            controlWindowOpen = true;
 
             SetupLayerButtons();
             ResetViewSize();
@@ -2333,6 +2384,15 @@ Error: {ex.Message}");
             using (var optionBox = new OptionBox())
             {
                 optionBox.ShowDialog();
+            }
+        }
+
+        private void controlsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            using (var ControlBox = new controlBox())
+            {
+                ControlBox.ShowDialog();
             }
         }
 
@@ -2499,6 +2559,8 @@ Error: {ex.Message}");
             StageTiles?.DisposeTextures();
             if (FGHigh != null) FGHigh.DisposeTextures();
             if (FGLow != null) FGLow.DisposeTextures();
+            if (FGHigher != null) FGHigh.DisposeTextures();
+            if (FGLower != null) FGLow.DisposeTextures();
             foreach (var el in EditorScene.OtherLayers)
             {
                 el.DisposeTextures();

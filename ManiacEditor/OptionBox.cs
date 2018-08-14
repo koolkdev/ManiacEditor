@@ -51,5 +51,31 @@ namespace ManiacEditor
         {
 
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyUnlock_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -11,9 +11,17 @@ namespace ManiacEditor
     {
         private IList<EditorLayer> _editorLayers;
 
+        public EditorLayer LowDetails
+        {
+            get => _editorLayers.LastOrDefault(el => el.Name.Equals(Properties.Settings.Default.CustomLayerLow) || el.Name.Equals("FG Lower") || el.Name.Equals("FG Supa Low"));
+        }
         public EditorLayer ForegroundLow
         {
             get => _editorLayers.LastOrDefault(el => el.Name.Equals("FG Low") || el.Name.Equals("Playfield"));
+        }
+        public EditorLayer HighDetails
+        {
+            get => _editorLayers.LastOrDefault(el => el.Name.Equals(Properties.Settings.Default.CustomLayerHigh) || el.Name.Equals("FG Higher") || el.Name.Equals("FG Overlay") || el.Name.Equals("FG Supa High"));
         }
         public EditorLayer ForegroundHigh
         {
@@ -29,7 +37,14 @@ namespace ManiacEditor
         {
             get
             {
-                return _editorLayers.Where(el => el != ForegroundLow && el != ForegroundHigh);
+                return _editorLayers.Where(el => el != ForegroundLow && el != ForegroundHigh && el != HighDetails && el != LowDetails);
+            }
+        }
+        public IEnumerable<EditorLayer> ViewableOtherLayers
+        {
+            get
+            {
+                return _editorLayers.Where(el => el != ForegroundLow && el != ForegroundHigh && el != HighDetails && el != LowDetails);
             }
         }
 

@@ -155,5 +155,29 @@ namespace ManiacEditor.Properties {
                 this["Unkown2Default"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CustomLayerHigh {
+            get {
+                return ((string)(this["CustomLayerHigh"]));
+            }
+            set {
+                this["CustomLayerHigh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CustomLayerLow {
+            get {
+                return ((string)(this["CustomLayerLow"]));
+            }
+            set {
+                this["CustomLayerLow"] = value;
+            }
+        }
     }
 }

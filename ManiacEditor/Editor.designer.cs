@@ -62,12 +62,13 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
             this.GraphicPanel = new ManiacEditor.DevicePanel();
+            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -102,7 +103,12 @@
             this.pointerButton = new System.Windows.Forms.ToolStripButton();
             this.selectTool = new System.Windows.Forms.ToolStripButton();
             this.placeTilesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowFGLower = new System.Windows.Forms.ToolStripButton();
+            this.ShowFGHigher = new System.Windows.Forms.ToolStripButton();
             this.ShowAnimations = new System.Windows.Forms.ToolStripButton();
+            this.EditFGLower = new System.Windows.Forms.ToolStripButton();
+            this.EditFGHigher = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -371,25 +377,33 @@
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.controlsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.helpToolStripMenuItem.Text = "Options";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
+            this.helpToolStripMenuItem.Text = "Other";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "Settings";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionToolStripMenuItem_Click);
+            // 
+            // controlsToolStripMenuItem
+            // 
+            this.controlsToolStripMenuItem.Name = "controlsToolStripMenuItem";
+            this.controlsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.controlsToolStripMenuItem.Text = "Controls";
+            this.controlsToolStripMenuItem.Click += new System.EventHandler(this.controlsToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -410,7 +424,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(1159, 680);
+            this.splitContainer1.Size = new System.Drawing.Size(1159, 681);
             this.splitContainer1.SplitterDistance = 870;
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
@@ -418,37 +432,22 @@
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.panel3);
-            this.viewPanel.Controls.Add(this.hScrollBar1);
             this.viewPanel.Controls.Add(this.vScrollBar1);
             this.viewPanel.Controls.Add(this.GraphicPanel);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 0);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(868, 678);
+            this.viewPanel.Size = new System.Drawing.Size(868, 679);
             this.viewPanel.TabIndex = 8;
             // 
             // panel3
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.Location = new System.Drawing.Point(850, 660);
+            this.panel3.Location = new System.Drawing.Point(850, 661);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(18, 18);
             this.panel3.TabIndex = 8;
             this.panel3.Visible = false;
-            // 
-            // hScrollBar1
-            // 
-            this.hScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollBar1.LargeChange = 20;
-            this.hScrollBar1.Location = new System.Drawing.Point(0, 660);
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(850, 18);
-            this.hScrollBar1.SmallChange = 20;
-            this.hScrollBar1.TabIndex = 2;
-            this.hScrollBar1.Visible = false;
-            this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
-            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
             // vScrollBar1
             // 
@@ -457,7 +456,7 @@
             this.vScrollBar1.LargeChange = 20;
             this.vScrollBar1.Location = new System.Drawing.Point(850, 0);
             this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(18, 660);
+            this.vScrollBar1.Size = new System.Drawing.Size(18, 661);
             this.vScrollBar1.SmallChange = 20;
             this.vScrollBar1.TabIndex = 1;
             this.vScrollBar1.Visible = false;
@@ -488,6 +487,19 @@
             this.GraphicPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseUp);
             this.GraphicPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_MouseWheel);
             // 
+            // hScrollBar1
+            // 
+            this.hScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.hScrollBar1.LargeChange = 20;
+            this.hScrollBar1.Location = new System.Drawing.Point(14, 715);
+            this.hScrollBar1.Name = "hScrollBar1";
+            this.hScrollBar1.Size = new System.Drawing.Size(850, 18);
+            this.hScrollBar1.SmallChange = 20;
+            this.hScrollBar1.TabIndex = 2;
+            this.hScrollBar1.Visible = false;
+            this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
+            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
             // mainPanel
             // 
             this.mainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -495,9 +507,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mainPanel.Controls.Add(this.splitContainer1);
-            this.mainPanel.Location = new System.Drawing.Point(12, 53);
+            this.mainPanel.Location = new System.Drawing.Point(12, 52);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(1160, 681);
+            this.mainPanel.Size = new System.Drawing.Size(1160, 682);
             this.mainPanel.TabIndex = 9;
             // 
             // statusStrip1
@@ -727,13 +739,17 @@
             this.placeTilesButton,
             this.MagnetMode,
             this.toolStripSeparator4,
+            this.ShowFGLower,
             this.ShowFGLow,
             this.ShowFGHigh,
+            this.ShowFGHigher,
             this.ShowEntities,
             this.ShowAnimations,
             this.toolStripSeparator5,
+            this.EditFGLower,
             this.EditFGLow,
             this.EditFGHigh,
+            this.EditFGHigher,
             this.EditEntities,
             this.toolStripSeparator6});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
@@ -842,6 +858,30 @@
             this.placeTilesButton.Text = "Place tiles (Right click [+drag] - place, Left click [+drag] - delete)";
             this.placeTilesButton.Click += new System.EventHandler(this.placeTilesButton_Click);
             // 
+            // ShowFGLower
+            // 
+            this.ShowFGLower.Checked = true;
+            this.ShowFGLower.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowFGLower.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.ShowFGLower.Image = ((System.Drawing.Image)(resources.GetObject("ShowFGLower.Image")));
+            this.ShowFGLower.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowFGLower.Name = "ShowFGLower";
+            this.ShowFGLower.Size = new System.Drawing.Size(60, 22);
+            this.ShowFGLower.Text = "FG Lower";
+            this.ShowFGLower.Click += new System.EventHandler(this.ShowFGLower_Click);
+            // 
+            // ShowFGHigher
+            // 
+            this.ShowFGHigher.Checked = true;
+            this.ShowFGHigher.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowFGHigher.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.ShowFGHigher.Image = ((System.Drawing.Image)(resources.GetObject("ShowFGHigher.Image")));
+            this.ShowFGHigher.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowFGHigher.Name = "ShowFGHigher";
+            this.ShowFGHigher.Size = new System.Drawing.Size(64, 22);
+            this.ShowFGHigher.Text = "FG Higher";
+            this.ShowFGHigher.Click += new System.EventHandler(this.ShowFGHigher_Click);
+            // 
             // ShowAnimations
             // 
             this.ShowAnimations.Checked = true;
@@ -855,11 +895,49 @@
             this.ShowAnimations.ToolTipText = "Hide Animations";
             this.ShowAnimations.Click += new System.EventHandler(this.ShowAnimations_Click);
             // 
+            // EditFGLower
+            // 
+            this.EditFGLower.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.EditFGLower.Enabled = false;
+            this.EditFGLower.ForeColor = System.Drawing.Color.Red;
+            this.EditFGLower.Image = ((System.Drawing.Image)(resources.GetObject("EditFGLower.Image")));
+            this.EditFGLower.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.EditFGLower.Name = "EditFGLower";
+            this.EditFGLower.Size = new System.Drawing.Size(60, 22);
+            this.EditFGLower.Text = "FG Lower";
+            this.EditFGLower.ToolTipText = "Edit FG Layer Lower";
+            this.EditFGLower.Click += new System.EventHandler(this.EditFGLower_Click);
+            // 
+            // EditFGHigher
+            // 
+            this.EditFGHigher.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.EditFGHigher.Enabled = false;
+            this.EditFGHigher.ForeColor = System.Drawing.Color.Red;
+            this.EditFGHigher.Image = ((System.Drawing.Image)(resources.GetObject("EditFGHigher.Image")));
+            this.EditFGHigher.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.EditFGHigher.Name = "EditFGHigher";
+            this.EditFGHigher.Size = new System.Drawing.Size(64, 22);
+            this.EditFGHigher.Text = "FG Higher";
+            this.EditFGHigher.ToolTipText = "Edit FG Layer Higher";
+            this.EditFGHigher.Click += new System.EventHandler(this.EditFGHigher_Click);
+            // 
+            // toolStrip2
+            // 
+            this.toolStrip2.Enabled = false;
+            this.toolStrip2.Location = new System.Drawing.Point(0, 49);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Size = new System.Drawing.Size(1184, 25);
+            this.toolStrip2.TabIndex = 10;
+            this.toolStrip2.Text = "toolStrip2";
+            this.toolStrip2.Visible = false;
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 759);
+            this.Controls.Add(this.toolStrip2);
+            this.Controls.Add(this.hScrollBar1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.toolStrip1);
@@ -969,6 +1047,12 @@
         private System.Windows.Forms.ToolStripStatusLabel selectedTilePositionLabel;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel amountOfTilesInSelection;
+        private System.Windows.Forms.ToolStrip toolStrip2;
+        private System.Windows.Forms.ToolStripButton ShowFGLower;
+        private System.Windows.Forms.ToolStripButton ShowFGHigher;
+        private System.Windows.Forms.ToolStripButton EditFGLower;
+        private System.Windows.Forms.ToolStripButton EditFGHigher;
+        private System.Windows.Forms.ToolStripMenuItem controlsToolStripMenuItem;
     }
 }
 
