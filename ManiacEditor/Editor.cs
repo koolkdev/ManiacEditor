@@ -1660,18 +1660,19 @@ a valid Data Directory.",
                     Background.Draw(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
-                if (ShowFGLower.Checked)
+                if (ShowFGLower.Checked || EditFGLower.Checked)
                     FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
+                if (ShowFGHigher.Checked || EditFGHigher.Checked)
+                    FGHigher.Draw(GraphicPanel);
+                if (ShowEntities.Checked && !EditEntities.Checked)
+                    entities.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
-                if (ShowFGHigher.Checked)
-                    FGHigher.Draw(GraphicPanel);
+
 
             }
             if (draggingSelection)
