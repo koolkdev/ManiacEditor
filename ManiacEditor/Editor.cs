@@ -67,6 +67,7 @@ namespace ManiacEditor
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
         internal int SelectedTilesCount;
+        internal int SelectedTilesCountTemp;
         internal int SelectedTileX;
         internal int SelectedTileY;
         internal bool controlWindowOpen;
@@ -788,9 +789,46 @@ namespace ManiacEditor
                 }
             }
 
-            toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
-            selectedTilePositionLabel.Text = "| Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ") " + "| Pixel Position: " + "(X: " + (int)SelectedTileX*16 + ", Y: " + (int)SelectedTileY*16 + ") |";
-            amountOfTilesInSelection.Text = "[Amount of Tiles in Selection: " + SelectedTilesCount + "] [Length of Pixels in Selection: " + SelectedTilesCount*16 + "]";
+            //
+            // Tooltip Bar Info 
+            //
+
+            positionLabel.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
+
+            if (Properties.Settings.Default.pixelCountMode == false)
+            {
+                selectedPositionLabel.Text = "Selected Tile Position: X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY;
+                selectedPositionLabel.ToolTipText = "The Position of the Selected Tile";
+            }
+            else
+            {
+                selectedPositionLabel.Text = "Selected Tile Pixel Position: " + "X: " + (int)SelectedTileX * 16 + ", Y: " + (int)SelectedTileY * 16;
+                selectedPositionLabel.ToolTipText = "The Pixel Position of the Selected Tile";
+            }
+            if (Properties.Settings.Default.pixelCountMode == false)
+            { 
+                selectionSizeLabel.Text = "Amount of Tiles in Selection: " + SelectedTilesCount;
+                selectionSizeLabel.ToolTipText = "The Size of the Selection";
+            }
+            else
+            {
+                selectionSizeLabel.Text = "Length of Pixels in Selection: " + SelectedTilesCount * 16;
+                selectionSizeLabel.ToolTipText = "The Length of all the Tiles (by Pixels) in the Selection";
+            }
+            if (Properties.Settings.Default.pixelCountMode == false)
+            { 
+                tempSelectionSizeLabel.Text = "Temporary Tile Selection Count: " + SelectedTilesCountTemp;
+                tempSelectionSizeLabel.ToolTipText = "The Amount of Tiles in the Temporary Selection (Includes Deselected Tiles)";
+            }
+            else
+            {
+                tempSelectionSizeLabel.Text = "Temporary Length of Pixels in Selection: " + SelectedTilesCountTemp * 16;
+                tempSelectionSizeLabel.ToolTipText = "The Amount of Pixels(of the Temporary Selected Tiles by their Length) in the Temporary Selection (Includes Deselected Pixels/Tiles)";
+            }
+
+            //
+            // End of Tooltip Bar Info Section
+            //
 
             if (IsEditing())
             {
@@ -2562,6 +2600,36 @@ Error: {ex.Message}");
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void toolStrip3_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void amountInSelectionLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pixelModeButton_Click(object sender, EventArgs e)
+        {
+            if (pixelModeButton.Checked == false)
+            {
+                pixelModeButton.Checked = true;
+                Properties.Settings.Default.pixelCountMode = true;
+            }
+            else
+            {
+                pixelModeButton.Checked = false;
+                Properties.Settings.Default.pixelCountMode = false;
+            }
 
         }
 

@@ -610,7 +610,8 @@ namespace ManiacEditor
                     if (SelectedTiles.Contains(new Point(x, y)) || _layer.Tiles[y][x] != 0xffff)
                     {
                         TempSelectionTiles.Add(new Point(x, y));
-                        Editor.Instance.SelectedTilesCount = TempSelectionTiles.Count;
+                        Editor.Instance.SelectedTilesCountTemp = TempSelectionTiles.Count;
+
                     }
                 }
             }
@@ -619,6 +620,7 @@ namespace ManiacEditor
         public void EndTempSelection()
         {
             TempSelectionTiles.Clear();
+            Editor.Instance.SelectedTilesCountTemp = TempSelectionTiles.Count;
         }
 
         private void InvalidateChunk(int x, int y)
@@ -787,8 +789,10 @@ namespace ManiacEditor
                 {
                     Point p = new Point(tx, ty);
                     // We will draw those later
-                    if (SelectedTiles.Contains(p) || TempSelectionTiles.Contains(p)) continue;
-                    
+                    if (SelectedTiles.Contains(p) || TempSelectionTiles.Contains(p))
+                    {
+                        continue;
+                    }
                     if (this._layer.Tiles[ty][tx] != 0xffff)
                     {
                         DrawTile(d, this._layer.Tiles[ty][tx], tx, ty, false, Transperncy);
@@ -802,11 +806,16 @@ namespace ManiacEditor
             foreach (Point p in SelectedTiles.GetChunkPoint(x, y))
                 if (SelectedTilesValue.ContainsKey(p))
                     DrawTile(d, SelectedTilesValue[p], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
+
                 else // It is still in the original place
                     DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
 
             foreach (Point p in TempSelectionTiles.GetChunkPoint(x, y)) {
-                if (SelectedTiles.Contains(p)) continue;
+                if (SelectedTiles.Contains(p))
+                {
+
+                    continue;
+                }
                 DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, true, Transperncy);
             }
         }
