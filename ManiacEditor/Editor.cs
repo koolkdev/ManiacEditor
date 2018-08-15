@@ -212,6 +212,7 @@ namespace ManiacEditor
         private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
         {
             UnloadScene();
+            UseVisibilityPrefrences();
             DataDirectory = newDataDirectory;
             AddRecentDataFolder(newDataDirectory);
             SetGameConfig();
@@ -1329,6 +1330,58 @@ namespace ManiacEditor
             GC.Collect();
         }
 
+        void UseVisibilityPrefrences()
+        {
+            if (!Properties.Settings.Default.FGLowerDefault)
+            {
+                ShowFGLower.Checked = false;
+            }
+            else
+            {
+                ShowFGLower.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGLowDefault)
+            {
+                ShowFGLow.Checked = false;
+            }
+            else
+            {
+                ShowFGLow.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGHighDefault)
+            {
+                ShowFGHigh.Checked = false;
+            }
+            else
+            {
+                ShowFGHigh.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGHigherDefault)
+            {
+                ShowFGHigher.Checked = false;
+            }
+            else
+            {
+                ShowFGHigher.Checked = true;
+            }
+            if (!Properties.Settings.Default.EntitiesDefault)
+            {
+                ShowEntities.Checked = false;
+            }
+            else
+            {
+                ShowEntities.Checked = true;
+            }
+            if (!Properties.Settings.Default.AnimationsDefault)
+            {
+                ShowAnimations.Checked = false;
+            }
+            else
+            {
+                ShowAnimations.Checked = true;
+            }
+        }
+
         private void Open_Click(object sender, EventArgs e)
         {
             if (!load()) return;
@@ -1344,6 +1397,7 @@ namespace ManiacEditor
                 return;
 
             UnloadScene();
+            UseVisibilityPrefrences();
 
             try
             {

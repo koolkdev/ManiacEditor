@@ -179,5 +179,77 @@ namespace ManiacEditor.Properties {
                 this["CustomLayerLow"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FGLowerDefault {
+            get {
+                return ((bool)(this["FGLowerDefault"]));
+            }
+            set {
+                this["FGLowerDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FGLowDefault {
+            get {
+                return ((bool)(this["FGLowDefault"]));
+            }
+            set {
+                this["FGLowDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FGHighDefault {
+            get {
+                return ((bool)(this["FGHighDefault"]));
+            }
+            set {
+                this["FGHighDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FGHigherDefault {
+            get {
+                return ((bool)(this["FGHigherDefault"]));
+            }
+            set {
+                this["FGHigherDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EntitiesDefault {
+            get {
+                return ((bool)(this["EntitiesDefault"]));
+            }
+            set {
+                this["EntitiesDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AnimationsDefault {
+            get {
+                return ((bool)(this["AnimationsDefault"]));
+            }
+            set {
+                this["AnimationsDefault"] = value;
+            }
+        }
     }
 }

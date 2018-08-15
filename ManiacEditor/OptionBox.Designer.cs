@@ -34,6 +34,15 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.animationsDefault = new System.Windows.Forms.CheckBox();
+            this.entitiesDefault = new System.Windows.Forms.CheckBox();
+            this.fgLowerDefault = new System.Windows.Forms.CheckBox();
+            this.fgLowDefault = new System.Windows.Forms.CheckBox();
+            this.fgHighDefault = new System.Windows.Forms.CheckBox();
+            this.fgHigherDefault = new System.Windows.Forms.CheckBox();
             this.highLayerTextbox = new System.Windows.Forms.TextBox();
             this.lowLayerTextbox = new System.Windows.Forms.TextBox();
             this.solidTopDefault = new System.Windows.Forms.CheckBox();
@@ -43,7 +52,6 @@
             this.neverLoadEntityTextures = new System.Windows.Forms.CheckBox();
             this.copyUnlock = new System.Windows.Forms.CheckBox();
             this.layerHide = new System.Windows.Forms.CheckBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label2
@@ -107,6 +115,122 @@
             this.label6.Size = new System.Drawing.Size(70, 13);
             this.label6.TabIndex = 43;
             this.label6.Text = "Higher Layer:";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.Location = new System.Drawing.Point(161, 259);
+            this.label7.Margin = new System.Windows.Forms.Padding(3);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(95, 98);
+            this.label7.TabIndex = 44;
+            this.label7.Text = "NOTE: You should reload the stage/scene to safely see changes";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label7.Click += new System.EventHandler(this.label7_Click);
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label8.Location = new System.Drawing.Point(14, 272);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(100, 2);
+            this.label8.TabIndex = 50;
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(11, 259);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(111, 13);
+            this.label9.TabIndex = 49;
+            this.label9.Text = "Default Visible Layers:";
+            // 
+            // animationsDefault
+            // 
+            this.animationsDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.animationsDefault.AutoSize = true;
+            this.animationsDefault.Checked = global::ManiacEditor.Properties.Settings.Default.AnimationsDefault;
+            this.animationsDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.animationsDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "AnimationsDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.animationsDefault.Location = new System.Drawing.Point(14, 392);
+            this.animationsDefault.Name = "animationsDefault";
+            this.animationsDefault.Size = new System.Drawing.Size(77, 17);
+            this.animationsDefault.TabIndex = 52;
+            this.animationsDefault.Text = "Animations";
+            this.animationsDefault.UseVisualStyleBackColor = true;
+            // 
+            // entitiesDefault
+            // 
+            this.entitiesDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.entitiesDefault.AutoSize = true;
+            this.entitiesDefault.Checked = global::ManiacEditor.Properties.Settings.Default.EntitiesDefault;
+            this.entitiesDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.entitiesDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "EntitiesDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.entitiesDefault.Location = new System.Drawing.Point(14, 369);
+            this.entitiesDefault.Name = "entitiesDefault";
+            this.entitiesDefault.Size = new System.Drawing.Size(60, 17);
+            this.entitiesDefault.TabIndex = 51;
+            this.entitiesDefault.Text = "Entities";
+            this.entitiesDefault.UseVisualStyleBackColor = true;
+            // 
+            // fgLowerDefault
+            // 
+            this.fgLowerDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.fgLowerDefault.AutoSize = true;
+            this.fgLowerDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGLowerDefault;
+            this.fgLowerDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fgLowerDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGLowerDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.fgLowerDefault.Location = new System.Drawing.Point(14, 277);
+            this.fgLowerDefault.Name = "fgLowerDefault";
+            this.fgLowerDefault.Size = new System.Drawing.Size(72, 17);
+            this.fgLowerDefault.TabIndex = 48;
+            this.fgLowerDefault.Text = "FG Lower";
+            this.fgLowerDefault.UseVisualStyleBackColor = true;
+            // 
+            // fgLowDefault
+            // 
+            this.fgLowDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.fgLowDefault.AutoSize = true;
+            this.fgLowDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGLowDefault;
+            this.fgLowDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fgLowDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGLowDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.fgLowDefault.Location = new System.Drawing.Point(14, 300);
+            this.fgLowDefault.Name = "fgLowDefault";
+            this.fgLowDefault.Size = new System.Drawing.Size(63, 17);
+            this.fgLowDefault.TabIndex = 47;
+            this.fgLowDefault.Text = "FG Low";
+            this.fgLowDefault.UseVisualStyleBackColor = true;
+            // 
+            // fgHighDefault
+            // 
+            this.fgHighDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.fgHighDefault.AutoSize = true;
+            this.fgHighDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGHighDefault;
+            this.fgHighDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fgHighDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGHighDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.fgHighDefault.Location = new System.Drawing.Point(14, 323);
+            this.fgHighDefault.Name = "fgHighDefault";
+            this.fgHighDefault.Size = new System.Drawing.Size(65, 17);
+            this.fgHighDefault.TabIndex = 46;
+            this.fgHighDefault.Text = "FG High";
+            this.fgHighDefault.UseVisualStyleBackColor = true;
+            // 
+            // fgHigherDefault
+            // 
+            this.fgHigherDefault.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.fgHigherDefault.AutoSize = true;
+            this.fgHigherDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGHigherDefault;
+            this.fgHigherDefault.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fgHigherDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGHigherDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.fgHigherDefault.Location = new System.Drawing.Point(14, 346);
+            this.fgHigherDefault.Name = "fgHigherDefault";
+            this.fgHigherDefault.Size = new System.Drawing.Size(74, 17);
+            this.fgHigherDefault.TabIndex = 45;
+            this.fgHigherDefault.Text = "FG Higher";
+            this.fgHigherDefault.UseVisualStyleBackColor = true;
             // 
             // highLayerTextbox
             // 
@@ -227,23 +351,19 @@
             this.layerHide.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.layerHide.UseVisualStyleBackColor = true;
             // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.Location = new System.Drawing.Point(161, 259);
-            this.label7.Margin = new System.Windows.Forms.Padding(3);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 98);
-            this.label7.TabIndex = 44;
-            this.label7.Text = "NOTE: You should reload the stage/scene to safely see changes";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
-            // 
             // OptionBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 443);
+            this.Controls.Add(this.animationsDefault);
+            this.Controls.Add(this.entitiesDefault);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.fgLowerDefault);
+            this.Controls.Add(this.fgLowDefault);
+            this.Controls.Add(this.fgHighDefault);
+            this.Controls.Add(this.fgHigherDefault);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -292,5 +412,13 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox fgLowerDefault;
+        private System.Windows.Forms.CheckBox fgLowDefault;
+        private System.Windows.Forms.CheckBox fgHighDefault;
+        private System.Windows.Forms.CheckBox fgHigherDefault;
+        private System.Windows.Forms.CheckBox entitiesDefault;
+        private System.Windows.Forms.CheckBox animationsDefault;
     }
 }
