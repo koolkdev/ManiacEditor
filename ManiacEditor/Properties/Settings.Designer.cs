@@ -263,5 +263,17 @@ namespace ManiacEditor.Properties {
                 this["pixelCountMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int tileToolbarDefaultZoomLevel {
+            get {
+                return ((int)(this["tileToolbarDefaultZoomLevel"]));
+            }
+            set {
+                this["tileToolbarDefaultZoomLevel"] = value;
+            }
+        }
     }
 }

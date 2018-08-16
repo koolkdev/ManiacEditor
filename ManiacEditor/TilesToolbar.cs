@@ -113,6 +113,7 @@ namespace ManiacEditor
         public void Reload()
         {
             tilesList.Reload();
+
         }
 
         public new void Dispose()
@@ -124,6 +125,7 @@ namespace ManiacEditor
         private void TilesToolbar_Load(object sender, EventArgs e)
         {
             Debug.WriteLine("Send to debug output.");
+            trackBar1.Value = Properties.Settings.Default.tileToolbarDefaultZoomLevel;
 
         }
 
@@ -169,6 +171,11 @@ namespace ManiacEditor
                 option1CheckBox.Text = "Flip Horizontal";
                 option2CheckBox.Text = "Flip Vertical";
             }
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
         }
     }
 }

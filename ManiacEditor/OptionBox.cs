@@ -77,5 +77,40 @@ namespace ManiacEditor
         {
 
         }
+
+        private void layerHide_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void animationsDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void entitiesDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fgHigherDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fgHighDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fgLowDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fgLowerDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
