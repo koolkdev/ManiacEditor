@@ -50,6 +50,20 @@ namespace ManiacEditor
             InitializeComponent();
 
             RefreshObjects(sceneObjects);
+
+            if (EditorEntities.SceneWithoutFilters)
+            { 
+                defaultFilter.Enabled = false;
+                Properties.Settings.Default.DefaultFilter = "Both (1)";
+            }
+            else
+            {
+                defaultFilter.Items.Add("Mania (2)");
+                defaultFilter.Items.Add("Encore (4)");
+                defaultFilter.Items.Add("Both (1)");
+                defaultFilter.Items.Add("Pinball (255)");
+                defaultFilter.Items.Add("Other (0)");
+            }
         }
 
         private void UpdateEntitiesList()
@@ -410,8 +424,46 @@ namespace ManiacEditor
             if (cbSpawn?.SelectedItem != null
                 && cbSpawn.SelectedItem is RSDKv5.SceneObject)
             {
+                switch (Properties.Settings.Default.DefaultFilter[0])
+                {
+                    case 'M':
+                        EditorEntities.DefaultFilter = 2;
+                        break;
+                    case 'E':
+                        EditorEntities.DefaultFilter = 4;
+                        break;
+                    case 'B':
+                        EditorEntities.DefaultFilter = 1;
+                        break;
+                    case 'P':
+                        EditorEntities.DefaultFilter = 255;
+                        break;
+                    default:
+                        EditorEntities.DefaultFilter = 0;
+                        break;
+                }
                 Spawn?.Invoke(cbSpawn.SelectedItem as RSDKv5.SceneObject);
             }
+        }
+
+        private void maniaFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void encoreFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void bothFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void otherFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
         }
     }
 }

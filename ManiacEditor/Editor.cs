@@ -51,10 +51,11 @@ namespace ManiacEditor
         string SceneFilename = null;
         string StageConfigFileName = null;
 
-        internal EditorLayer FGHigher => EditorScene?.HighDetails;
         internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
         internal EditorLayer FGLow => EditorScene?.ForegroundLow;
+
         internal EditorLayer FGLower => EditorScene?.LowDetails;
+        internal EditorLayer FGHigher => EditorScene?.LowDetails;
         private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
@@ -68,10 +69,8 @@ namespace ManiacEditor
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
         internal int SelectedTilesCount;
-        internal int SelectedTilesCountTemp;
         internal int SelectedTileX;
         internal int SelectedTileY;
-        internal bool controlWindowOpen;
 
         internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
         internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
@@ -214,7 +213,6 @@ namespace ManiacEditor
         private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
         {
             UnloadScene();
-            UseVisibilityPrefrences();
             DataDirectory = newDataDirectory;
             AddRecentDataFolder(newDataDirectory);
             SetGameConfig();
@@ -258,8 +256,6 @@ namespace ManiacEditor
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled && FGLow != null;
-            ShowFGHigher.Enabled = enabled && FGHigher != null;
-            ShowFGLower.Enabled = enabled && FGLower != null;
             ShowEntities.Enabled = enabled;
             ShowAnimations.Enabled = enabled;
             ReloadToolStripButton.Enabled = enabled;
@@ -296,8 +292,6 @@ namespace ManiacEditor
         {
             EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
-            EditFGLower.Enabled = enabled && FGLower != null;
-            EditFGHigher.Enabled = enabled && FGHigher != null;
             EditEntities.Enabled = enabled;
             importObjectsToolStripMenuItem.Enabled = enabled && StageConfig != null;
             importSoundsToolStripMenuItem.Enabled = enabled && StageConfig != null;
@@ -305,13 +299,10 @@ namespace ManiacEditor
 
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
-            else if (enabled && EditFGHigher.Checked) EditLayer = FGHigher;
-            else if (enabled && EditFGLower.Checked) EditLayer = FGLower;
             else if (enabled && _extraLayerButtons.Any(elb => elb.Checked))
             {
                 var selectedExtraLayerButton = _extraLayerButtons.Single(elb => elb.Checked);
                 var editorLayer = EditorScene.OtherLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
-
                 EditLayer = editorLayer;
             }
             else EditLayer = null;
@@ -790,46 +781,11 @@ namespace ManiacEditor
                 }
             }
 
-            //
-            // Tooltip Bar Info 
-            //
-
-            positionLabel.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
-
-            if (Properties.Settings.Default.pixelCountMode == false)
-            {
-                selectedPositionLabel.Text = "Selected Tile Position: X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY;
-                selectedPositionLabel.ToolTipText = "The Position of the Selected Tile";
-            }
-            else
-            {
-                selectedPositionLabel.Text = "Selected Tile Pixel Position: " + "X: " + (int)SelectedTileX * 16 + ", Y: " + (int)SelectedTileY * 16;
-                selectedPositionLabel.ToolTipText = "The Pixel Position of the Selected Tile";
-            }
-            if (Properties.Settings.Default.pixelCountMode == false)
-            { 
-                selectionSizeLabel.Text = "Amount of Tiles in Selection: " + SelectedTilesCount;
-                selectionSizeLabel.ToolTipText = "The Size of the Selection";
-            }
-            else
-            {
-                selectionSizeLabel.Text = "Length of Pixels in Selection: " + SelectedTilesCount * 16;
-                selectionSizeLabel.ToolTipText = "The Length of all the Tiles (by Pixels) in the Selection";
-            }
-            if (Properties.Settings.Default.pixelCountMode == false)
-            { 
-                tempSelectionSizeLabel.Text = "Temporary Tile Selection Count: " + SelectedTilesCountTemp;
-                tempSelectionSizeLabel.ToolTipText = "The Amount of Tiles in the Temporary Selection (Includes Deselected Tiles)";
-            }
-            else
-            {
-                tempSelectionSizeLabel.Text = "Temporary Length of Pixels in Selection: " + SelectedTilesCountTemp * 16;
-                tempSelectionSizeLabel.ToolTipText = "The Amount of Pixels(of the Temporary Selected Tiles by their Length) in the Temporary Selection (Includes Deselected Pixels/Tiles)";
-            }
-
-            //
-            // End of Tooltip Bar Info Section
-            //
+            toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
+            toolStripStatusLabel2.Text = "Selected Tile Position: (X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY + ")";
+            toolStripStatusLabel3.Text = "Selection Count: " + (int)SelectedTilesCount;
+            toolStripStatusLabel4.Text = ""; //Reserved for More Useful Info
+            toolStripStatusLabel5.Text = ""; //Reserved for More Useful Info
 
             if (IsEditing())
             {
@@ -1339,7 +1295,7 @@ namespace ManiacEditor
 
             Background = null;
 
-            if (!Properties.Settings.Default.ForceCopyUnlock)
+            if (!Properties.Settings.Default.forceCopyUnlock)
             {
                 TilesClipboard = null;
                 entitiesClipboard = null;
@@ -1356,8 +1312,6 @@ namespace ManiacEditor
 
             EditFGLow.Checked = false;
             EditFGHigh.Checked = false;
-            EditFGLower.Checked = false;
-            EditFGHigher.Checked = false;
             EditEntities.Checked = false;
 
             SetViewSize();
@@ -1367,58 +1321,6 @@ namespace ManiacEditor
             // clear memory a little more aggressively 
             EditorEntity.ReleaseResources();
             GC.Collect();
-        }
-
-        void UseVisibilityPrefrences()
-        {
-            if (!Properties.Settings.Default.FGLowerDefault)
-            {
-                ShowFGLower.Checked = false;
-            }
-            else
-            {
-                ShowFGLower.Checked = true;
-            }
-            if (!Properties.Settings.Default.FGLowDefault)
-            {
-                ShowFGLow.Checked = false;
-            }
-            else
-            {
-                ShowFGLow.Checked = true;
-            }
-            if (!Properties.Settings.Default.FGHighDefault)
-            {
-                ShowFGHigh.Checked = false;
-            }
-            else
-            {
-                ShowFGHigh.Checked = true;
-            }
-            if (!Properties.Settings.Default.FGHigherDefault)
-            {
-                ShowFGHigher.Checked = false;
-            }
-            else
-            {
-                ShowFGHigher.Checked = true;
-            }
-            if (!Properties.Settings.Default.EntitiesDefault)
-            {
-                ShowEntities.Checked = false;
-            }
-            else
-            {
-                ShowEntities.Checked = true;
-            }
-            if (!Properties.Settings.Default.AnimationsDefault)
-            {
-                ShowAnimations.Checked = false;
-            }
-            else
-            {
-                ShowAnimations.Checked = true;
-            }
         }
 
         private void Open_Click(object sender, EventArgs e)
@@ -1436,7 +1338,6 @@ namespace ManiacEditor
                 return;
 
             UnloadScene();
-            UseVisibilityPrefrences();
 
             try
             {
@@ -1502,8 +1403,6 @@ namespace ManiacEditor
 
             UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
             UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
-            UpdateDualButtonsControlsForLayer(FGLower, ShowFGLower, EditFGLower);
-            UpdateDualButtonsControlsForLayer(FGHigher, ShowFGHigher, EditFGHigher);
         }
 
         private void TearDownExtraLayerButtons()
@@ -1515,8 +1414,6 @@ namespace ManiacEditor
             }
             _extraLayerButtons.Clear();
         }
-
-
 
         /// <summary>
         /// Given a scene layer, configure the given visibiltiy and edit buttons which will control that layer.
@@ -1542,17 +1439,13 @@ namespace ManiacEditor
             Deselect(false);
             if (tsb.Checked)
             {
-                if (!Properties.Settings.Default.KeepLayersVisible)
+                if (!Properties.Settings.Default.keepLayersVisible)
                 {
                     ShowFGLow.Checked = false;
                     ShowFGHigh.Checked = false;
-                    ShowFGLower.Checked = false;
-                    ShowFGHigher.Checked = false;
                 }
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
-                EditFGLower.Checked = false;
-                EditFGHigher.Checked = false;
                 EditEntities.Checked = false;
 
                 foreach (var elb in _extraLayerButtons)
@@ -1699,20 +1592,14 @@ a valid Data Directory.",
                     Background.Draw(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
-                if (ShowFGLower.Checked || EditFGLower.Checked)
-                    FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
-                if (ShowFGHigh.Checked || EditFGHigh.Checked)
-                    FGHigh.Draw(GraphicPanel);
-                if (ShowFGHigher.Checked || EditFGHigher.Checked)
-                    FGHigher.Draw(GraphicPanel);
                 if (ShowEntities.Checked && !EditEntities.Checked)
                     entities.Draw(GraphicPanel);
+                if (ShowFGHigh.Checked || EditFGHigh.Checked)
+                    FGHigh.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
-
-
             }
             if (draggingSelection)
             {
@@ -1783,16 +1670,6 @@ a valid Data Directory.",
             LayerShowButton_Click(ShowFGHigh, "Layer FG High");
         }
 
-        private void ShowFGHigher_Click(object sender, EventArgs e)
-        {
-            LayerShowButton_Click(ShowFGHigher, "Layer FG Higher");
-        }
-
-        private void ShowFGLower_Click(object sender, EventArgs e)
-        {
-            LayerShowButton_Click(ShowFGLower, "Layer FG Lower");
-        }
-
         private void ShowEntities_Click(object sender, EventArgs e)
         {
             LayerShowButton_Click(ShowEntities, "Entities");
@@ -1831,8 +1708,6 @@ a valid Data Directory.",
             {
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
-                EditFGLower.Checked = false;
-                EditFGHigher.Checked = false;
                 EditEntities.Checked = false;
                 button.Checked = true;
             }
@@ -1852,16 +1727,6 @@ a valid Data Directory.",
         private void EditFGHigh_Click(object sender, EventArgs e)
         {
             LayerEditButton_Click(EditFGHigh);
-        }
-
-        private void EditFGLower_Click(object sender, EventArgs e)
-        {
-            LayerEditButton_Click(EditFGLower);
-        }
-
-        private void EditFGHigher_Click(object sender, EventArgs e)
-        {
-            LayerEditButton_Click(EditFGHigher);
         }
 
         private void EditEntities_Click(object sender, EventArgs e)
@@ -1945,8 +1810,6 @@ Error: {ex.Message}");
                     // only attempt to render the ones we actually have
                     FGLow?.Draw(g);
                     FGHigh?.Draw(g);
-                    FGLower?.Draw(g);
-                    FGHigher?.Draw(g);
                     bitmap.Save(save.FileName);
                 }
             }
@@ -2034,12 +1897,9 @@ Error: {ex.Message}");
         {
             if (IsTilesEdit())
                 CopyTilesToClipboard();
-															 
-			 
             else if (IsEntitiesEdit())
                 CopyEntitiesToClipboard();
 
-			 
             UpdateControls();
         }
 
@@ -2067,6 +1927,7 @@ Error: {ex.Message}");
             // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
             entitiesClipboard = copyData;
         }
+
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsTilesEdit())
@@ -2458,7 +2319,6 @@ Error: {ex.Message}");
             {
                 lm.ShowDialog();
             }
-            controlWindowOpen = true;
 
             SetupLayerButtons();
             ResetViewSize();
@@ -2470,23 +2330,6 @@ Error: {ex.Message}");
             using (var aboutBox = new AboutBox())
             {
                 aboutBox.ShowDialog();
-            }
-        }
-
-        private void optionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var optionBox = new OptionBox())
-            {
-                optionBox.ShowDialog();
-            }
-        }
-
-        private void controlsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            using (var ControlBox = new controlBox())
-            {
-                ControlBox.ShowDialog();
             }
         }
 
@@ -2599,41 +2442,6 @@ Error: {ex.Message}");
 
         }
 
-        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStrip3_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void amountInSelectionLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pixelModeButton_Click(object sender, EventArgs e)
-        {
-            if (pixelModeButton.Checked == false)
-            {
-                pixelModeButton.Checked = true;
-                Properties.Settings.Default.pixelCountMode = true;
-            }
-            else
-            {
-                pixelModeButton.Checked = false;
-                Properties.Settings.Default.pixelCountMode = false;
-            }
-
-        }
-
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
         {
             if (!GraphicPanel.Focused && e.Control)
@@ -2683,8 +2491,6 @@ Error: {ex.Message}");
             StageTiles?.DisposeTextures();
             if (FGHigh != null) FGHigh.DisposeTextures();
             if (FGLow != null) FGLow.DisposeTextures();
-            if (FGHigher != null) FGHigh.DisposeTextures();
-            if (FGLower != null) FGLow.DisposeTextures();
             foreach (var el in EditorScene.OtherLayers)
             {
                 el.DisposeTextures();
