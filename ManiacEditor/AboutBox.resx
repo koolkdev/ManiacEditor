@@ -119,7 +119,7 @@
   </resheader>
   <data name="llAbout.Text" xml:space="preserve">
     <value>Maniac Editor is a tool for changing the levels and scenes found in the PC version of Sonic Mania.
-This tool was originally written by koolkdev, while this particular version has been extended by OtherworldBob, Axanery, CarJem Generations, Campbellsonic and SuperSonic16.</value>
+This tool was originally written by koolkdev, while this particular version has been extended by OtherworldBob, Axanery, CarJem Generations and SuperSonic16.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="logoPictureBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
