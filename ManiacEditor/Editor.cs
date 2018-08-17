@@ -35,6 +35,7 @@ namespace ManiacEditor
         bool zooming;
         double Zoom = 1;
         int ZoomLevel = 0;
+        public String ToolbarSelectedTile;
 
         public static string DataDirectory;
 
@@ -52,11 +53,15 @@ namespace ManiacEditor
 
         internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
         internal EditorLayer FGLow => EditorScene?.ForegroundLow;
+
+        internal EditorLayer FGLower => EditorScene?.LowDetails;
+        internal EditorLayer FGHigher => EditorScene?.LowDetails;
         private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
 
         internal EditorLayer EditLayer;
+
 
         internal TilesToolbar TilesToolbar = null;
         private EntitiesToolbar entitiesToolbar = null;

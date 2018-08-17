@@ -42,6 +42,7 @@
             this.option4CheckBox = new System.Windows.Forms.CheckBox();
             this.option3CheckBox = new System.Windows.Forms.CheckBox();
             this.tilesList = new ManiacEditor.TilesList();
+            this.selectedTileLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -212,16 +213,27 @@
             this.tilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tilesList.FlipHorizontal = false;
             this.tilesList.FlipVertical = false;
-            this.tilesList.Location = new System.Drawing.Point(3, 59);
+            this.tilesList.Location = new System.Drawing.Point(3, 73);
             this.tilesList.Name = "tilesList";
-            this.tilesList.Size = new System.Drawing.Size(249, 281);
+            this.tilesList.Size = new System.Drawing.Size(249, 267);
             this.tilesList.TabIndex = 0;
             this.tilesList.TileScale = 2;
+            // 
+            // selectedTileLabel
+            // 
+            this.selectedTileLabel.AutoSize = true;
+            this.selectedTileLabel.Location = new System.Drawing.Point(3, 51);
+            this.selectedTileLabel.Name = "selectedTileLabel";
+            this.selectedTileLabel.Padding = new System.Windows.Forms.Padding(3);
+            this.selectedTileLabel.Size = new System.Drawing.Size(112, 19);
+            this.selectedTileLabel.TabIndex = 14;
+            this.selectedTileLabel.Text = "Selected Tile: NULL ";
             // 
             // TilesToolbar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.selectedTileLabel);
             this.Controls.Add(this.tileOption4);
             this.Controls.Add(this.tileOption3);
             this.Controls.Add(this.tileOption2);
@@ -261,5 +273,6 @@
         private System.Windows.Forms.CheckBox tileOption3;
         private System.Windows.Forms.CheckBox tileOption2;
         private System.Windows.Forms.CheckBox tileOption1;
+        private System.Windows.Forms.Label selectedTileLabel;
     }
 }

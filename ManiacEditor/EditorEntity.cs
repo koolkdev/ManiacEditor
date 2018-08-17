@@ -417,7 +417,8 @@ namespace ManiacEditor
                 name == "UIControl"       || name == "SignPost"       || name == "UFO_Ring"    ||
                 name == "UFO_Sphere"      || name == "UFO_Player"     || name == "UFO_ItemBox" ||
                 name == "UFO_Springboard" || name == "Decoration"     || name == "WaterGush"   ||
-                name == "BreakBar"        || name == "InvisibleBlock")
+                name == "BreakBar"        || name == "InvisibleBlock" || name == "ForceUnstick"||
+                name == "BreakableWall")
             {
                 DrawOthers(d);
             }
@@ -656,7 +657,7 @@ namespace ManiacEditor
                 bool fliph = false;
                 bool flipv = false;
                 int animID = 0;
-                
+
                 // Down
                 if (value.ValueVar == 1)
                 {
@@ -674,18 +675,38 @@ namespace ManiacEditor
                     fliph = true;
                     animID = 1;
                 }
+
+                int count = (int)entity.attributesMap["count"].ValueUInt8;
+                //Make sure its even
+                if (count % 2 == 1)
+                    --count;
+                count = count >> 2;
                 var editorAnim = LoadAnimation2("Spikes", d, animID, 0, fliph, flipv, false);
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[0];
-                    d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY,
-                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    if (value.ValueVar == 0 || value.ValueVar == 1)
+                    {
+                        for (int i = -count / 2; i < (count + 1) / 2; ++i)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + (i * (frame.Frame.Width)),
+                                y + frame.Frame.CenterY, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                    if (value.ValueVar == 2 || value.ValueVar == 3)
+                    {
+                        for (int i = -count; i < (count + 1); ++i)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + (i * (frame.Frame.Height)), frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
                 }
 
             }
             else if (entity.Object.Name.Name == "Spring")
             {
-                int animID = (int) entity.attributesMap["type"].ValueVar;
+                int animID = (int)entity.attributesMap["type"].ValueVar;
                 var flipFlag = entity.attributesMap["flipFlag"].ValueVar;
                 bool fliph = false;
                 bool flipv = false;
@@ -888,8 +909,54 @@ namespace ManiacEditor
                         for (int yy = 0; yy <= height; ++yy)
                         {
                             d.DrawBitmap(frame.Texture,
-                                x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width/2 + xx) * frame.Frame.Width,
-                                y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height/2 + yy) * frame.Frame.Height,
+                                x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + xx) * frame.Frame.Width,
+                                y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + yy) * frame.Frame.Height,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "ForceUnstick")
+            {
+                var width = (int)(entity.attributesMap["width"].ValueUInt8);
+                var height = (int)(entity.attributesMap["height"].ValueUInt8);
+                var editorAnim = LoadAnimation2("ItemBox", d, 2, 9, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool wEven = width % 2 == 0;
+                    bool hEven = height % 2 == 0;
+                    for (int xx = 0; xx <= width; ++xx)
+                    {
+                        for (int yy = 0; yy <= height; ++yy)
+                        {
+                            d.DrawBitmap(frame.Texture,
+                                x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + xx) * frame.Frame.Width,
+                                y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + yy) * frame.Frame.Height,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "BreakableWalls")
+            {
+                var width = (int)(entity.attributesMap["width"].ValueUInt8);
+                var height = (int)(entity.attributesMap["height"].ValueUInt8);
+                var editorAnim = LoadAnimation2("ItemBox", d, 2, 9, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool wEven = width % 2 == 0;
+                    bool hEven = height % 2 == 0;
+                    for (int xx = 0; xx <= width; ++xx)
+                    {
+                        for (int yy = 0; yy <= height; ++yy)
+                        {
+                            d.DrawBitmap(frame.Texture,
+                                x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + xx) * frame.Frame.Width,
+                                y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + yy) * frame.Frame.Height,
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }

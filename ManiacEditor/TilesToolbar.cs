@@ -40,6 +40,7 @@ namespace ManiacEditor
                 for (int i = 0; i < selectTileOptionsCheckboxes.Length; ++i)
                     if (selectTileOptionsCheckboxes[i].Checked) res |= 1 << (10 + i);
                 return res;
+
             }
         }
         
@@ -177,5 +178,11 @@ namespace ManiacEditor
         {
 
         }
+        public static void RefreshTileSelected()
+        {
+            Editor.Instance.TilesToolbar.selectedTileLabel.Text = "Selected Tile: " + Editor.Instance.ToolbarSelectedTile;
+        }
+
     }
+
 }
