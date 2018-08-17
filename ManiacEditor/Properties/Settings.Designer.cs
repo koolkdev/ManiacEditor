@@ -12,7 +12,7 @@ namespace ManiacEditor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -74,12 +74,12 @@ namespace ManiacEditor.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
-        public bool forceCopyUnlock {
+        public bool ForceCopyUnlock {
             get {
-                return ((bool)(this["forceCopyUnlock"]));
+                return ((bool)(this["ForceCopyUnlock"]));
             }
             set {
-                this["forceCopyUnlock"] = value;
+                this["ForceCopyUnlock"] = value;
             }
         }
         
@@ -87,72 +87,192 @@ namespace ManiacEditor.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
-        public bool keepLayersVisible {
+        public bool KeepLayersVisible {
             get {
-                return ((bool)(this["keepLayersVisible"]));
+                return ((bool)(this["KeepLayersVisible"]));
             }
             set {
-                this["keepLayersVisible"] = value;
+                this["KeepLayersVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NeverLoadEntityTextures {
+            get {
+                return ((bool)(this["NeverLoadEntityTextures"]));
+            }
+            set {
+                this["NeverLoadEntityTextures"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SolidTopDefault {
+            get {
+                return ((bool)(this["SolidTopDefault"]));
+            }
+            set {
+                this["SolidTopDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SolidAllButTopDefault {
+            get {
+                return ((bool)(this["SolidAllButTopDefault"]));
+            }
+            set {
+                this["SolidAllButTopDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Unkown1Default {
+            get {
+                return ((bool)(this["Unkown1Default"]));
+            }
+            set {
+                this["Unkown1Default"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Unkown2Default {
+            get {
+                return ((bool)(this["Unkown2Default"]));
+            }
+            set {
+                this["Unkown2Default"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CustomLayerHigh {
+            get {
+                return ((string)(this["CustomLayerHigh"]));
+            }
+            set {
+                this["CustomLayerHigh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CustomLayerLow {
+            get {
+                return ((string)(this["CustomLayerLow"]));
+            }
+            set {
+                this["CustomLayerLow"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool showManiaEntities {
+        public bool FGLowerDefault {
             get {
-                return ((bool)(this["showManiaEntities"]));
+                return ((bool)(this["FGLowerDefault"]));
             }
             set {
-                this["showManiaEntities"] = value;
+                this["FGLowerDefault"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool showEncoreEntities {
+        public bool FGLowDefault {
             get {
-                return ((bool)(this["showEncoreEntities"]));
+                return ((bool)(this["FGLowDefault"]));
             }
             set {
-                this["showEncoreEntities"] = value;
+                this["FGLowDefault"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool showBothEntities {
+        public bool FGHighDefault {
             get {
-                return ((bool)(this["showBothEntities"]));
+                return ((bool)(this["FGHighDefault"]));
             }
             set {
-                this["showBothEntities"] = value;
+                this["FGHighDefault"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool showOtherEntities {
+        public bool FGHigherDefault {
             get {
-                return ((bool)(this["showOtherEntities"]));
+                return ((bool)(this["FGHigherDefault"]));
             }
             set {
-                this["showOtherEntities"] = value;
+                this["FGHigherDefault"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Mania (2)")]
-        public string DefaultFilter {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EntitiesDefault {
             get {
-                return ((string)(this["DefaultFilter"]));
+                return ((bool)(this["EntitiesDefault"]));
             }
             set {
-                this["DefaultFilter"] = value;
+                this["EntitiesDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AnimationsDefault {
+            get {
+                return ((bool)(this["AnimationsDefault"]));
+            }
+            set {
+                this["AnimationsDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool pixelCountMode {
+            get {
+                return ((bool)(this["pixelCountMode"]));
+            }
+            set {
+                this["pixelCountMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int tileToolbarDefaultZoomLevel {
+            get {
+                return ((int)(this["tileToolbarDefaultZoomLevel"]));
+            }
+            set {
+                this["tileToolbarDefaultZoomLevel"] = value;
             }
         }
     }

@@ -21,7 +21,6 @@ namespace ManiacEditor
         public bool Selected;
 
         private SceneEntity entity;
-        private bool filteredOut;
 
         public static Dictionary<string, EditorAnimation> Animations = new Dictionary<string, EditorAnimation>();
         public static Dictionary<string, Bitmap> Sheets = new Dictionary<string, Bitmap>();
@@ -44,15 +43,11 @@ namespace ManiacEditor
 
         public bool ContainsPoint(Point point)
         {
-            if (filteredOut) return false;
-
             return GetDimensions().Contains(point);
         }
 
         public bool IsInArea(Rectangle area)
         {
-            if (filteredOut) return false;
-
             return GetDimensions().IntersectsWith(area);
         }
 
@@ -367,40 +362,17 @@ namespace ManiacEditor
 
         }
 
-        public bool SetFilter()
-        {
-            if (EditorEntities.SceneWithoutFilters)
-                filteredOut = !Properties.Settings.Default.showBothEntities;
-            else
-            {
-                int filter = entity.GetAttribute("filter").ValueUInt8;
-
-                /**
-                 * 1 or 5 = Both
-                 * 2 = Mania
-                 * 4 = Encore
-                 */
-
-                filteredOut =
-                    ((filter == 1 || filter == 5) && !Properties.Settings.Default.showBothEntities) ||
-                    (filter == 2 && !Properties.Settings.Default.showManiaEntities) ||
-                    (filter == 4 && !Properties.Settings.Default.showEncoreEntities) ||
-                    ((filter < 1 || filter == 3 || filter > 5) && !Properties.Settings.Default.showOtherEntities);
-
-            }
-            return filteredOut;
-        }
-
         // allow derived types to override the draw
         public virtual void Draw(DevicePanel d)
         {
-            if (filteredOut) return;
-
             if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
             System.Drawing.Color color = Selected ? System.Drawing.Color.MediumPurple : System.Drawing.Color.MediumTurquoise;
             System.Drawing.Color color2 = System.Drawing.Color.DarkBlue;
             int Transparency = (Editor.Instance.EditLayer == null) ? 0xff : 0x32;
-            LoadNextAnimation();
+            if (!Properties.Settings.Default.NeverLoadEntityTextures)
+            {
+                LoadNextAnimation();
+            }
             int x = entity.Position.X.High;
             int y = entity.Position.Y.High;
             bool fliph = false;
@@ -420,7 +392,11 @@ namespace ManiacEditor
                 name == "BreakBar"        || name == "InvisibleBlock" || name == "ForceUnstick"||
                 name == "BreakableWall")
             {
-                DrawOthers(d);
+                if (!Properties.Settings.Default.NeverLoadEntityTextures)
+                {
+                    DrawOthers(d);
+                }
+
             }
             else if (editorAnim != null && editorAnim.Frames.Count > 0)
             {
@@ -1138,8 +1114,6 @@ namespace ManiacEditor
                     pair2.Texture?.Dispose();
 
             Animations.Clear();
-
-            EditorEntities.ResetFilterStuff();
 
         }
 
