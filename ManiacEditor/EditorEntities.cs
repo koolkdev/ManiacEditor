@@ -8,6 +8,11 @@ namespace ManiacEditor
 {
     class EditorEntities : IDrawable
     {
+        public static bool SceneWithoutFilters = false;
+        public static bool FirstEntity = true;
+        public static bool FilterRefreshNeeded = false;
+        public static int DefaultFilter = -1;
+
         List<EditorEntity> entities = new List<EditorEntity>();
         List<EditorEntity> selectedEntities = new List<EditorEntity>();
         List<EditorEntity> tempSelection = new List<EditorEntity>();
@@ -27,7 +32,9 @@ namespace ManiacEditor
         public EditorEntities(RSDKv5.Scene scene)
         {
             foreach (var obj in scene.Objects)
+            {
                 entities.AddRange(obj.Entities.Select(x => GenerateEditorEntity(x)));
+            }
             entitiesBySlot = entities.ToDictionary(x => x.Entity.SlotID);
         }
 
@@ -234,6 +241,8 @@ namespace ManiacEditor
 
         public void Draw(DevicePanel d)
         {
+            if (FilterRefreshNeeded)
+                UpdateViewFilters();
             foreach (var entity in entities)
                 entity.Draw(d);
         }
@@ -271,7 +280,50 @@ namespace ManiacEditor
             {
                 Debug.WriteLine("Failed to generate a LinkedEditorEntity, will create a basic one instead.");
             }
-            return new EditorEntity(sceneEntity);
+
+            EditorEntity entity = new EditorEntity(sceneEntity);
+
+            // Check the first entity spawned to see if this Scene uses filters
+            if (FirstEntity)
+            {
+                FirstEntity = false;
+
+                // Try to get "filter"
+                try
+                {
+                    int filter = entity.Entity.GetAttribute("filter").ValueUInt8;
+                }
+
+                // If this is an old Scene that doesn't have them, disable future filter checks
+                catch (KeyNotFoundException)
+                {
+                    SceneWithoutFilters = true;
+                }
+            }
+
+            if (!SceneWithoutFilters && DefaultFilter > -1)
+            {
+                entity.Entity.GetAttribute("filter").ValueUInt8 = (byte)DefaultFilter;
+                DefaultFilter = -1;
+            }
+
+            entity.SetFilter();
+
+            return entity;
+        }
+
+        public void UpdateViewFilters()
+        {
+            FilterRefreshNeeded = false;
+            foreach (EditorEntity entity in entities)
+                entity.SetFilter();
+        }
+
+        public static void ResetFilterStuff()
+        {
+            SceneWithoutFilters = false;
+            FirstEntity = true;
+            FilterRefreshNeeded = false;
         }
 
     }
