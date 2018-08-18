@@ -685,27 +685,80 @@ namespace ManiacEditor
                 }
 
                 int count = (int)entity.attributesMap["count"].ValueUInt8;
-                //Make sure its even
-                if (count % 2 == 1)
-                    --count;
-                count = count >> 2;
+
+                // Is it a value that defaults to 2?
+                if (count < 2)
+                    count = 2;
+
+                int offset1 = 0, offset2 = 0;
+                bool extra = false;
+                count *= 2; // I made all this with an incorrect assumption so here's a cheap fix
+                int count2 = count >> 2;
                 var editorAnim = LoadAnimation2("Spikes", d, animID, 0, fliph, flipv, false);
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[0];
+
                     if (value.ValueVar == 0 || value.ValueVar == 1)
                     {
-                        for (int i = -count / 2; i < (count + 1) / 2; ++i)
+                        // Is count indivisible by 4?
+                        if (count % 4 != 0)
                         {
-                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + (i * (frame.Frame.Width)),
-                                y + frame.Frame.CenterY, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                            offset1 = frame.Frame.Width / 4;
+                            count -= 2;
+                            extra = true;
                         }
-                    }
-                    if (value.ValueVar == 2 || value.ValueVar == 3)
-                    {
-                        for (int i = -count; i < (count + 1); ++i)
+
+                        // Is count divisible by 8?
+                        if (count % 8 == 0)
                         {
-                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + (i * (frame.Frame.Height)), frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                            offset2 = frame.Frame.Width / 2;
+                        }
+
+                        // Draw each set of spikes
+                        int max = (count2 + 1) / 2;
+                        for (int i = -count2 / 2; i < max; ++i)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + (i * (frame.Frame.Width)) - offset1 + offset2, y + frame.Frame.CenterY,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+
+                        // Draw one more overlapping if needed
+                        if (extra)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + ((max-1) * (frame.Frame.Width)) + offset1 + offset2, y + frame.Frame.CenterY,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }                           
+                    }
+                    else if (value.ValueVar == 2 || value.ValueVar == 3)
+                    {
+                        // Is count indivisible by 4?
+                        if (count % 4 != 0)
+                        {
+                            offset1 = frame.Frame.Height / 4;
+                            count -= 2;
+                            extra = true;
+                        }
+
+                        // Is count divisible by 8?
+                        if (count % 8 == 0)
+                        {
+                            offset2 = frame.Frame.Height / 2;
+                        }
+
+                        // Draw each set of spikes
+                        int max = (count2 + 1) / 2;
+                        for (int i = -count2 / 2; i < max; ++i)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + (i * (frame.Frame.Height)) - offset1 + offset2,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+
+                        // Draw one more overlapping if needed
+                        if (extra)
+                        {
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + ((max-1) * (frame.Frame.Height)) + offset1 + offset2,
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }
 
