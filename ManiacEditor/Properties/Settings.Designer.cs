@@ -335,5 +335,17 @@ namespace ManiacEditor.Properties {
                 this["DefaultFilter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableWindowsClipboard {
+            get {
+                return ((bool)(this["EnableWindowsClipboard"]));
+            }
+            set {
+                this["EnableWindowsClipboard"] = value;
+            }
+        }
     }
 }
