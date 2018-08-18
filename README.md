@@ -1,10 +1,14 @@
-# Maniac Editor - Sonic Mania Scene Editor
+# Maniac Editor (Generations Edition) - Sonic Mania Scene/Level Editor
 
-Find my latest version [here](https://github.com/OtherworldBob/ManiacEditor/releases/latest), yes, it's still a Beta!
+Find my latest version [here](https://github.com/CarJem/ManiacEditor/releases/latest), yes, it's still a Beta!
 
 Find the original by **koolkdev** over [there](https://github.com/koolkdev/ManiacEditor/releases/latest), from which this version derives. None of this would be possible without the work done in the original!
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pubh9p6k0ti8muk4/branch/master?svg=true)](https://ci.appveyor.com/project/OtherworldBob/maniaceditor/branch/master)
+Find the fork by **OtherworldBob** over [there](https://github.com/OtherworldBob/ManiacEditor/releases/latest), from which this version also derives from. None of this would be possible without the work done in the fork!
+
+BUILD STATUS NOT OFFERED FOR NOW, Sorry.
+
+This Fork is Experimental, if OtherworldBob does not comeback, this might become the main fork. No Guarentees though.
 
 ## Tiles editing
 
