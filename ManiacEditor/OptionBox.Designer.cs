@@ -53,6 +53,7 @@
             this.copyUnlock = new System.Windows.Forms.CheckBox();
             this.layerHide = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.enableWindowsClipboard = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tileToolbarZoomDefault)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,7 +72,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(28, 259);
+            this.label9.Location = new System.Drawing.Point(27, 332);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(134, 13);
             this.label9.TabIndex = 49;
@@ -145,7 +146,7 @@
             this.animationsDefault.Checked = global::ManiacEditor.Properties.Settings.Default.AnimationsDefault;
             this.animationsDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.animationsDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "AnimationsDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.animationsDefault.Location = new System.Drawing.Point(64, 394);
+            this.animationsDefault.Location = new System.Drawing.Point(63, 467);
             this.animationsDefault.Name = "animationsDefault";
             this.animationsDefault.Size = new System.Drawing.Size(77, 17);
             this.animationsDefault.TabIndex = 52;
@@ -159,7 +160,7 @@
             this.entitiesDefault.Checked = global::ManiacEditor.Properties.Settings.Default.EntitiesDefault;
             this.entitiesDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.entitiesDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "EntitiesDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.entitiesDefault.Location = new System.Drawing.Point(64, 371);
+            this.entitiesDefault.Location = new System.Drawing.Point(63, 444);
             this.entitiesDefault.Name = "entitiesDefault";
             this.entitiesDefault.Size = new System.Drawing.Size(60, 17);
             this.entitiesDefault.TabIndex = 51;
@@ -173,7 +174,7 @@
             this.fgLowerDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGLowerDefault;
             this.fgLowerDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fgLowerDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGLowerDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.fgLowerDefault.Location = new System.Drawing.Point(64, 279);
+            this.fgLowerDefault.Location = new System.Drawing.Point(63, 352);
             this.fgLowerDefault.Name = "fgLowerDefault";
             this.fgLowerDefault.Size = new System.Drawing.Size(72, 17);
             this.fgLowerDefault.TabIndex = 48;
@@ -187,7 +188,7 @@
             this.fgLowDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGLowDefault;
             this.fgLowDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fgLowDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGLowDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.fgLowDefault.Location = new System.Drawing.Point(64, 302);
+            this.fgLowDefault.Location = new System.Drawing.Point(63, 375);
             this.fgLowDefault.Name = "fgLowDefault";
             this.fgLowDefault.Size = new System.Drawing.Size(63, 17);
             this.fgLowDefault.TabIndex = 47;
@@ -201,7 +202,7 @@
             this.fgHighDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGHighDefault;
             this.fgHighDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fgHighDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGHighDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.fgHighDefault.Location = new System.Drawing.Point(64, 325);
+            this.fgHighDefault.Location = new System.Drawing.Point(63, 398);
             this.fgHighDefault.Name = "fgHighDefault";
             this.fgHighDefault.Size = new System.Drawing.Size(65, 17);
             this.fgHighDefault.TabIndex = 46;
@@ -215,7 +216,7 @@
             this.fgHigherDefault.Checked = global::ManiacEditor.Properties.Settings.Default.FGHigherDefault;
             this.fgHigherDefault.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fgHigherDefault.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "FGHigherDefault", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.fgHigherDefault.Location = new System.Drawing.Point(64, 348);
+            this.fgHigherDefault.Location = new System.Drawing.Point(63, 421);
             this.fgHigherDefault.Name = "fgHigherDefault";
             this.fgHigherDefault.Size = new System.Drawing.Size(74, 17);
             this.fgHigherDefault.TabIndex = 45;
@@ -349,11 +350,26 @@
             this.label4.TabIndex = 55;
             this.label4.Text = "Varrious Settings:";
             // 
+            // enableWindowsClipboard
+            // 
+            this.enableWindowsClipboard.Checked = global::ManiacEditor.Properties.Settings.Default.EnableWindowsClipboard;
+            this.enableWindowsClipboard.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "EnableWindowsClipboard", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.enableWindowsClipboard.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.enableWindowsClipboard.Location = new System.Drawing.Point(30, 258);
+            this.enableWindowsClipboard.Margin = new System.Windows.Forms.Padding(5);
+            this.enableWindowsClipboard.Name = "enableWindowsClipboard";
+            this.enableWindowsClipboard.Size = new System.Drawing.Size(131, 49);
+            this.enableWindowsClipboard.TabIndex = 56;
+            this.enableWindowsClipboard.Text = "Enable Windows Clipboard (NOTE: Use at your own risk)";
+            this.enableWindowsClipboard.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.enableWindowsClipboard.UseVisualStyleBackColor = true;
+            // 
             // OptionBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 446);
+            this.ClientSize = new System.Drawing.Size(390, 520);
+            this.Controls.Add(this.enableWindowsClipboard);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tileToolbarZoomDefault);
@@ -419,5 +435,6 @@
         private System.Windows.Forms.TrackBar tileToolbarZoomDefault;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox enableWindowsClipboard;
     }
 }
