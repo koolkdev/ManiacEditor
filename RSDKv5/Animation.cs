@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace RSDKv5
 {
     // Thanks to Xeeynamo for the Animation information
+    [Serializable]
     public class Animation
     {
 

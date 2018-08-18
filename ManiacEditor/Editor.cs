@@ -2043,30 +2043,6 @@ Error: {ex.Message}");
             UpdateControls();
         }
 
-        private void CopyTilesToClipboard()
-        {
-            Dictionary<Point, ushort> copyData = EditLayer.CopyToClipboard();
-
-            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
-            Clipboard.SetDataObject(new DataObject("ManiacTiles", copyData), true);
-
-            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
-            TilesClipboard = copyData;
-        }
-
-        private void CopyEntitiesToClipboard()
-        {
-            List<EditorEntity> copyData = entities.CopyToClipboard();
-
-            /*
-            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
-            Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
-            Console.WriteLine("Copied entities to Windows clipboard...");
-            */
-
-            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
-            entitiesClipboard = copyData;
-        }
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsTilesEdit())
@@ -2192,12 +2168,36 @@ Error: {ex.Message}");
             }
         }
 
+        private void CopyTilesToClipboard()
+        {
+            Dictionary<Point, ushort> copyData = EditLayer.CopyToClipboard();
+
+            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+            if (Properties.Settings.Default.EnableWindowsClipboard)
+                Clipboard.SetDataObject(new DataObject("ManiacTiles", copyData), true);
+
+            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+            TilesClipboard = copyData;
+        }
+
+        private void CopyEntitiesToClipboard()
+        {
+            List<EditorEntity> copyData = entities.CopyToClipboard();
+
+            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+            if (Properties.Settings.Default.EnableWindowsClipboard)
+                Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
+
+            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+            entitiesClipboard = copyData;
+        }
+
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsTilesEdit())
             {
                 // check if there are tiles on the Windows clipboard; if so, use those
-                if (Clipboard.ContainsData("ManiacTiles"))
+                if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
                 {
                     EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTiles"));
                     UpdateEditLayerActions();
@@ -2214,30 +2214,17 @@ Error: {ex.Message}");
             {
                 try
                 {
-                    /*
                     // check if there are entities on the Windows clipboard; if so, use those
-                    if (Clipboard.ContainsData("ManiacEntities"))
+                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacEntities"))
                     {
-                        Object tempClipboard = Clipboard.GetDataObject().GetData("ManiacEntities");
-                        // this always returns null for some reason...
-
-                        if (tempClipboard == null)
-                            Console.WriteLine("Tragically, tempClipboard is null");
-                        else
-                            Console.WriteLine("Pasted from Windows clipboard!!");
-
-                        entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), (List<EditorEntity>)tempClipboard);.
-
+                        entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), (List<EditorEntity>)Clipboard.GetDataObject().GetData("ManiacEntities"));
                         UpdateLastEntityAction();
                     }
 
                     // if there's none, use the internal clipboard
-                    else*/ if (entitiesClipboard != null)
+                    else if (entitiesClipboard != null)
                     {
                         entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), entitiesClipboard);
-
-                        //Console.WriteLine("Pasted from Maniac clipboard!!");
-
                         UpdateLastEntityAction();
                     }
                 }

@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ManiacEditor.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="IsMaximized" Type="System.Boolean" Scope="User">
@@ -79,6 +79,9 @@
     </Setting>
     <Setting Name="DefaultFilter" Type="System.String" Scope="User">
       <Value Profile="(Default)">Mania (2)</Value>
+    </Setting>
+    <Setting Name="EnableWindowsClipboard" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

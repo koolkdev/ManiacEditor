@@ -10,7 +10,8 @@ using System.Windows.Forms;
 
 namespace ManiacEditor
 {
-    class EditorEntity : IDrawable
+    [Serializable]
+    public class EditorEntity : IDrawable
     {
         protected const int NAME_BOX_WIDTH  = 20;
         protected const int NAME_BOX_HEIGHT = 20;
@@ -125,7 +126,7 @@ namespace ManiacEditor
                         {
                             LoadAnimation(val.name, val.d, val.AnimId, val.frameId, val.fliph, val.flipv, val.rotate, false);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             // lots of changes introduced by Plus, just hide errors for now (evil I know!)
                             // Console.WriteLine($"Pop loading next animiation. {val.name}, {val.AnimId}, {val.frameId}, {val.fliph}, {val.flipv}, {val.rotate}", e);
@@ -158,7 +159,7 @@ namespace ManiacEditor
             }
         }
 
-
+        [Serializable]
         public class LoadAnimationData
         {
             public string name;
