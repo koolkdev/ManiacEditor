@@ -949,9 +949,27 @@ namespace ManiacEditor
             }
             else if (entity.Object.Name.Name == "BreakableWall")
             {
+                var type = entity.attributesMap["type"].ValueUInt8;
                 var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) - 1;
                 var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) - 1;
+
                 var editorAnim = LoadAnimation2("ItemBox", d, 2, 9, false, false, false);
+                /*
+                Code Prep for Editor Exclusive Assets
+                var editorAnim = LoadAnimation2("ME1", d, 2, 16, false, false, false);
+                if (entity.attributesMap["onlyKnux"].ValueBool) 
+                {
+                 editorAnim = LoadAnimation2("ME1", d, 2, 17, false, false, false);
+                }
+                if (entity.attributesMap["onlyMighty"].ValueBool)
+                {
+                    editorAnim = LoadAnimation2("ME1", d, 2, 17, false, false, false);
+                }
+                if (entity.attributesMap["onlyMighty"].ValueBool && entity.attributesMap["onlyKnux"].ValueBool)
+                {
+                    editorAnim = LoadAnimation2("ME1", d, 2, 18, false, false, false);
+                }
+                */
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[index];
