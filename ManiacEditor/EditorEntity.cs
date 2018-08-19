@@ -238,53 +238,63 @@ namespace ManiacEditor
 
             Animations.Add(key, anim);
 
-            if (DataDirectoryList == null)
-                DataDirectoryList = Directory.GetFiles(Path.Combine(Editor.DataDirectory, "Sprites"), $"*.bin", SearchOption.AllDirectories);
 
+            string path, path2;
+            if (name == "EditorAssets")
+            {
+                path2 = Path.Combine(Environment.CurrentDirectory, "EditorAssets.bin");
+                if (!File.Exists(path2))
+                    return null;
+            }
+            else
+            {
+                if (DataDirectoryList == null)
+                    DataDirectoryList = Directory.GetFiles(Path.Combine(Editor.DataDirectory, "Sprites"), $"*.bin", SearchOption.AllDirectories);
 
-            // Checks Global frist
-            string path = Editor.Instance.SelectedZone + "\\" + name + ".bin";
-            string path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
-            if (!File.Exists(path2))
-            {
-                // Checks without last character
-                path = path = Editor.Instance.SelectedZone.Substring(0, Editor.Instance.SelectedZone.Length - 1) + "\\" + name + ".bin";
+                // Checks Global frist
+                path = Editor.Instance.SelectedZone + "\\" + name + ".bin";
                 path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
-            }
-            if (!File.Exists(path2))
-            {
-                // Checks Global
-                path = "Global\\" + name + ".bin";
-                path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
-            }
-            if (!File.Exists(path2))
-            {
-                // Checks the Stage folder 
-                foreach (string dir in Directory.GetDirectories(Path.Combine(Editor.DataDirectory, "Sprites"), $"*", SearchOption.TopDirectoryOnly))
+                if (!File.Exists(path2))
                 {
-                    path = Path.GetFileName(dir) + "\\" + name + ".bin";
+                    // Checks without last character
+                    path = path = Editor.Instance.SelectedZone.Substring(0, Editor.Instance.SelectedZone.Length - 1) + "\\" + name + ".bin";
                     path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
-                    if (File.Exists(path2))
-                        break;
                 }
-            }
-            if (!File.Exists(path2))
-            {
-                // Seaches all around the Data directory
-                var list = DataDirectoryList;
-                if (list.Any(t => Path.GetFileName(t.ToLower()).Contains(name.ToLower())))
+                if (!File.Exists(path2))
                 {
-                    list = list.Where(t => Path.GetFileName(t.ToLower()).Contains(name.ToLower())).ToArray();
-                    if (list.Any(t => t.ToLower().Contains(Editor.Instance.SelectedZone)))
-                        path2 = list.Where(t => t.ToLower().Contains(Editor.Instance.SelectedZone)).First();
-                    else
-                        path2 = list.First();
+                    // Checks Global
+                    path = "Global\\" + name + ".bin";
+                    path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
                 }
-            }
-            if (!File.Exists(path2))
-            {
-                // No Admination Found
-                return null;
+                if (!File.Exists(path2))
+                {
+                    // Checks the Stage folder 
+                    foreach (string dir in Directory.GetDirectories(Path.Combine(Editor.DataDirectory, "Sprites"), $"*", SearchOption.TopDirectoryOnly))
+                    {
+                        path = Path.GetFileName(dir) + "\\" + name + ".bin";
+                        path2 = Path.Combine(Editor.DataDirectory, "sprites") + '\\' + path;
+                        if (File.Exists(path2))
+                            break;
+                    }
+                }
+                if (!File.Exists(path2))
+                {
+                    // Seaches all around the Data directory
+                    var list = DataDirectoryList;
+                    if (list.Any(t => Path.GetFileName(t.ToLower()).Contains(name.ToLower())))
+                    {
+                        list = list.Where(t => Path.GetFileName(t.ToLower()).Contains(name.ToLower())).ToArray();
+                        if (list.Any(t => t.ToLower().Contains(Editor.Instance.SelectedZone)))
+                            path2 = list.Where(t => t.ToLower().Contains(Editor.Instance.SelectedZone)).First();
+                        else
+                            path2 = list.First();
+                    }
+                }
+                if (!File.Exists(path2))
+                {
+                    // No animation found
+                    return null;
+                }
             }
 
             using (var stream = File.OpenRead(path2))
@@ -315,7 +325,11 @@ namespace ManiacEditor
                 Bitmap map;
                 if (!Sheets.ContainsKey(rsdkAnim.SpriteSheets[frame.SpriteSheet]))
                 {
-                    string targetFile = Path.Combine(Editor.DataDirectory, "sprites", rsdkAnim.SpriteSheets[frame.SpriteSheet].Replace('/', '\\'));
+                    string targetFile;
+                    if (name == "EditorAssets")
+                        targetFile = Path.Combine(Environment.CurrentDirectory, "EditorAssets.gif");
+                    else
+                        targetFile = Path.Combine(Editor.DataDirectory, "sprites", rsdkAnim.SpriteSheets[frame.SpriteSheet].Replace('/', '\\'));
                     if (!File.Exists(targetFile))
                     {
                         map = null;
@@ -1006,7 +1020,8 @@ namespace ManiacEditor
                 var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) - 1;
                 var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) - 1;
 
-                var editorAnim = LoadAnimation2("ItemBox", d, 2, 9, false, false, false);
+                var editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+
                 /*
                 Code Prep for Editor Exclusive Assets
                 var editorAnim = LoadAnimation2("ME1", d, 2, 16, false, false, false);
