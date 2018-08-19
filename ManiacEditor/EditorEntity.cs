@@ -1020,24 +1020,17 @@ namespace ManiacEditor
                 var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) - 1;
                 var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) - 1;
 
-                var editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
-
-                /*
-                Code Prep for Editor Exclusive Assets
-                var editorAnim = LoadAnimation2("ME1", d, 2, 16, false, false, false);
-                if (entity.attributesMap["onlyKnux"].ValueBool) 
-                {
-                 editorAnim = LoadAnimation2("ME1", d, 2, 17, false, false, false);
-                }
-                if (entity.attributesMap["onlyMighty"].ValueBool)
-                {
-                    editorAnim = LoadAnimation2("ME1", d, 2, 17, false, false, false);
-                }
+                // Load animation by type
+                EditorAnimation editorAnim;
                 if (entity.attributesMap["onlyMighty"].ValueBool && entity.attributesMap["onlyKnux"].ValueBool)
-                {
-                    editorAnim = LoadAnimation2("ME1", d, 2, 18, false, false, false);
-                }
-                */
+                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 3, false, false, false);
+                else if (entity.attributesMap["onlyKnux"].ValueBool) 
+                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
+                else if (entity.attributesMap["onlyMighty"].ValueBool)
+                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, false, false, false);
+                else
+                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[index];
