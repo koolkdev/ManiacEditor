@@ -1022,14 +1022,24 @@ namespace ManiacEditor
 
                 // Load animation by type
                 EditorAnimation editorAnim;
-                if (entity.attributesMap["onlyMighty"].ValueBool && entity.attributesMap["onlyKnux"].ValueBool)
-                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 3, false, false, false);
-                else if (entity.attributesMap["onlyKnux"].ValueBool) 
-                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
-                else if (entity.attributesMap["onlyMighty"].ValueBool)
-                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, false, false, false);
+                if (EditorEntities.SceneWithoutFilters)
+                {
+                    if (entity.attributesMap["onlyKnux"].ValueBool)
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
+                    else
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+                }
                 else
-                    editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+                {
+                    if (entity.attributesMap["onlyMighty"].ValueBool && entity.attributesMap["onlyKnux"].ValueBool)
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 3, false, false, false);
+                    else if (entity.attributesMap["onlyKnux"].ValueBool)
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
+                    else if (entity.attributesMap["onlyMighty"].ValueBool)
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, false, false, false);
+                    else
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+                }
 
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
