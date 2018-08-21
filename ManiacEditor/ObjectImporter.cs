@@ -28,7 +28,16 @@ namespace ManiacEditor
 
             var targetNames = targetSceneObjects.Select(tso => tso.Name.ToString());
             var importableObjects = sourceSceneObjects.Where(sso => !targetNames.Contains(sso.Name.ToString()))
-                                                      .OrderBy(sso => sso.Name.ToString());
+                                                        .OrderBy(sso => sso.Name.ToString());
+            if (Properties.Settings.Default.RemoveObjectImportLock == true) {
+                importableObjects = sourceSceneObjects.Where(sso => targetNames.Contains(sso.Name.ToString()))
+                                                        .OrderBy(sso => sso.Name.ToString());
+            }
+            else 
+            {
+                importableObjects = sourceSceneObjects.Where(sso => !targetNames.Contains(sso.Name.ToString()))
+                                        .OrderBy(sso => sso.Name.ToString());
+            }
 
             foreach (var io in importableObjects)
             {

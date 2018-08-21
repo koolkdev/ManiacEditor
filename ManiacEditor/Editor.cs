@@ -265,9 +265,19 @@ namespace ManiacEditor
             ReloadToolStripButton.Enabled = enabled;
 
             Save.Enabled = enabled;
-
-            zoomInButton.Enabled = enabled && ZoomLevel < 5;
-            zoomOutButton.Enabled = enabled && ZoomLevel > -5;
+            
+            if (Properties.Settings.Default.ReduceZoom)
+            {
+                zoomInButton.Enabled = enabled && ZoomLevel < 5;
+                zoomOutButton.Enabled = enabled && ZoomLevel > -2;
+            }
+            else
+            {
+                zoomInButton.Enabled = enabled && ZoomLevel < 5;
+                zoomOutButton.Enabled = enabled && ZoomLevel > -5;
+            }
+            
+            
 
             RunScene.Enabled = enabled && !GameRunning;
 
@@ -1152,10 +1162,22 @@ namespace ManiacEditor
             //GraphicPanel.Focus();
             if (CtrlPressed())
             {
+                int maxZoom;
+                int minZoom;
+                if (Properties.Settings.Default.ReduceZoom)
+                {
+                    maxZoom = 5;
+                    minZoom = -2;
+                }
+                else
+                {
+                    maxZoom = 5;
+                    minZoom = -5;
+                }
                 int change = e.Delta / 120;
                 ZoomLevel += change;
-                if (ZoomLevel > 5) ZoomLevel = 5;
-                if (ZoomLevel < -5) ZoomLevel = -5;
+                if (ZoomLevel > maxZoom) ZoomLevel = maxZoom;
+                if (ZoomLevel < minZoom) ZoomLevel = minZoom;
 
                 SetZoomLevel(ZoomLevel, new Point(e.X - ShiftX, e.Y - ShiftY));
             }

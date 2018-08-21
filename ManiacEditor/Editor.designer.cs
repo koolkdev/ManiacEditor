@@ -106,6 +106,7 @@
             this.EditFGHigher = new System.Windows.Forms.ToolStripButton();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+            this.positionLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.selectionSizeLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
@@ -113,7 +114,6 @@
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.selectedPositionLabel = new System.Windows.Forms.ToolStripLabel();
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
-            this.positionLabel = new System.Windows.Forms.ToolStripLabel();
             this.GraphicPanel = new ManiacEditor.DevicePanel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -911,6 +911,12 @@
             this.toolStrip3.Text = "toolStrip3";
             this.toolStrip3.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip3_ItemClicked);
             // 
+            // positionLabel
+            // 
+            this.positionLabel.Name = "positionLabel";
+            this.positionLabel.Size = new System.Drawing.Size(0, 22);
+            this.positionLabel.ToolTipText = "The position relative to your mouse (Pixels Only for Now)";
+            // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
@@ -962,12 +968,6 @@
             this.pixelModeButton.Text = "Pixel Mode";
             this.pixelModeButton.ToolTipText = "Change the Positional/Selection Values to Pixel or Tile Based Values";
             this.pixelModeButton.Click += new System.EventHandler(this.pixelModeButton_Click);
-            // 
-            // positionLabel
-            // 
-            this.positionLabel.Name = "positionLabel";
-            this.positionLabel.Size = new System.Drawing.Size(0, 22);
-            this.positionLabel.ToolTipText = "The position relative to your mouse (Pixels Only for Now)";
             // 
             // GraphicPanel
             // 

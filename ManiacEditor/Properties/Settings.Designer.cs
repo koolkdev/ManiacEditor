@@ -347,5 +347,29 @@ namespace ManiacEditor.Properties {
                 this["EnableWindowsClipboard"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ReduceZoom {
+            get {
+                return ((bool)(this["ReduceZoom"]));
+            }
+            set {
+                this["ReduceZoom"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RemoveObjectImportLock {
+            get {
+                return ((bool)(this["RemoveObjectImportLock"]));
+            }
+            set {
+                this["RemoveObjectImportLock"] = value;
+            }
+        }
     }
 }

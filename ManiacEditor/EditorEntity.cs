@@ -1026,7 +1026,7 @@ namespace ManiacEditor
                 {
                     if (entity.attributesMap["onlyKnux"].ValueBool)
                         editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
-                    else
+                    else //This seems to crash for some reason?
                         editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
                 }
                 else
