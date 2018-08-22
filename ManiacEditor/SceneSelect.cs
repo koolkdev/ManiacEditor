@@ -17,7 +17,8 @@ namespace ManiacEditor
         Dictionary<string, List<string>> Directories = new Dictionary<string, List<string>>();
 
         public string Result = null;
-        
+
+
         public SceneSelect(GameConfig config)
         {
             foreach (GameConfig.Category category in config.Categories)
@@ -49,6 +50,14 @@ namespace ManiacEditor
             this.scenesTree.ImageList.Images.Add("File", Properties.Resources.file);
 
             UpdateTree();
+            if (Properties.Settings.Default.IsFilesViewDefault)
+            {
+                this.isFilesView.Checked = true;
+            }
+            else
+            {
+                this.isFilesView.Checked = false;
+            }
         }
 
         private void selectButton_Click(object sender, EventArgs e)

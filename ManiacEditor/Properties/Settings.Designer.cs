@@ -371,5 +371,41 @@ namespace ManiacEditor.Properties {
                 this["RemoveObjectImportLock"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsFilesViewDefault {
+            get {
+                return ((bool)(this["IsFilesViewDefault"]));
+            }
+            set {
+                this["IsFilesViewDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SceneSelectRadioButton1On {
+            get {
+                return ((bool)(this["SceneSelectRadioButton1On"]));
+            }
+            set {
+                this["SceneSelectRadioButton1On"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SceneSelectRadioButton2On {
+            get {
+                return ((bool)(this["SceneSelectRadioButton2On"]));
+            }
+            set {
+                this["SceneSelectRadioButton2On"] = value;
+            }
+        }
     }
 }

@@ -36,6 +36,13 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.SceneSelectRadio2 = new System.Windows.Forms.RadioButton();
+            this.SceneSelectRadio1 = new System.Windows.Forms.RadioButton();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.enableWindowsClipboard = new System.Windows.Forms.CheckBox();
             this.tileToolbarZoomDefault = new System.Windows.Forms.TrackBar();
             this.animationsDefault = new System.Windows.Forms.CheckBox();
             this.entitiesDefault = new System.Windows.Forms.CheckBox();
@@ -52,10 +59,6 @@
             this.neverLoadEntityTextures = new System.Windows.Forms.CheckBox();
             this.copyUnlock = new System.Windows.Forms.CheckBox();
             this.layerHide = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.enableWindowsClipboard = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tileToolbarZoomDefault)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,6 +132,97 @@
             this.label1.TabIndex = 54;
             this.label1.Text = "Tiles Toolbar Default Zoom Level:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label4
+            // 
+            this.label4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(27, 23);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(155, 13);
+            this.label4.TabIndex = 55;
+            this.label4.Text = "Varrious Settings:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(28, 518);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(174, 13);
+            this.label8.TabIndex = 62;
+            this.label8.Text = "Scene Select Default Format:";
+            // 
+            // SceneSelectRadio2
+            // 
+            this.SceneSelectRadio2.Checked = global::ManiacEditor.Properties.Settings.Default.SceneSelectRadioButton2On;
+            this.SceneSelectRadio2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "SceneSelectRadioButton2On", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.SceneSelectRadio2.Location = new System.Drawing.Point(68, 563);
+            this.SceneSelectRadio2.Name = "SceneSelectRadio2";
+            this.SceneSelectRadio2.Size = new System.Drawing.Size(87, 17);
+            this.SceneSelectRadio2.TabIndex = 60;
+            this.SceneSelectRadio2.Text = "Files View                  ";
+            this.SceneSelectRadio2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SceneSelectRadio2.UseVisualStyleBackColor = true;
+            this.SceneSelectRadio2.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            // 
+            // SceneSelectRadio1
+            // 
+            this.SceneSelectRadio1.Checked = global::ManiacEditor.Properties.Settings.Default.SceneSelectRadioButton1On;
+            this.SceneSelectRadio1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "SceneSelectRadioButton1On", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.SceneSelectRadio1.Location = new System.Drawing.Point(68, 541);
+            this.SceneSelectRadio1.Name = "SceneSelectRadio1";
+            this.SceneSelectRadio1.Size = new System.Drawing.Size(87, 17);
+            this.SceneSelectRadio1.TabIndex = 61;
+            this.SceneSelectRadio1.TabStop = true;
+            this.SceneSelectRadio1.Text = "Sorted View                   ";
+            this.SceneSelectRadio1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SceneSelectRadio1.UseVisualStyleBackColor = true;
+            this.SceneSelectRadio1.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.Checked = global::ManiacEditor.Properties.Settings.Default.RemoveObjectImportLock;
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "RemoveObjectImportLock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox2.Location = new System.Drawing.Point(28, 430);
+            this.checkBox2.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(152, 73);
+            this.checkBox2.TabIndex = 58;
+            this.checkBox2.Text = "Remove Object Import Lock\r\n\r\n(Allows for you to upgrade your entities, etc.)\r\n";
+            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Checked = global::ManiacEditor.Properties.Settings.Default.ReduceZoom;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "ReduceZoom", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.Location = new System.Drawing.Point(28, 362);
+            this.checkBox1.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(152, 58);
+            this.checkBox1.TabIndex = 57;
+            this.checkBox1.Text = "Reduce Maximum Zoom Level \r\n(Helps prevent slowdowns and crashes)";
+            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // enableWindowsClipboard
+            // 
+            this.enableWindowsClipboard.Checked = global::ManiacEditor.Properties.Settings.Default.EnableWindowsClipboard;
+            this.enableWindowsClipboard.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "EnableWindowsClipboard", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.enableWindowsClipboard.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.enableWindowsClipboard.Location = new System.Drawing.Point(28, 285);
+            this.enableWindowsClipboard.Margin = new System.Windows.Forms.Padding(5);
+            this.enableWindowsClipboard.Name = "enableWindowsClipboard";
+            this.enableWindowsClipboard.Size = new System.Drawing.Size(153, 67);
+            this.enableWindowsClipboard.TabIndex = 56;
+            this.enableWindowsClipboard.Text = "Enable Windows Clipboard \r\n(NOTE: Use at your own risk)";
+            this.enableWindowsClipboard.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.enableWindowsClipboard.UseVisualStyleBackColor = true;
             // 
             // tileToolbarZoomDefault
             // 
@@ -341,65 +435,14 @@
             this.layerHide.UseVisualStyleBackColor = true;
             this.layerHide.CheckedChanged += new System.EventHandler(this.layerHide_CheckedChanged);
             // 
-            // label4
-            // 
-            this.label4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(27, 23);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(155, 13);
-            this.label4.TabIndex = 55;
-            this.label4.Text = "Varrious Settings:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
-            // enableWindowsClipboard
-            // 
-            this.enableWindowsClipboard.Checked = global::ManiacEditor.Properties.Settings.Default.EnableWindowsClipboard;
-            this.enableWindowsClipboard.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "EnableWindowsClipboard", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.enableWindowsClipboard.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.enableWindowsClipboard.Location = new System.Drawing.Point(28, 285);
-            this.enableWindowsClipboard.Margin = new System.Windows.Forms.Padding(5);
-            this.enableWindowsClipboard.Name = "enableWindowsClipboard";
-            this.enableWindowsClipboard.Size = new System.Drawing.Size(153, 67);
-            this.enableWindowsClipboard.TabIndex = 56;
-            this.enableWindowsClipboard.Text = "Enable Windows Clipboard \r\n(NOTE: Use at your own risk)";
-            this.enableWindowsClipboard.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.enableWindowsClipboard.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Checked = global::ManiacEditor.Properties.Settings.Default.ReduceZoom;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "ReduceZoom", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBox1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.Location = new System.Drawing.Point(28, 371);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(5);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(152, 58);
-            this.checkBox1.TabIndex = 57;
-            this.checkBox1.Text = "Reduce Maximum Zoom Level \r\n(Helps prevent slowdowns and crashes)";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.Checked = global::ManiacEditor.Properties.Settings.Default.RemoveObjectImportLock;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "RemoveObjectImportLock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBox2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox2.Location = new System.Drawing.Point(28, 439);
-            this.checkBox2.Margin = new System.Windows.Forms.Padding(5);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(152, 86);
-            this.checkBox2.TabIndex = 58;
-            this.checkBox2.Text = "Remove Object Import Lock\r\n\r\n(Allows for you to upgrade your entities, etc.)\r\n";
-            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
             // OptionBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(390, 612);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.SceneSelectRadio1);
+            this.Controls.Add(this.SceneSelectRadio2);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.enableWindowsClipboard);
@@ -471,5 +514,8 @@
         private System.Windows.Forms.CheckBox enableWindowsClipboard;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.RadioButton SceneSelectRadio2;
+        private System.Windows.Forms.RadioButton SceneSelectRadio1;
+        private System.Windows.Forms.Label label8;
     }
 }

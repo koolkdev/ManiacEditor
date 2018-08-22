@@ -117,5 +117,39 @@ namespace ManiacEditor
         {
 
         }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SceneSelectRadio2.Checked == true)
+            {
+                Properties.Settings.Default.IsFilesViewDefault = true;
+                Properties.Settings.Default.SceneSelectRadioButton1On = false;
+                Properties.Settings.Default.SceneSelectRadioButton2On = true;
+            }
+            else
+            {
+                Properties.Settings.Default.IsFilesViewDefault = false;
+                Properties.Settings.Default.SceneSelectRadioButton1On = true;
+                Properties.Settings.Default.SceneSelectRadioButton2On = false;
+
+            }
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SceneSelectRadio2.Checked == true)
+            {
+                Properties.Settings.Default.IsFilesViewDefault = true;
+                Properties.Settings.Default.SceneSelectRadioButton1On = false;
+                Properties.Settings.Default.SceneSelectRadioButton2On = true;
+            }
+            else
+            {
+                Properties.Settings.Default.IsFilesViewDefault = false;
+                Properties.Settings.Default.SceneSelectRadioButton1On = true;
+                Properties.Settings.Default.SceneSelectRadioButton2On = false;
+
+            }
+        }
     }
 }

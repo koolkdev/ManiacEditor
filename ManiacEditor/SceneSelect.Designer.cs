@@ -31,10 +31,10 @@
             this.scenesTree = new System.Windows.Forms.TreeView();
             this.selectButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.isFilesView = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.FilterText = new System.Windows.Forms.TextBox();
             this.browse = new System.Windows.Forms.Button();
+            this.isFilesView = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // scenesTree
@@ -74,24 +74,12 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // isFilesView
-            // 
-            this.isFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.isFilesView.AutoSize = true;
-            this.isFilesView.Location = new System.Drawing.Point(12, 328);
-            this.isFilesView.Name = "isFilesView";
-            this.isFilesView.Size = new System.Drawing.Size(81, 19);
-            this.isFilesView.TabIndex = 6;
-            this.isFilesView.Text = "Files View";
-            this.isFilesView.UseVisualStyleBackColor = true;
-            this.isFilesView.CheckedChanged += new System.EventHandler(this.isFilesView_CheckedChanged);
-            // 
             // searchLabel
             // 
             this.searchLabel.AutoSize = true;
             this.searchLabel.Location = new System.Drawing.Point(9, 9);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Size = new System.Drawing.Size(37, 15);
+            this.searchLabel.Size = new System.Drawing.Size(32, 13);
             this.searchLabel.TabIndex = 8;
             this.searchLabel.Text = "Filter:";
             // 
@@ -115,6 +103,18 @@
             this.browse.Text = "Browse...";
             this.browse.UseVisualStyleBackColor = true;
             this.browse.Click += new System.EventHandler(this.browse_Click);
+            // 
+            // isFilesView
+            // 
+            this.isFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.isFilesView.AutoSize = true;
+            this.isFilesView.Location = new System.Drawing.Point(12, 330);
+            this.isFilesView.Name = "isFilesView";
+            this.isFilesView.Size = new System.Drawing.Size(73, 17);
+            this.isFilesView.TabIndex = 6;
+            this.isFilesView.Text = "Files View";
+            this.isFilesView.UseVisualStyleBackColor = true;
+            this.isFilesView.CheckedChanged += new System.EventHandler(this.isFilesView_CheckedChanged);
             // 
             // SceneSelect
             // 
