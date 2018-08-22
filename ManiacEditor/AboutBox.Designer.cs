@@ -47,7 +47,7 @@
             this.llAbout.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
             this.llAbout.Location = new System.Drawing.Point(127, 135);
             this.llAbout.Name = "llAbout";
-            this.llAbout.Size = new System.Drawing.Size(246, 78);
+            this.llAbout.Size = new System.Drawing.Size(245, 78);
             this.llAbout.TabIndex = 25;
             this.llAbout.Text = resources.GetString("llAbout.Text");
             this.llAbout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
