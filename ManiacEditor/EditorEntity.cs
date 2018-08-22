@@ -436,7 +436,7 @@ namespace ManiacEditor
                 name == "UFO_Sphere"      || name == "UFO_Player"     || name == "UFO_ItemBox" ||
                 name == "UFO_Springboard" || name == "Decoration"     || name == "WaterGush"   ||
                 name == "BreakBar"        || name == "InvisibleBlock" || name == "ForceUnstick"||
-                name == "BreakableWall")
+                name == "BreakableWall"   || name == "CollapsingPlatform")
             {
                 if (!Properties.Settings.Default.NeverLoadEntityTextures)
                 {
@@ -740,9 +740,9 @@ namespace ManiacEditor
                         // Draw one more overlapping if needed
                         if (extra)
                         {
-                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + ((max-1) * (frame.Frame.Width)) + offset1 + offset2, y + frame.Frame.CenterY,
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX + ((max - 1) * (frame.Frame.Width)) + offset1 + offset2, y + frame.Frame.CenterY,
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
-                        }                           
+                        }
                     }
                     else if (value.ValueVar == 2 || value.ValueVar == 3)
                     {
@@ -771,7 +771,7 @@ namespace ManiacEditor
                         // Draw one more overlapping if needed
                         if (extra)
                         {
-                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + ((max-1) * (frame.Frame.Height)) + offset1 + offset2,
+                            d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY + ((max - 1) * (frame.Frame.Height)) + offset1 + offset2,
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }
@@ -1022,7 +1022,9 @@ namespace ManiacEditor
 
                 // Load animation by type
                 EditorAnimation editorAnim;
-                if (EditorEntities.SceneWithoutFilters)
+                editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
+                //Breaks if a scene has duplicate entities, so just disable it
+                /*if (EditorEntities.SceneWithoutFilters)
                 {
                     if (entity.attributesMap["onlyKnux"].ValueBool)
                         editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
@@ -1039,7 +1041,7 @@ namespace ManiacEditor
                         editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, false, false, false);
                     else
                         editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
-                }
+                }*/
 
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
@@ -1057,6 +1059,38 @@ namespace ManiacEditor
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }
+                }
+            }
+            else if (entity.Object.Name.Name == "CollapsingPlatform")
+            {
+                var type = entity.attributesMap["type"].ValueUInt8;
+                var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) / 16;
+                var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) / 16;
+                var width_tiled = (int)(entity.attributesMap["size"].ValuePosition.X.High);
+                var height_tiled = (int)(entity.attributesMap["size"].ValuePosition.Y.High);
+
+                // Load animation by type
+                EditorAnimation editorAnim= LoadAnimation2("EditorAssets", d, 1, 0, false, false, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool wEven = width % 2 == 0;
+                    bool hEven = height % 2 == 0;
+
+
+                    for (int xx = 1; xx <= width; ++xx)
+                    {
+                        for (int yy = 1; yy <= height; ++yy)
+                        {
+                            d.DrawBitmap(frame.Texture,
+                                (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width - width * 16) + (-width / 2 + xx) * frame.Frame.Width),
+                                (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height - height * 16) + (-height / 2 + yy) * frame.Frame.Height),
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+
                 }
             }
             else if (entity.Object.Name.Name == "Decoration")
