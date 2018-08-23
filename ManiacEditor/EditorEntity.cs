@@ -427,16 +427,16 @@ namespace ManiacEditor
             var offset = GetRotationFromAttributes(ref fliph, ref flipv, ref rotate);
             string name = entity.Object.Name.Name;
             var editorAnim = LoadAnimation2(name, d, -1, -1, fliph, flipv, rotate);
-            if (name == "Spring"          || name == "Player"         || name == "Platform"    ||
-                name == "TimeAttackGate"  || name == "Spikes"         || name == "ItemBox"     ||
-                name == "Bridge"          || name == "TeeterTotter"   || name == "HUD"         ||
-                name == "Music"           || name == "BoundsMarker"   || name == "TitleCard"   ||
-                name == "CorkscrewPath"   || name == "BGSwitch"       || name == "ForceSpin"   ||
-                name == "UIControl"       || name == "SignPost"       || name == "UFO_Ring"    ||
-                name == "UFO_Sphere"      || name == "UFO_Player"     || name == "UFO_ItemBox" ||
-                name == "UFO_Springboard" || name == "Decoration"     || name == "WaterGush"   ||
-                name == "BreakBar"        || name == "InvisibleBlock" || name == "ForceUnstick"||
-                name == "BreakableWall"   || name == "CollapsingPlatform")
+            if (name == "Spring"          || name == "Player"             || name == "Platform"    ||
+                name == "TimeAttackGate"  || name == "Spikes"             || name == "ItemBox"     ||
+                name == "Bridge"          || name == "TeeterTotter"       || name == "HUD"         ||
+                name == "Music"           || name == "BoundsMarker"       || name == "TitleCard"   ||
+                name == "CorkscrewPath"   || name == "BGSwitch"           || name == "ForceSpin"   ||
+                name == "UIControl"       || name == "SignPost"           || name == "UFO_Ring"    ||
+                name == "UFO_Sphere"      || name == "UFO_Player"         || name == "UFO_ItemBox" ||
+                name == "UFO_Springboard" || name == "Decoration"         || name == "WaterGush"   ||
+                name == "BreakBar"        || name == "InvisibleBlock"     || name == "ForceUnstick"||
+                name == "BreakableWall"   || name == "CollapsingPlatform" || name == "PlaneSwitch")
             {
                 if (!Properties.Settings.Default.NeverLoadEntityTextures)
                 {
@@ -1253,7 +1253,84 @@ namespace ManiacEditor
                         frame.Frame.Width, frame.Frame.Height, false, Transparency);
                 }
             }
+            else if (entity.Object.Name.Name == "PlaneSwitch")
+            {
+                const int LeftDist = 1,
+                          LeftPlane = 2,
+                          RightDist = 4,
+                          RightPlane = 8;
 
+                var flags = (int)entity.attributesMap["flags"].ValueVar;
+                var size = (int)(entity.attributesMap["size"].ValueVar) - 1;
+                var angle = entity.attributesMap["angle"].ValueInt32;
+
+                int frameDist = (flags & LeftDist) > 0 ? 1 : 0;
+                int framePlane = (flags & LeftPlane) > 0 ? 2 : 0;
+                EditorAnimation editorAnim = LoadAnimation2("PlaneSwitch", d, 0, frameDist + framePlane, false, false, false);
+
+                const int pivotOffsetX = -8, pivotOffsetY = 0;
+                const int drawOffsetX = 0, drawOffsetY = -8;
+
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool hEven = size % 2 == 0;
+                    for (int yy = 0; yy <= size; ++yy)
+                    {
+                        int[] drawCoords = RotatePoints(
+                            x - frame.Frame.Width,
+                            (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-size / 2 + yy) * frame.Frame.Height),
+                            x + pivotOffsetX, y + pivotOffsetY, angle);
+
+                        d.DrawBitmap(frame.Texture, drawCoords[0] + drawOffsetX, drawCoords[1] + drawOffsetY, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
+                }
+
+                frameDist = (flags & RightDist) > 0 ? 1 : 0;
+                framePlane = (flags & RightPlane) > 0 ? 2 : 0;
+                editorAnim = LoadAnimation2("PlaneSwitch", d, 0, frameDist + framePlane, false, false, false);
+
+                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                    bool hEven = size % 2 == 0;
+                    for (int yy = 0; yy <= size; ++yy)
+                    {
+                        int[] drawCoords = RotatePoints(
+                            x,
+                            (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-size / 2 + yy) * frame.Frame.Height),
+                            x + pivotOffsetX, y + pivotOffsetY, angle);
+
+                        d.DrawBitmap(frame.Texture, drawCoords[0] + drawOffsetX, drawCoords[1] + drawOffsetY, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
+                }
+            }
+        }
+
+        private static int[] RotatePoints(double initX, double initY, double centerX, double centerY, int angle)
+        {
+            initX -= centerX;
+            initY -= centerY;
+
+            if (initX == 0 && initY == 0)
+            {
+                int[] results2 = { (int)centerX, (int)centerY };
+                return results2;
+            }
+
+            const double FACTOR = 40.743665431525205956834243423364;
+
+            double hypo = Math.Sqrt(Math.Pow(initX, 2) + Math.Pow(initY, 2));
+            double initAngle = Math.Acos(initX / hypo);
+            if (initY < 0) initAngle = 2 * Math.PI - initAngle;
+            double newAngle = initAngle - angle / FACTOR;
+            double finalX = hypo * Math.Cos(newAngle) + centerX;
+            double finalY = hypo * Math.Sin(newAngle) + centerY;
+
+            int[] results = { (int)Math.Round(finalX), (int)Math.Round(finalY) };
+            return results;
         }
 
         public static void ReleaseResources()
