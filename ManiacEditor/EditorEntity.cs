@@ -32,11 +32,13 @@ namespace ManiacEditor
         public DateTime lastFrametime;
         public int index = 0;
         public SceneEntity Entity { get { return entity; } }
+        public bool hasFilter;
 
         public EditorEntity(SceneEntity entity)
         {
             this.entity = entity;
             lastFrametime = DateTime.Now;
+            hasFilter = entity.attributesMap.ContainsKey("filter");
         }
  
         public void Draw(Graphics g)
@@ -384,9 +386,7 @@ namespace ManiacEditor
 
         public bool SetFilter()
         {
-            if (EditorEntities.SceneWithoutFilters)
-                filteredOut = !Properties.Settings.Default.showBothEntities;
-            else
+            if (hasFilter)
             {
                 int filter = entity.GetAttribute("filter").ValueUInt8;
 
@@ -403,6 +403,8 @@ namespace ManiacEditor
                     ((filter < 1 || filter == 3 || filter > 5) && !Properties.Settings.Default.showOtherEntities);
 
             }
+            else
+                filteredOut = !Properties.Settings.Default.showBothEntities;
             return filteredOut;
         }
 
@@ -1020,77 +1022,154 @@ namespace ManiacEditor
                 var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) - 1;
                 var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) - 1;
 
-                // Load animation by type
                 EditorAnimation editorAnim;
-                editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
-                //Breaks if a scene has duplicate entities, so just disable it
-                /*if (EditorEntities.SceneWithoutFilters)
-                {
-                    if (entity.attributesMap["onlyKnux"].ValueBool)
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
-                    else //This seems to crash for some reason?
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
-                }
-                else
-                {
-                    if (entity.attributesMap["onlyMighty"].ValueBool && entity.attributesMap["onlyKnux"].ValueBool)
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 3, false, false, false);
-                    else if (entity.attributesMap["onlyKnux"].ValueBool)
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, false, false);
-                    else if (entity.attributesMap["onlyMighty"].ValueBool)
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, false, false, false);
-                    else
-                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, false, false, false);
-                }*/
 
-                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                if (width != -1 && height != -1)
                 {
-                    var frame = editorAnim.Frames[index];
-                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
-                    bool wEven = width % 2 == 0;
-                    bool hEven = height % 2 == 0;
-                    for (int xx = 0; xx <= width; ++xx)
+                    // draw corners
+                    for (int i = 0; i < 4; i++)
                     {
-                        for (int yy = 0; yy <= height; ++yy)
+                        bool right = (i & 1) > 0;
+                        bool bottom = (i & 2) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, right, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
                         {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            bool hEven = height % 2 == 0;
                             d.DrawBitmap(frame.Texture,
-                                (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + xx) * frame.Frame.Width),
-                                (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + yy) * frame.Frame.Height),
+                                (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + (right ? width : 0)) * frame.Frame.Width),
+                                (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + (bottom ? height : 0)) * frame.Frame.Height),
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
+
                         }
                     }
+
+                    // draw top and bottom
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool bottom = (i & 1) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            bool hEven = height % 2 == 0;
+                            for (int j = 1; j < width; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + j) * frame.Frame.Width),
+                                    (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + (bottom ? height : 0)) * frame.Frame.Height),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // draw sides
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool right = (i & 1) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, right, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            bool hEven = height % 2 == 0;
+                            for (int j = 1; j < height; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + (right ? width : 0)) * frame.Frame.Width),
+                                    (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + j) * frame.Frame.Height),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // draw Knuckles icon
+                    if (entity.attributesMap["onlyKnux"].ValueBool)
+                    {
+                        editorAnim = LoadAnimation2("HUD", d, 2, 2, false, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            d.DrawBitmap(frame.Texture, x - frame.Frame.Width / 2, y - frame.Frame.Height / 2, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // TODO add a Mighty icon when we figure out how to check for that without crashing old Scenes
                 }
             }
             else if (entity.Object.Name.Name == "CollapsingPlatform")
             {
                 var type = entity.attributesMap["type"].ValueUInt8;
-                var width = (int)(entity.attributesMap["size"].ValuePosition.X.High) / 16;
-                var height = (int)(entity.attributesMap["size"].ValuePosition.Y.High) / 16;
-                var width_tiled = (int)(entity.attributesMap["size"].ValuePosition.X.High);
-                var height_tiled = (int)(entity.attributesMap["size"].ValuePosition.Y.High);
+                var widthPixels = (int)(entity.attributesMap["size"].ValuePosition.X.High);
+                var heightPixels = (int)(entity.attributesMap["size"].ValuePosition.Y.High);
+                var width = (int)widthPixels / 16;
+                var height = (int)heightPixels / 16;
 
-                // Load animation by type
-                EditorAnimation editorAnim= LoadAnimation2("EditorAssets", d, 1, 0, false, false, false);
-                if (editorAnim != null && editorAnim.Frames.Count != 0)
+                EditorAnimation editorAnim;
+
+                if (width != 0 && height != 0)
                 {
-                    var frame = editorAnim.Frames[index];
-                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
-                    bool wEven = width % 2 == 0;
-                    bool hEven = height % 2 == 0;
-
-
-                    for (int xx = 1; xx <= width; ++xx)
+                    // draw corners
+                    for (int i = 0; i < 4; i++)
                     {
-                        for (int yy = 1; yy <= height; ++yy)
+                        bool right = (i & 1) > 0;
+                        bool bottom = (i & 2) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, right, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
                         {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
                             d.DrawBitmap(frame.Texture,
-                                (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width - width * 16) + (-width / 2 + xx) * frame.Frame.Width),
-                                (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height - height * 16) + (-height / 2 + yy) * frame.Frame.Height),
+                                (x + widthPixels / (right ? 2 : -2) ) - (right ? frame.Frame.Width : 0),
+                                (y + heightPixels / (bottom ? 2 : -2) - (bottom ? frame.Frame.Height : 0)),
                                 frame.Frame.Width, frame.Frame.Height, false, Transparency);
+
                         }
                     }
 
+                    // draw top and bottom
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool bottom = (i & 1) > 0;
 
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            for (int j = 1; j < width; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + j) * frame.Frame.Width),
+                                    (y + heightPixels / (bottom ? 2 : -2) - (bottom ? frame.Frame.Height : 0)),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // draw sides
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool right = (i & 1) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, right, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool hEven = height % 2 == 0;
+                            for (int j = 1; j < height; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + widthPixels / (right ? 2 : -2)) - (right ? frame.Frame.Width : 0),
+                                    (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + j) * frame.Frame.Height),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
                 }
             }
             else if (entity.Object.Name.Name == "Decoration")
@@ -1346,9 +1425,6 @@ namespace ManiacEditor
                     pair2.Texture?.Dispose();
 
             Animations.Clear();
-
-            EditorEntities.ResetFilterStuff();
-
         }
 
         public class EditorAnimation

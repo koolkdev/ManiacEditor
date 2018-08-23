@@ -8,8 +8,6 @@ namespace ManiacEditor
 {
     class EditorEntities : IDrawable
     {
-        public static bool SceneWithoutFilters = false;
-        public static bool FirstEntity = true;
         public static bool FilterRefreshNeeded = false;
         public static int DefaultFilter = -1;
 
@@ -283,25 +281,7 @@ namespace ManiacEditor
 
             EditorEntity entity = new EditorEntity(sceneEntity);
 
-            // Check the first entity spawned to see if this Scene uses filters
-            if (FirstEntity)
-            {
-                FirstEntity = false;
-
-                // Try to get "filter"
-                try
-                {
-                    int filter = entity.Entity.GetAttribute("filter").ValueUInt8;
-                }
-
-                // If this is an old Scene that doesn't have them, disable future filter checks
-                catch (KeyNotFoundException)
-                {
-                    SceneWithoutFilters = true;
-                }
-            }
-
-            if (!SceneWithoutFilters && DefaultFilter > -1)
+            if (entity.hasFilter && DefaultFilter > -1)
             {
                 entity.Entity.GetAttribute("filter").ValueUInt8 = (byte)DefaultFilter;
                 DefaultFilter = -1;
@@ -318,13 +298,5 @@ namespace ManiacEditor
             foreach (EditorEntity entity in entities)
                 entity.SetFilter();
         }
-
-        public static void ResetFilterStuff()
-        {
-            SceneWithoutFilters = false;
-            FirstEntity = true;
-            FilterRefreshNeeded = false;
-        }
-
     }
 }

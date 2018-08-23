@@ -51,19 +51,11 @@ namespace ManiacEditor
 
             RefreshObjects(sceneObjects);
 
-            if (EditorEntities.SceneWithoutFilters)
-            { 
-                defaultFilter.Enabled = false;
-                Properties.Settings.Default.DefaultFilter = "Both (1)";
-            }
-            else
-            {
-                defaultFilter.Items.Add("Mania (2)");
-                defaultFilter.Items.Add("Encore (4)");
-                defaultFilter.Items.Add("Both (1)");
-                defaultFilter.Items.Add("Pinball (255)");
-                defaultFilter.Items.Add("Other (0)");
-            }
+            defaultFilter.Items.Add("Mania (2)");
+            defaultFilter.Items.Add("Encore (4)");
+            defaultFilter.Items.Add("Both (1)");
+            defaultFilter.Items.Add("Pinball (255)");
+            defaultFilter.Items.Add("Other (0)");
         }
 
         private void UpdateEntitiesList()
