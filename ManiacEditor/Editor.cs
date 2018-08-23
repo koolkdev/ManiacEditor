@@ -2549,6 +2549,8 @@ Error: {ex.Message}");
                     return;
                 }
             }
+
+            // TODO: Find workaround to get Mania to boot into a Scene
             ProcessStartInfo psi = new ProcessStartInfo(GamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
             string maniaDir = Path.GetDirectoryName(GamePath);
             // Check if the mod loader is installed
@@ -2562,11 +2564,11 @@ Error: {ex.Message}");
             // Patches
             GameMemory.Attach(p);
             // Disable Background Pausing
-            GameMemory.WriteByte(0x005CAD65, 0xEB);
+            GameMemory.WriteByte(0x005FDD00, 0xEB);
             // Enable Debug
-            GameMemory.WriteByte(0x00CCF708, 0x01);
+            GameMemory.WriteByte(0x00E48768, 0x01);
             // Enable DevMenu
-            GameMemory.WriteByte(0x00630D74, 0x01);
+            GameMemory.WriteByte(0x006F1806, 0x01);
 
 
 

@@ -34,11 +34,13 @@ namespace RSDKv5
                 if (scenesHaveModeFilter) ModeFilter = reader.ReadByte();
             }
 
-            internal void Write(Writer writer)
+            internal void Write(Writer writer, bool scenesHaveModeFilter = false)
             {
                 writer.WriteRSDKString(Name);
                 writer.WriteRSDKString(Zone);
                 writer.WriteRSDKString(SceneID);
+
+                if (scenesHaveModeFilter) writer.Write(ModeFilter);
             }
         }
 
@@ -56,13 +58,13 @@ namespace RSDKv5
                     Scenes.Add(new SceneInfo(reader, scenesHaveModeFilter));
             }
 
-            internal void Write(Writer writer)
+            internal void Write(Writer writer, bool scenesHaveModeFilter = false)
             {
                 writer.WriteRSDKString(Name);
 
                 writer.Write((byte)Scenes.Count);
                 foreach (SceneInfo scene in Scenes)
-                    scene.Write(writer);
+                    scene.Write(writer, scenesHaveModeFilter);
             }
         }
 
@@ -93,17 +95,17 @@ namespace RSDKv5
 
         public List<ConfigurableMemoryEntry> ConfigMemory = new List<ConfigurableMemoryEntry>();
 
-        public GameConfig(string filename) : this(new Reader(filename))
+        public GameConfig(string filename) : this(new Reader(filename), true)
         {
 
         }
 
-        public GameConfig(Stream stream) : this(new Reader(stream))
+        public GameConfig(Stream stream) : this(new Reader(stream), false)
         {
 
         }
 
-        private GameConfig(Reader reader)
+        private GameConfig(Reader reader, bool closeStream = false)
         {
             base.ReadMagic(reader);
 
@@ -127,6 +129,9 @@ namespace RSDKv5
             byte config_memory_count = reader.ReadByte();
             for (int i = 0; i < config_memory_count; ++i)
                 ConfigMemory.Add(new ConfigurableMemoryEntry(reader));
+
+            if (closeStream)
+                reader.Close();
         }
 
         private void InterpretVersion()
@@ -168,7 +173,7 @@ namespace RSDKv5
 
             writer.Write((byte)Categories.Count);
             foreach (Category cat in Categories)
-                cat.Write(writer);
+                cat.Write(writer, _scenesHaveModeFilter);
 
             writer.Write((byte)ConfigMemory.Count);
             foreach (ConfigurableMemoryEntry c in ConfigMemory)
