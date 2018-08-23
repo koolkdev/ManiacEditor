@@ -10,7 +10,7 @@ namespace RSDKv5
     [Serializable]
     public class SceneEntity
     {
-        public readonly ushort SlotID;
+        public ushort SlotID;
         public Position Position;
         public SceneObject Object;
         public List<AttributeValue> Attributes = new List<AttributeValue>();

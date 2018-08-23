@@ -147,7 +147,7 @@ namespace ManiacEditor
             LocalProperties objProperties = new LocalProperties();
             int category_index = 2 + entity.Attributes.Count;
             addProperty(objProperties, category_index, "object", "name", "string", entity.Object.Name.ToString(), false);
-            addProperty(objProperties, category_index, "object", "entitySlot", "ushort", entity.SlotID, true);
+            addProperty(objProperties, category_index, "object", "entitySlot", "ushort", entity.SlotID, false);
             --category_index;
             addProperty(objProperties, category_index, "position", "x", "float", entity.Position.X.High + ((float)entity.Position.X.Low / 0x10000));
             addProperty(objProperties, category_index, "position", "y", "float", entity.Position.Y.High + ((float)entity.Position.Y.Low / 0x10000));
@@ -335,6 +335,23 @@ namespace ManiacEditor
                         sobj.Entities.Add(entity);
                         _bindingSceneObjectsSource.Add(sobj);
                     }
+                }
+                if (name == "entitySlot" && oldValue != value)
+                {
+                    ushort newSlot = (ushort)value;
+                    // Check if slot has been used
+                    var objects = ((BindingList<RSDKv5.SceneObject>)_bindingSceneObjectsSource.DataSource).ToList();
+                    foreach (var obj in objects)
+                    {
+                        if (obj.Entities.Any(t => t.SlotID == newSlot))
+                        {
+                            MessageBox.Show($"Slot {newSlot} is currently being used by a {obj.Name.ToString()}",
+                                "Slot in use!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    // Passed
+                    entity.SlotID = newSlot;
                 }
                 // Update Properties
                 currentEntity = null;
