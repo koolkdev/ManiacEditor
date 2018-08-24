@@ -432,6 +432,16 @@
         AElFTkSuQmCC
 </value>
   </data>
+  <data name="resetDeviceButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAD2SURBVDhPzZIxDsIwDEV9ECaExMCChLgIC116FiTmSrAy
+        cAPEEpE5KgcD/9gJboBWMNXSEzROnRfXNM5or+dHpBV8LbQHZSCvZYhCc8LDX4RLfFcCVaeTubC9Z1Z7
+        wd/8K18AUy1D5KoPRpvQhdeaWbGHCcEY4b6dk4xVRnO+NvsY9EzLcI+kqpAMFsWa/ndV10xvI4Gq+RSc
+        vi4MDTCyVriNlmEj6bwAE2tTACOQnvWLS6Dz+VTYGCP7xfxebI5L3cv0z5ExcjvGOfktbMD3OUqoVbIo
+        e5MYniPFmmR4LeX75+gH3uYowveNcM8ATMFQXsuMKoieRTygXTgOG0gAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="ShowFGLower.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8

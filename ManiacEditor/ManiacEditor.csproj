@@ -25,12 +25,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
@@ -74,6 +76,12 @@
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="ColorsCaching.cs" />
     <Compile Include="DeviceEventArgs.cs" />
+    <Compile Include="DeviceLostBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceLostBox.Designer.cs">
+      <DependentUpon>DeviceLostBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditorBackground.cs" />
     <Compile Include="EditorScene.cs" />
     <Compile Include="EntitiesToolbar.cs">
@@ -170,6 +178,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeviceLostBox.resx">
+      <DependentUpon>DeviceLostBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EntitiesToolbar.resx">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>

@@ -2755,14 +2755,12 @@ Error: {ex.Message}");
             UpdateEditLayerActions();
         }
 
-        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        private void resetDeviceButton_Click(object sender, EventArgs e)
         {
-            ShiftY = e.NewValue;
-            GraphicPanel.Render();
+            GraphicPanel.ResetDevice();
         }
 
-
-        private void vScrollBar1_Click(object sender, ScrollEventArgs e)
+        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftY = e.NewValue;
             GraphicPanel.Render();
@@ -2836,6 +2834,24 @@ Error: {ex.Message}");
         public double GetZoom()
         {
             return Zoom;
+        }
+
+        DialogResult deviceExceptionResult;
+        public void DeviceExceptionDialog()
+        {
+            using (var deviceLostBox = new DeviceLostBox())
+            {
+                deviceLostBox.ShowDialog();
+                deviceExceptionResult = deviceLostBox.DialogResult;
+            }
+            if (deviceExceptionResult == DialogResult.Yes)
+            {
+                GraphicPanel.ResetDevice();
+            }
+            else
+            {
+                
+            }
         }
     }
 }

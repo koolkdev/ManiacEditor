@@ -48,7 +48,7 @@ namespace ManiacEditor
 
         // The DirectX device
         internal Device _device = null;
-        private bool deviceLost;
+        public bool deviceLost;
         private Direct3D direct3d = new Direct3D();
         private Font font;
         private Font fontBold;
@@ -166,7 +166,7 @@ namespace ManiacEditor
         }
 
         public void Run()
-        {
+        {        
             RenderLoop.Run(this, () =>
             {
                 // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
@@ -239,7 +239,7 @@ namespace ManiacEditor
                 {
                     // If it's still lost or lost again, just do nothing
                     if (ex.ResultCode == ResultCode.DeviceLost) return;
-                    else throw ex;
+                    else Editor.Instance.DeviceExceptionDialog();
                 }
             }
         }
@@ -345,7 +345,7 @@ namespace ManiacEditor
                 if (ex.ResultCode == ResultCode.DeviceLost)
                     deviceLost = true;
                 else
-                    throw ex;
+                    Editor.Instance.DeviceExceptionDialog();
             }
         }
 

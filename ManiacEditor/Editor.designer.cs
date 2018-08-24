@@ -121,6 +121,7 @@
             this.selectedPositionLabel = new System.Windows.Forms.ToolStripLabel();
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
             this.scrollLockButton = new System.Windows.Forms.ToolStripButton();
+            this.resetDeviceButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -731,6 +732,7 @@
             this.selectTool,
             this.placeTilesButton,
             this.MagnetMode,
+            this.resetDeviceButton,
             this.toolStripSeparator4,
             this.ShowFGLower,
             this.ShowFGLow,
@@ -1015,6 +1017,17 @@
             this.scrollLockButton.ToolTipText = "Prevent the Mouse Wheel from Scrolling with the vertical scroll bar\r\n";
             this.scrollLockButton.Click += new System.EventHandler(this.scrollLockButton_Click);
             // 
+            // resetDeviceButton
+            // 
+            this.resetDeviceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.resetDeviceButton.Image = ((System.Drawing.Image)(resources.GetObject("resetDeviceButton.Image")));
+            this.resetDeviceButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.resetDeviceButton.Name = "resetDeviceButton";
+            this.resetDeviceButton.Size = new System.Drawing.Size(23, 22);
+            this.resetDeviceButton.Text = "ResetDevice";
+            this.resetDeviceButton.ToolTipText = "Reset Device";
+            this.resetDeviceButton.Click += new System.EventHandler(this.resetDeviceButton_Click);
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1146,6 +1159,7 @@
         private System.Windows.Forms.ToolStripLabel positionLabel;
         private System.Windows.Forms.ToolStripStatusLabel _baseDataDirectoryLabel;
         private System.Windows.Forms.ToolStripButton pixelModeButton;
+        private System.Windows.Forms.ToolStripButton resetDeviceButton;
     }
 }
 

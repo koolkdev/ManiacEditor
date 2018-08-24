@@ -61,7 +61,6 @@ namespace ManiacEditor.Properties {
         }
 
         [System.ComponentModel.Browsable(false)]
-        public event System.Windows.Forms.MouseEventHandler MouseClicked;
 
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
