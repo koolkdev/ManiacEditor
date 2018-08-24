@@ -223,14 +223,54 @@ namespace ManiacEditor
 
         }
 
-        private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
+        private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void checkBox10_CheckedChanged(object sender, EventArgs e)
+
+        private void radioButtonX_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void radioButtonY_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButtonY_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButtonY.Checked == true)
+            {
+                Properties.Settings.Default.ScrollLockDirection = true;
+                Properties.Settings.Default.ScrollLockX = false;
+                Properties.Settings.Default.ScrollLockY = true;
+            }
+            else
+            {
+                Properties.Settings.Default.ScrollLockDirection = false;
+                Properties.Settings.Default.ScrollLockX = true;
+                Properties.Settings.Default.ScrollLockY = false;
+
+            }
+        }
+
+        private void radioButtonX_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButtonY.Checked == true)
+            {
+                Properties.Settings.Default.ScrollLockDirection = true;
+                Properties.Settings.Default.ScrollLockX = false;
+                Properties.Settings.Default.ScrollLockY = true;
+            }
+            else
+            {
+                Properties.Settings.Default.ScrollLockDirection = false;
+                Properties.Settings.Default.ScrollLockX = true;
+                Properties.Settings.Default.ScrollLockY = false;
+
+            }
         }
     }
 }

@@ -386,7 +386,7 @@ namespace ManiacEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool SceneSelectRadioButton1On {
             get {
                 return ((bool)(this["SceneSelectRadioButton1On"]));
@@ -405,6 +405,54 @@ namespace ManiacEditor.Properties {
             }
             set {
                 this["SceneSelectRadioButton2On"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool scrollLock {
+            get {
+                return ((bool)(this["scrollLock"]));
+            }
+            set {
+                this["scrollLock"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrollLockDirection {
+            get {
+                return ((bool)(this["ScrollLockDirection"]));
+            }
+            set {
+                this["ScrollLockDirection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrollLockX {
+            get {
+                return ((bool)(this["ScrollLockX"]));
+            }
+            set {
+                this["ScrollLockX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrollLockY {
+            get {
+                return ((bool)(this["ScrollLockY"]));
+            }
+            set {
+                this["ScrollLockY"] = value;
             }
         }
     }

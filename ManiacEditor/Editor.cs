@@ -26,6 +26,7 @@ namespace ManiacEditor
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
 
         int ClickedX = -1, ClickedY = -1;
+        string scrollDirection = "X";
 
         public Stack<IAction> undo = new Stack<IAction>();
         public Stack<IAction> redo = new Stack<IAction>();
@@ -1183,12 +1184,80 @@ namespace ManiacEditor
             }
             else
             {
-                if (vScrollBar1.Visible)
+                if (vScrollBar1.Visible || hScrollBar1.Visible)
                 {
-                    int y = vScrollBar1.Value - e.Delta;
-                    if (y < 0) y = 0;
-                    if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
-                    vScrollBar1.Value = y;
+                    if (scrollDirection == "Y" && !Properties.Settings.Default.scrollLock)
+                    {
+                        if (vScrollBar1.Visible)
+                        {
+                            int y = vScrollBar1.Value - e.Delta;
+                            if (y < 0) y = 0;
+                            if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                            vScrollBar1.Value = y;
+                        }
+                        else
+                        {
+                            int x = hScrollBar1.Value - e.Delta * 2;
+                            if (x < 0) x = 0;
+                            if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                            hScrollBar1.Value = x;
+                        }
+                    }
+                    else if (scrollDirection == "X" && !Properties.Settings.Default.scrollLock)
+                    {
+                        if (hScrollBar1.Visible)
+                        {
+                            int x = hScrollBar1.Value - e.Delta * 2;
+                            if (x < 0) x = 0;
+                            if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                            hScrollBar1.Value = x;
+                        }
+                        else
+                        {
+                            int y = vScrollBar1.Value - e.Delta;
+                            if (y < 0) y = 0;
+                            if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                            vScrollBar1.Value = y;
+                        }
+                    }
+                    else if (scrollDirection == "Locked" || Properties.Settings.Default.scrollLock == true)
+                    {
+                        if (Properties.Settings.Default.ScrollLockDirection == false)
+                        {
+                            if (vScrollBar1.Visible)
+                            {
+                                int y = vScrollBar1.Value - e.Delta * 2;
+                                if (y < 0) y = 0;
+                                if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                vScrollBar1.Value = y;
+                            }
+                            else
+                            {
+                                int x = vScrollBar1.Value - e.Delta * 2;
+                                if (x < 0) x = 0;
+                                if (x > vScrollBar1.Maximum - vScrollBar1.LargeChange) x = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                vScrollBar1.Value = x;
+                            }
+                        }
+                        else
+                        {
+                            if (hScrollBar1.Visible)
+                            {
+                                int x = hScrollBar1.Value - e.Delta * 2;
+                                if (x < 0) x = 0;
+                                if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                                hScrollBar1.Value = x;
+                            }
+                            else
+                            {
+                                int y = vScrollBar1.Value - e.Delta;
+                                if (y < 0) y = 0;
+                                if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                vScrollBar1.Value = y;
+                            }
+                        }
+
+                    }
                 }
 
             }
@@ -2645,6 +2714,33 @@ Error: {ex.Message}");
 
         }
 
+        private void scrollLockButton_Click(object sender, EventArgs e)
+        {
+            if (scrollLockButton.Checked == false)
+            {
+                scrollLockButton.Checked = true;
+                Properties.Settings.Default.scrollLock = true;
+                scrollDirection = "Locked";
+            }
+            else
+            {
+                if (Properties.Settings.Default.ScrollLockY == true)
+                {
+                    scrollLockButton.Checked = false;
+                    Properties.Settings.Default.scrollLock = false;
+                    scrollDirection = "Y";
+                }
+                else
+                {
+                    scrollLockButton.Checked = false;
+                    Properties.Settings.Default.scrollLock = false;
+                    scrollDirection = "X";
+                }
+
+            }
+
+        }
+
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
         {
             if (!GraphicPanel.Focused && e.Control)
@@ -2660,6 +2756,13 @@ Error: {ex.Message}");
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            ShiftY = e.NewValue;
+            GraphicPanel.Render();
+        }
+
+
+        private void vScrollBar1_Click(object sender, ScrollEventArgs e)
         {
             ShiftY = e.NewValue;
             GraphicPanel.Render();
@@ -2687,7 +2790,30 @@ Error: {ex.Message}");
             ShiftX = hScrollBar1.Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
         }
-
+        
+        private void vScrollBar1_Entered(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.scrollLock == false)
+            {
+                scrollDirection = "Y";
+            }
+            else
+            {
+                scrollDirection = "Locked";
+            }
+            
+        }
+        private void hScrollBar1_Entered(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.scrollLock == false)
+            {
+                scrollDirection = "X";
+            }
+            else
+            {
+                scrollDirection = "Locked";
+            }
+        }
         public void DisposeTextures()
         {
             // Make sure to dispose the textures of the extra layers too

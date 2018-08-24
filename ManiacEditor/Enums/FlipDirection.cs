@@ -5,4 +5,5 @@
         Horizontal = 1024,
         Veritcal = 2048
     }
+
 }
