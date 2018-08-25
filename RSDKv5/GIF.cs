@@ -14,7 +14,7 @@ namespace RSDKv5
     {
         Bitmap _bitmap;
         string _bitmapFilename;
-        
+
         Dictionary<Tuple<Rectangle, bool, bool>, Bitmap> _bitmapCache = new Dictionary<Tuple<Rectangle, bool, bool>, Bitmap>();
         Dictionary<Tuple<Rectangle, bool, bool>, Texture> _texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
 
@@ -26,7 +26,7 @@ namespace RSDKv5
             }
             _bitmap = new Bitmap(filename);
             // stash the filename too, so we can reload later
-            _bitmapFilename = filename; 
+            _bitmapFilename = filename;
             // TODO: Proper transparent (palette index 0)
             _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
         }
@@ -104,7 +104,7 @@ namespace RSDKv5
         {
             if (!File.Exists(_bitmapFilename))
             {
-                throw new FileNotFoundException(string.Format("Could not find the file {0}", _bitmapFilename), 
+                throw new FileNotFoundException(string.Format("Could not find the file {0}", _bitmapFilename),
                                                 _bitmapFilename);
             }
             ReleaseResources();
