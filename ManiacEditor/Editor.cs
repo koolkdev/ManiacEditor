@@ -2846,7 +2846,8 @@ Error: {ex.Message}");
             }
             if (deviceExceptionResult == DialogResult.Yes)
             {
-                GraphicPanel.ResetDevice();
+                GraphicPanel.Dispose();
+                //GraphicPanel.ResetDevice();
             }
             else
             {

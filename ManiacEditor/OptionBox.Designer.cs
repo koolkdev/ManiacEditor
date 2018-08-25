@@ -88,6 +88,7 @@
             this.label20 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBox15 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tileToolbarZoomDefault)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -841,11 +842,26 @@
             this.panel2.Size = new System.Drawing.Size(160, 64);
             this.panel2.TabIndex = 94;
             // 
+            // checkBox15
+            // 
+            this.checkBox15.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.checkBox15.Enabled = false;
+            this.checkBox15.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox15.Location = new System.Drawing.Point(8, 392);
+            this.checkBox15.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox15.Name = "checkBox15";
+            this.checkBox15.Size = new System.Drawing.Size(160, 32);
+            this.checkBox15.TabIndex = 95;
+            this.checkBox15.Text = "Enable Dark Mode";
+            this.checkBox15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox15.UseVisualStyleBackColor = false;
+            // 
             // OptionBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 612);
+            this.Controls.Add(this.checkBox15);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.label19);
@@ -980,5 +996,6 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.CheckBox checkBox15;
     }
 }

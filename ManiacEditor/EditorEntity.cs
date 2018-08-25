@@ -935,13 +935,29 @@ namespace ManiacEditor
             }
             else if (entity.Object.Name.Name == "ForceSpin")
             {
-                var editorAnim = LoadAnimation2("EditorIcons", d, 0, 6, false, false, false);
+
+                var size = (int)(entity.attributesMap["size"].ValueVar) - 1;
+                var angle = entity.attributesMap["angle"].ValueInt32;
+
+                EditorAnimation editorAnim = LoadAnimation2("PlaneSwitch", d, 0, 4, false, false, false);
+
+                const int pivotOffsetX = -8, pivotOffsetY = 0;
+                const int drawOffsetX = 0, drawOffsetY = -8;
+
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[index];
                     ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
-                    d.DrawBitmap(frame.Texture, x + frame.Frame.CenterX, y + frame.Frame.CenterY,
-                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    bool hEven = size % 2 == 0;
+                    for (int yy = 0; yy <= size; ++yy)
+                    {
+                        int[] drawCoords = RotatePoints(
+                            x - frame.Frame.Width,
+                            (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-size / 2 + yy) * frame.Frame.Height),
+                            x + pivotOffsetX, y + pivotOffsetY, angle);
+
+                        d.DrawBitmap(frame.Texture, drawCoords[0] + drawOffsetX, drawCoords[1] + drawOffsetY, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
                 }
             }
             else if (entity.Object.Name.Name == "UIControl")

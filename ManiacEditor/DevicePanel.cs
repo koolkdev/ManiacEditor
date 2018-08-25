@@ -48,7 +48,7 @@ namespace ManiacEditor
 
         // The DirectX device
         internal Device _device = null;
-        public bool deviceLost;
+        private bool deviceLost;
         private Direct3D direct3d = new Direct3D();
         private Font font;
         private Font fontBold;
@@ -176,7 +176,7 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                // Application.DoEvents();
+                Application.DoEvents();
             });
         }
 
@@ -233,7 +233,7 @@ namespace ManiacEditor
             if (result == ResultCode.DeviceNotReset) { 
                 try
                 {
-                    ResetDevice();
+                    Editor.Instance.DeviceExceptionDialog();
                 }
                 catch (SharpDXException ex)
                 {
@@ -343,7 +343,7 @@ namespace ManiacEditor
             catch (SharpDXException ex)
             {
                 if (ex.ResultCode == ResultCode.DeviceLost)
-                    deviceLost = true;
+                    Editor.Instance.DeviceExceptionDialog();
                 else
                     Editor.Instance.DeviceExceptionDialog();
             }
