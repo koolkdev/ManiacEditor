@@ -939,7 +939,7 @@ namespace ManiacEditor
                 var size = (int)(entity.attributesMap["size"].ValueVar) - 1;
                 var angle = entity.attributesMap["angle"].ValueInt32;
 
-                EditorAnimation editorAnim = LoadAnimation2("PlaneSwitch", d, 0, 4, false, false, false);
+                EditorAnimation editorAnim = LoadAnimation2("PlaneSwitch", d, 0, 4, true, false, false);
 
                 const int pivotOffsetX = -8, pivotOffsetY = 0;
                 const int drawOffsetX = 0, drawOffsetY = -8;
@@ -952,7 +952,7 @@ namespace ManiacEditor
                     for (int yy = 0; yy <= size; ++yy)
                     {
                         int[] drawCoords = RotatePoints(
-                            x - frame.Frame.Width,
+                            x - frame.Frame.Width/2,
                             (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-size / 2 + yy) * frame.Frame.Height),
                             x + pivotOffsetX, y + pivotOffsetY, angle);
 
