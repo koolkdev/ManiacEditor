@@ -467,5 +467,17 @@ namespace ManiacEditor.Properties {
                 this["DisableSaveWarnings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool enableMightySupport {
+            get {
+                return ((bool)(this["enableMightySupport"]));
+            }
+            set {
+                this["enableMightySupport"] = value;
+            }
+        }
     }
 }
