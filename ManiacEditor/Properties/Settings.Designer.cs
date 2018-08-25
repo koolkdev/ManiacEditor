@@ -386,7 +386,7 @@ namespace ManiacEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool SceneSelectRadioButton1On {
             get {
                 return ((bool)(this["SceneSelectRadioButton1On"]));
@@ -434,7 +434,7 @@ namespace ManiacEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ScrollLockX {
             get {
                 return ((bool)(this["ScrollLockX"]));

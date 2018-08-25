@@ -277,5 +277,25 @@ namespace ManiacEditor
         {
 
         }
+
+        private void tileToolbarZoomDefault_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox2_CheckedChanged_2(object sender, EventArgs e)
+        {
+
+        }
+
+        private void enableWindowsClipboard_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+        }
     }
 }
