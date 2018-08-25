@@ -1102,20 +1102,33 @@ namespace ManiacEditor
                                     frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }
+                }
 
-                    // draw Knuckles icon
-                    if (entity.attributesMap["onlyKnux"].ValueBool)
+                bool knux = entity.attributesMap["onlyKnux"].ValueBool;
+                bool mighty = entity.attributesMap.ContainsKey("onlyMighty") && entity.attributesMap["onlyMighty"].ValueBool;
+
+                // draw Knuckles icon
+                if (knux)
+                {
+                    editorAnim = LoadAnimation2("HUD", d, 2, 2, false, false, false);
+                    if (editorAnim != null && editorAnim.Frames.Count != 0)
                     {
-                        editorAnim = LoadAnimation2("HUD", d, 2, 2, false, false, false);
-                        if (editorAnim != null && editorAnim.Frames.Count != 0)
-                        {
-                            var frame = editorAnim.Frames[index];
-                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
-                            d.DrawBitmap(frame.Texture, x - frame.Frame.Width / 2, y - frame.Frame.Height / 2, frame.Frame.Width, frame.Frame.Height, false, Transparency);
-                        }
+                        var frame = editorAnim.Frames[index];
+                        ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                        d.DrawBitmap(frame.Texture, x - frame.Frame.Width / (mighty ? 1 : 2), y - frame.Frame.Height / 2, frame.Frame.Width, frame.Frame.Height, false, Transparency);
                     }
+                }
 
-                    // TODO add a Mighty icon when we figure out how to check for that without crashing old Scenes
+                // draw Mighty icon
+                if (mighty)
+                {
+                    editorAnim = LoadAnimation2("HUD", d, 2, 3, false, false, false);
+                    if (editorAnim != null && editorAnim.Frames.Count != 0)
+                    {
+                        var frame = editorAnim.Frames[index];
+                        ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                        d.DrawBitmap(frame.Texture, x - (knux ? 0 : frame.Frame.Width / 2), y - frame.Frame.Height / 2, frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
                 }
             }
             else if (entity.Object.Name.Name == "CollapsingPlatform")
