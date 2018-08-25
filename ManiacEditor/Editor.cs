@@ -37,6 +37,8 @@ namespace ManiacEditor
         double Zoom = 1;
         int ZoomLevel = 0;
         public String ToolbarSelectedTile;
+        bool SceneLoaded = false;
+        bool AllowSceneChange = false;
 
         public static string DataDirectory;
 
@@ -1414,6 +1416,7 @@ namespace ManiacEditor
 
         void UnloadScene()
         {
+            SceneLoaded = false;
             EditorScene?.Dispose();
             EditorScene = null;
             SceneFilename = null;
@@ -1514,57 +1517,69 @@ namespace ManiacEditor
 
         private void Open_Click(object sender, EventArgs e)
         {
-            if (!load()) return;
-            OpenScene();
+            Editor.Instance.SceneChangeWarning(sender, e);
+            if (AllowSceneChange == true || SceneLoaded == false || Properties.Settings.Default.DisableSaveWarnings == true)
+            {
+                AllowSceneChange = false;
+                if (!load()) return;
+                OpenScene();
+            }
+            else
+            {
+                return;
+            }
+
         }
 
         private void OpenScene()
         {
-            SceneSelect select = new SceneSelect(GameConfig);
-            select.ShowDialog();
 
-            if (select.Result == null)
-                return;
+                SceneSelect select = new SceneSelect(GameConfig);
+                select.ShowDialog();
 
-            UnloadScene();
-            UseVisibilityPrefrences();
+                if (select.Result == null)
+                    return;
 
-            try
-            {
-                if (File.Exists(select.Result))
+                UnloadScene();
+                UseVisibilityPrefrences();
+
+                try
                 {
-                    // Selected file
-                    // Don't forget to populate these Members
-                    string directoryPath = Path.GetDirectoryName(select.Result);
-                    SelectedZone = new DirectoryInfo(directoryPath).Name;
-                    SelectedScene = Path.GetFileName(select.Result);
+                    if (File.Exists(select.Result))
+                    {
+                        // Selected file
+                        // Don't forget to populate these Members
+                        string directoryPath = Path.GetDirectoryName(select.Result);
+                        SelectedZone = new DirectoryInfo(directoryPath).Name;
+                        SelectedScene = Path.GetFileName(select.Result);
 
-                    StageTiles = new StageTiles(directoryPath);
-                    SceneFilename = select.Result;
+                        StageTiles = new StageTiles(directoryPath);
+                        SceneFilename = select.Result;
+                    }
+                    else
+                    {
+                        string[] splitted = select.Result.Split('/');
+
+                        SelectedZone = splitted[0];
+                        SelectedScene = splitted[1];
+
+                        StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
+                        SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
+                    }
+
+                    EditorScene = new EditorScene(SceneFilename);
+                    StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
+                    if (File.Exists(StageConfigFileName))
+                    {
+                        StageConfig = new StageConfig(StageConfigFileName);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string[] splitted = select.Result.Split('/');
-
-                    SelectedZone = splitted[0];
-                    SelectedScene = splitted[1];
-
-                    StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
-                    SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
+                    MessageBox.Show("Load failed. Error: " + ex.ToString());
+                    return;
                 }
-
-                EditorScene = new EditorScene(SceneFilename);
-                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
-                if (File.Exists(StageConfigFileName))
-                {
-                    StageConfig = new StageConfig(StageConfigFileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Load failed. Error: " + ex.ToString());
-                return;
-            }
+            
 
             SetupLayerButtons();
 
@@ -1575,6 +1590,8 @@ namespace ManiacEditor
             SetViewSize(SceneWidth, SceneHeight);
 
             UpdateControls();
+
+            SceneLoaded = true;
         }
 
         private void SetupLayerButtons()
@@ -1760,18 +1777,28 @@ namespace ManiacEditor
 
         private void openDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string newDataDirectory = GetDataDirectory();
-            if (null == newDataDirectory) return;
-            if (newDataDirectory.Equals(DataDirectory)) return;
+            SceneChangeWarning(sender, e);
+            if (AllowSceneChange == true || SceneLoaded == false)
+            {
+                AllowSceneChange = false;
+                string newDataDirectory = GetDataDirectory();
+                if (null == newDataDirectory) return;
+                if (newDataDirectory.Equals(DataDirectory)) return;
 
-            if (IsDataDirectoryValid(newDataDirectory))
-                ResetDataDirectoryToAndResetScene(newDataDirectory);
-            else
-                MessageBox.Show($@"{newDataDirectory} is not
+                if (IsDataDirectoryValid(newDataDirectory))
+                    ResetDataDirectoryToAndResetScene(newDataDirectory);
+                else
+                    MessageBox.Show($@"{newDataDirectory} is not
 a valid Data Directory.",
-                                "Invalid Data Directory!",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                                    "Invalid Data Directory!",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+            }
+            else
+            {
+                return;
+            }
+            
         }
 
         public void OnResetDevice(object sender, DeviceEventArgs e)
@@ -2853,6 +2880,66 @@ Error: {ex.Message}");
             {
                 
             }
+        }
+        private void Editor_FormClosing1(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
+            {
+                DialogResult exitBoxResult;
+                using (var exitBox = new ExitWarningBox())
+                {
+                    exitBox.ShowDialog();
+                    exitBoxResult = exitBox.DialogResult;
+                }
+                if (exitBoxResult == DialogResult.Yes)
+                {
+                    Save_Click(sender, e);
+                    Environment.Exit(1);
+                }
+                else if (exitBoxResult == DialogResult.No)
+                {
+                    Environment.Exit(1);
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                Environment.Exit(1);
+            }
+
+        }
+        private void SceneChangeWarning(object sender, EventArgs e)
+        {
+            if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
+            {
+                DialogResult exitBoxResult;
+                using (var exitBox = new ExitWarningBox())
+                {
+                    exitBox.ShowDialog();
+                    exitBoxResult = exitBox.DialogResult;
+                }
+                if (exitBoxResult == DialogResult.Yes)
+                {
+                    Save_Click(sender, e);
+                    AllowSceneChange = true;
+                }
+                else if (exitBoxResult == DialogResult.No)
+                {
+                    AllowSceneChange = true;
+                }
+                else
+                {
+                    AllowSceneChange = false;
+                }
+            }
+            else
+            {
+                AllowSceneChange = true;
+            }
+
         }
     }
 }

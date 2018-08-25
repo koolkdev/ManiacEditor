@@ -455,5 +455,17 @@ namespace ManiacEditor.Properties {
                 this["ScrollLockY"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableSaveWarnings {
+            get {
+                return ((bool)(this["DisableSaveWarnings"]));
+            }
+            set {
+                this["DisableSaveWarnings"] = value;
+            }
+        }
     }
 }

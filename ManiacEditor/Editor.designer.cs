@@ -516,7 +516,7 @@
             this.MagnetMode.Name = "MagnetMode";
             this.MagnetMode.Size = new System.Drawing.Size(23, 22);
             this.MagnetMode.Text = "toolStripButton9";
-            this.MagnetMode.ToolTipText = "MagnetMode";
+            this.MagnetMode.ToolTipText = "Magnet Mode";
             this.MagnetMode.Click += new System.EventHandler(this.MagnetMode_Click);
             // 
             // toolStripSeparator4
@@ -1067,8 +1067,11 @@
             this.viewPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+            this.FormClosing += Editor.Instance.Editor_FormClosing1;
 
         }
+
+
 
         #endregion
 
