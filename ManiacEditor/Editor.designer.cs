@@ -537,6 +537,7 @@
             this.New.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.New.Enabled = false;
             this.New.Image = ((System.Drawing.Image)(resources.GetObject("New.Image")));
+            this.New.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.New.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.New.Name = "New";
             this.New.Size = new System.Drawing.Size(23, 22);
@@ -548,6 +549,7 @@
             // 
             this.Open.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Open.Image = ((System.Drawing.Image)(resources.GetObject("Open.Image")));
+            this.Open.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.Open.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Open.Name = "Open";
             this.Open.Size = new System.Drawing.Size(23, 22);
@@ -559,6 +561,7 @@
             // 
             this.Save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.Save.Image = ((System.Drawing.Image)(resources.GetObject("Save.Image")));
+            this.Save.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.Save.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(23, 22);
@@ -743,6 +746,7 @@
             // 
             this.zoomInButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.zoomInButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomInButton.Image")));
+            this.zoomInButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.zoomInButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.zoomInButton.Name = "zoomInButton";
             this.zoomInButton.Size = new System.Drawing.Size(23, 22);
@@ -753,6 +757,7 @@
             // 
             this.zoomOutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.zoomOutButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomOutButton.Image")));
+            this.zoomOutButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.zoomOutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.zoomOutButton.Name = "zoomOutButton";
             this.zoomOutButton.Size = new System.Drawing.Size(23, 22);
@@ -764,6 +769,7 @@
             this.resetDeviceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.resetDeviceButton.Enabled = false;
             this.resetDeviceButton.Image = ((System.Drawing.Image)(resources.GetObject("resetDeviceButton.Image")));
+            this.resetDeviceButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.resetDeviceButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.resetDeviceButton.Name = "resetDeviceButton";
             this.resetDeviceButton.Size = new System.Drawing.Size(23, 22);
@@ -780,6 +786,7 @@
             // 
             this.undoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.undoButton.Image = ((System.Drawing.Image)(resources.GetObject("undoButton.Image")));
+            this.undoButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.undoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.undoButton.Name = "undoButton";
             this.undoButton.Size = new System.Drawing.Size(23, 22);
@@ -791,6 +798,7 @@
             // 
             this.redoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.redoButton.Image = ((System.Drawing.Image)(resources.GetObject("redoButton.Image")));
+            this.redoButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.redoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.redoButton.Name = "redoButton";
             this.redoButton.Size = new System.Drawing.Size(23, 22);
@@ -808,6 +816,7 @@
             this.ReloadToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ReloadToolStripButton.Enabled = false;
             this.ReloadToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("ReloadToolStripButton.Image")));
+            this.ReloadToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ReloadToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ReloadToolStripButton.Name = "ReloadToolStripButton";
             this.ReloadToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -825,6 +834,7 @@
             this.pointerButton.CheckState = System.Windows.Forms.CheckState.Checked;
             this.pointerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.pointerButton.Image = ((System.Drawing.Image)(resources.GetObject("pointerButton.Image")));
+            this.pointerButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pointerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pointerButton.Name = "pointerButton";
             this.pointerButton.Size = new System.Drawing.Size(23, 22);
@@ -835,6 +845,7 @@
             // 
             this.selectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.selectTool.Image = ((System.Drawing.Image)(resources.GetObject("selectTool.Image")));
+            this.selectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.selectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.selectTool.Name = "selectTool";
             this.selectTool.Size = new System.Drawing.Size(23, 22);
@@ -860,6 +871,7 @@
             // 
             this.showTileIDButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.showTileIDButton.Image = ((System.Drawing.Image)(resources.GetObject("showTileIDButton.Image")));
+            this.showTileIDButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.showTileIDButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showTileIDButton.Name = "showTileIDButton";
             this.showTileIDButton.Size = new System.Drawing.Size(23, 22);
@@ -870,6 +882,7 @@
             // 
             this.showGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.showGridButton.Image = ((System.Drawing.Image)(resources.GetObject("showGridButton.Image")));
+            this.showGridButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.showGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showGridButton.Name = "showGridButton";
             this.showGridButton.Size = new System.Drawing.Size(23, 22);
@@ -880,6 +893,7 @@
             // 
             this.showCollisionAButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.showCollisionAButton.Image = ((System.Drawing.Image)(resources.GetObject("showCollisionAButton.Image")));
+            this.showCollisionAButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.showCollisionAButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showCollisionAButton.Name = "showCollisionAButton";
             this.showCollisionAButton.Size = new System.Drawing.Size(23, 22);
@@ -890,6 +904,7 @@
             // 
             this.showCollisionBButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.showCollisionBButton.Image = ((System.Drawing.Image)(resources.GetObject("showCollisionBButton.Image")));
+            this.showCollisionBButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.showCollisionBButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showCollisionBButton.Name = "showCollisionBButton";
             this.showCollisionBButton.Size = new System.Drawing.Size(23, 22);
