@@ -1882,6 +1882,7 @@ a valid Data Directory.",
             Show();
             Focus();
             GraphicPanel.Run();
+
         }
 
         private void LayerShowButton_Click(ToolStripButton button, string desc)

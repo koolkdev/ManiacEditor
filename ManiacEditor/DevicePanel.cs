@@ -18,6 +18,8 @@ using Point = System.Drawing.Point;
  * This file is a ported old rendering code
  * It will be replaced with OpenGL soon
  */
+
+
 namespace ManiacEditor
 {
     public partial class DevicePanel : UserControl
@@ -81,6 +83,10 @@ namespace ManiacEditor
         /// Init the DirectX-Stuff here
         /// </summary>
         /// <param name="parent">parent of the DevicePanel</param>
+        /// 
+        // This will enable a dev warning box on start up if 'true' and if 'false' disable it.
+        bool enableDevWarning = true;
+
         public void Init(IDrawArea parent)
         {
             try
@@ -166,7 +172,14 @@ namespace ManiacEditor
         }
 
         public void Run()
-        {        
+        {
+            if (enableDevWarning == true)
+            {
+                using (var devWarnBox = new DevWarningBox())
+                {
+                    devWarnBox.ShowDialog();
+                }
+            }
             RenderLoop.Run(this, () =>
             {
                 // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
