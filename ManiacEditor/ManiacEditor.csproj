@@ -84,6 +84,12 @@
     </Compile>
     <Compile Include="EditorBackground.cs" />
     <Compile Include="EditorScene.cs" />
+    <Compile Include="EditSceneSelectInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditSceneSelectInfoForm.Designer.cs">
+      <DependentUpon>EditSceneSelectInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EntitiesToolbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -187,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DeviceLostBox.resx">
       <DependentUpon>DeviceLostBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditSceneSelectInfoForm.resx">
+      <DependentUpon>EditSceneSelectInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EntitiesToolbar.resx">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>

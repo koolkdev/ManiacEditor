@@ -25,6 +25,10 @@ namespace RSDKv5
             public string SceneID;
             public byte ModeFilter;
 
+            public SceneInfo()
+            {
+            }
+
             internal SceneInfo(Reader reader, bool scenesHaveModeFilter)
             {
                 Name = reader.ReadRSDKString();
