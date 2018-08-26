@@ -27,8 +27,7 @@ namespace RSDKv5
             _bitmap = new Bitmap(filename);
             // stash the filename too, so we can reload later
             _bitmapFilename = filename;
-            // TODO: Proper transparent (palette index 0)
-            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+            _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
         }
 
         private GIF(Bitmap bitmap)
@@ -109,7 +108,7 @@ namespace RSDKv5
             }
             ReleaseResources();
             _bitmap = new Bitmap(_bitmapFilename);
-            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+            _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
         }
 
         private void ReleaseResources()
