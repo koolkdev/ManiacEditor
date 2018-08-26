@@ -26,6 +26,8 @@ namespace ManiacEditor
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
         public bool showTileID;
         public bool showGrid;
+        public bool showCollisionA;
+        public bool showCollisionB;
 
         int ClickedX = -1, ClickedY = -1;
         string scrollDirection = "X";
@@ -2848,6 +2850,46 @@ Error: {ex.Message}");
             {
                 showGridButton.Checked = false;
                 showGrid = false;
+            }
+        }
+
+        private void ShowCollisionAButton_Click(object sender, EventArgs e)
+        {
+            if (showCollisionAButton.Checked == false)
+            {
+                showCollisionAButton.Checked = true;
+                showCollisionA = true;
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+            else
+            {
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+        }
+
+        private void showCollisionBButton_Click(object sender, EventArgs e)
+        {
+            if (showCollisionBButton.Checked == false)
+            {
+                showCollisionBButton.Checked = true;
+                showCollisionB = true;
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+            else
+            {
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                ReloadToolStripButton_Click(sender, e);
             }
         }
 

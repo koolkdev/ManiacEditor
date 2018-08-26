@@ -25,9 +25,19 @@ namespace RSDKv5
                 throw new FileNotFoundException("The GIF file was not found.", filename);
             }
             _bitmap = new Bitmap(filename);
+
+            if (_bitmap.Palette != null && _bitmap.Palette.Entries.Length > 0)
+            {
+                _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
+            }
+            else
+            {
+                _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+            }
             // stash the filename too, so we can reload later
             _bitmapFilename = filename;
-            _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
+            // TODO: Proper transparent (palette index 0)
+            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
         }
 
         private GIF(Bitmap bitmap)
@@ -108,7 +118,7 @@ namespace RSDKv5
             }
             ReleaseResources();
             _bitmap = new Bitmap(_bitmapFilename);
-            _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
+            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
         }
 
         private void ReleaseResources()

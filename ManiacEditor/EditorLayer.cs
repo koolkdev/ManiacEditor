@@ -717,14 +717,109 @@ namespace ManiacEditor
 
         public void DrawTile(Graphics g, ushort tile, int x, int y)
         {
+            ushort TileIndex = (ushort)(tile & 0x3ff);
             bool flipX = ((tile >> 10) & 1) == 1;
             bool flipY = ((tile >> 11) & 1) == 1;
-            g.DrawImage(Editor.Instance.StageTiles.Image.GetBitmap(new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
+            bool SolidTopA = ((tile >> 12) & 1) == 1;
+            bool SolidLrbA = ((tile >> 13) & 1) == 1;
+            bool SolidTopB = ((tile >> 14) & 1) == 1;
+            bool SolidLrbB = ((tile >> 15) & 1) == 1;
+
+            g.DrawImage(Editor.Instance.StageTiles.Image.GetBitmap(new Rectangle(0, TileIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
                 new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+            if (Editor.Instance.showCollisionA == true)
+            {
+                if (SolidLrbA || SolidTopA)
+                {
+                    //Get a bitmap of the collision
+                    Bitmap cm = Editor.Instance.StageTiles.Config.CollisionPath1[TileIndex].DrawCMask(System.Drawing.Color.FromArgb(0, 0, 0, 0), System.Drawing.Color.FromArgb(255, 255, 255));
+
+                    if (SolidTopA && !SolidLrbA)
+                    {
+                        for (int ix = 0; ix < cm.Width; ix++)
+                        {
+                            for (int iy = 0; iy < cm.Height; iy++)
+                            {
+                                System.Drawing.Color gotColor = cm.GetPixel(ix, iy);
+                                if (gotColor == System.Drawing.Color.FromArgb(255, 255, 255, 255))
+                                {
+                                    cm.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, 255, 0));
+                                }
+                            }
+                        }
+                    }//Change Colour if Solidity = Top
+
+                    if (SolidLrbA && !SolidTopA)
+                    {
+                        for (int ix = 0; ix < cm.Width; ix++)
+                        {
+                            for (int iy = 0; iy < cm.Height; iy++)
+                            {
+                                System.Drawing.Color gotColor = cm.GetPixel(ix, iy);
+                                if (gotColor == System.Drawing.Color.FromArgb(255, 255, 255, 255))
+                                {
+                                    cm.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, 0, 0));
+                                }
+                            }
+                        }
+                    } //Change Colour if Solidity = All But Top
+
+                    if (flipX) { cm.RotateFlip(RotateFlipType.RotateNoneFlipX); }
+
+                    if (flipY) { cm.RotateFlip(RotateFlipType.RotateNoneFlipY); }
+
+                    g.DrawImage(cm, new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+                }
+            }
+            if (Editor.Instance.showCollisionB == true)
+            {
+                if (SolidLrbB || SolidTopB)
+                {
+                    //Get a bitmap of the collision
+                    Bitmap cm = Editor.Instance.StageTiles.Config.CollisionPath2[TileIndex].DrawCMask(System.Drawing.Color.FromArgb(0, 0, 0, 0), System.Drawing.Color.FromArgb(255, 255, 255));//.Clone(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), System.Drawing.Imaging.PixelFormat.DontCare);
+
+                    if (SolidTopB && !SolidLrbB)
+                    {
+                        for (int ix = 0; ix < cm.Width; ix++)
+                        {
+                            for (int iy = 0; iy < cm.Height; iy++)
+                            {
+                                System.Drawing.Color gotColor = cm.GetPixel(ix, iy);
+                                if (gotColor == System.Drawing.Color.FromArgb(255, 255, 255, 255))
+                                {
+                                    cm.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, 255, 0));
+                                }
+                            }
+                        }
+                    }//Change Colour if Solidity = Top
+
+                    if (SolidLrbB && !SolidTopB)
+                    {
+                        for (int ix = 0; ix < cm.Width; ix++)
+                        {
+                            for (int iy = 0; iy < cm.Height; iy++)
+                            {
+                                System.Drawing.Color gotColor = cm.GetPixel(ix, iy);
+                                if (gotColor == System.Drawing.Color.FromArgb(255, 255, 255, 255))
+                                {
+                                    cm.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, 0, 0));
+                                }
+                            }
+                        }
+                    } //Change Colour if Solidity = All But Top
+
+                    if (flipX) { cm.RotateFlip(RotateFlipType.RotateNoneFlipX); }
+
+                    if (flipY) { cm.RotateFlip(RotateFlipType.RotateNoneFlipY); }
+
+                    g.DrawImage(cm, new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+                }
+            }
+
             if (Editor.Instance.showTileID == true)
             {
-                g.DrawImage(Editor.Instance.StageTiles.IDImage.GetBitmap(new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
-    new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+                g.DrawImage(Editor.Instance.StageTiles.IDImage.GetBitmap(new Rectangle(0, TileIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
+                            new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
             }
 
         }
