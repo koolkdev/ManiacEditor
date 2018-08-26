@@ -24,6 +24,7 @@ namespace ManiacEditor
         bool startDragged;
         int lastX, lastY, draggedX, draggedY;
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
+        public bool showTileID;
 
         int ClickedX = -1, ClickedY = -1;
         string scrollDirection = "X";
@@ -2815,7 +2816,23 @@ Error: {ex.Message}");
             ShiftX = hScrollBar1.Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
         }
-        
+
+        private void showTileIDButton_Click(object sender, EventArgs e)
+        {
+            if (showTileIDButton.Checked == false)
+            {
+                showTileIDButton.Checked = true;
+                ReloadToolStripButton_Click(sender, e);
+                showTileID = true;
+            }
+            else
+            {
+                showTileIDButton.Checked = false;
+                ReloadToolStripButton_Click(sender, e);
+                showTileID = false;
+            }
+        }
+
         private void vScrollBar1_Entered(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.scrollLock == false)

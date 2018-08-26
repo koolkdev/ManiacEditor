@@ -631,7 +631,6 @@ namespace ManiacEditor
 
         private ushort GetTile(Point point)
         {
-            
             return _layer.Tiles[point.Y][point.X];
             
         }
@@ -722,6 +721,12 @@ namespace ManiacEditor
             bool flipY = ((tile >> 11) & 1) == 1;
             g.DrawImage(Editor.Instance.StageTiles.Image.GetBitmap(new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
                 new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+            if (Editor.Instance.showTileID == true)
+            {
+                g.DrawImage(Editor.Instance.StageTiles.IDImage.GetBitmap(new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
+    new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+            }
+
         }
 
         public void DrawTile(DevicePanel d, ushort tile, int x, int y, bool selected, int Transperncy)
@@ -730,6 +735,11 @@ namespace ManiacEditor
             bool flipY = ((tile >> 11) & 1) == 1;
             d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
                 x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
+            if (Editor.Instance.showTileID == true)
+            {
+                d.DrawBitmap(Editor.Instance.StageTiles.IDImage.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
+                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
+            }
             if (selected)
             {
                 d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
