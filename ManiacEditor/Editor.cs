@@ -25,6 +25,7 @@ namespace ManiacEditor
         int lastX, lastY, draggedX, draggedY;
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
         public bool showTileID;
+        public bool showGrid;
 
         int ClickedX = -1, ClickedY = -1;
         string scrollDirection = "X";
@@ -1832,6 +1833,7 @@ a valid Data Directory.",
                     entities.Draw(GraphicPanel);
 
 
+
             }
             if (draggingSelection)
             {
@@ -1864,6 +1866,8 @@ a valid Data Directory.",
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
                 else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
             }
+            if (showGrid)
+                Background.DrawGrid(GraphicPanel);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -2830,6 +2834,20 @@ Error: {ex.Message}");
                 showTileIDButton.Checked = false;
                 ReloadToolStripButton_Click(sender, e);
                 showTileID = false;
+            }
+        }
+
+        private void showGridButton_Click(object sender, EventArgs e)
+        {
+            if (showGridButton.Checked == false)
+            {
+                showGridButton.Checked = true;
+                showGrid = true;
+            }
+            else
+            {
+                showGridButton.Checked = false;
+                showGrid = false;
             }
         }
 

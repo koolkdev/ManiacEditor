@@ -273,7 +273,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="16x16Tiles_grid.gif" />
+    <Content Include="16x16Tiles_ID.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

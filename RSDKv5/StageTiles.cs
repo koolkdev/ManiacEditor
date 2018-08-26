@@ -16,7 +16,7 @@ namespace RSDKv5
         public StageTiles(string stage_directory)
         {
             Image = new GIF(Path.Combine(stage_directory, "16x16Tiles.gif"));
-            IDImage = new GIF(Path.Combine(Environment.CurrentDirectory, "16x16Tiles_grid.gif"));
+            IDImage = new GIF(Path.Combine(Environment.CurrentDirectory, "16x16Tiles_ID.gif"));
             if (File.Exists(Path.Combine(stage_directory, "TileConfig.bin")))
                 Config = new TilesConfig(Path.Combine(stage_directory, "TileConfig.bin"));
         }
