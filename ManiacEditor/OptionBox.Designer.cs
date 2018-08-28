@@ -114,6 +114,7 @@
             this.unkown2Default = new System.Windows.Forms.CheckBox();
             this.radioButtonY = new System.Windows.Forms.RadioButton();
             this.radioButtonX = new System.Windows.Forms.RadioButton();
+            this.checkBox19 = new System.Windows.Forms.CheckBox();
             this.enableWindowsClipboard = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabPage4.SuspendLayout();
@@ -210,8 +211,8 @@
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(128, 80);
             this.label25.TabIndex = 80;
-            this.label25.Text = "** Extremely Dangerous if you have no Idea what you are doing, please make a back" +
-    "up";
+            this.label25.Text = "** Extremely Dangerous to touch if you have no Idea what you \r\nare doing, please " +
+    "make a backup";
             this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label27
@@ -240,12 +241,13 @@
             // 
             // panel10
             // 
+            this.panel10.Controls.Add(this.checkBox19);
             this.panel10.Controls.Add(this.label12);
             this.panel10.Controls.Add(this.enableWindowsClipboard);
             this.panel10.Controls.Add(this.checkBox2);
             this.panel10.Location = new System.Drawing.Point(8, 8);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(176, 112);
+            this.panel10.Size = new System.Drawing.Size(176, 190);
             this.panel10.TabIndex = 102;
             // 
             // label12
@@ -1226,6 +1228,20 @@
             this.radioButtonX.UseVisualStyleBackColor = false;
             this.radioButtonX.CheckedChanged += new System.EventHandler(this.radioButtonX_CheckedChanged_1);
             // 
+            // checkBox19
+            // 
+            this.checkBox19.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox19.Checked = global::ManiacEditor.Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard;
+            this.checkBox19.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox19.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "ProhibitEntityUseOnExternalClipboard", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox19.Location = new System.Drawing.Point(8, 112);
+            this.checkBox19.Name = "checkBox19";
+            this.checkBox19.Size = new System.Drawing.Size(160, 69);
+            this.checkBox19.TabIndex = 60;
+            this.checkBox19.Text = "Prohibit Entities from Using Windows Clipboard and Between Scenes Copying**";
+            this.checkBox19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox19.UseVisualStyleBackColor = false;
+            // 
             // enableWindowsClipboard
             // 
             this.enableWindowsClipboard.BackColor = System.Drawing.Color.Transparent;
@@ -1385,5 +1401,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.CheckBox checkBox18;
         private System.Windows.Forms.CheckBox checkBox17;
+        private System.Windows.Forms.CheckBox checkBox19;
     }
 }

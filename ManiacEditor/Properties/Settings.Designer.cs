@@ -539,5 +539,17 @@ namespace ManiacEditor.Properties {
                 this["RunGamePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ProhibitEntityUseOnExternalClipboard {
+            get {
+                return ((bool)(this["ProhibitEntityUseOnExternalClipboard"]));
+            }
+            set {
+                this["ProhibitEntityUseOnExternalClipboard"] = value;
+            }
+        }
     }
 }

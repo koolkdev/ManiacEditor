@@ -1468,6 +1468,10 @@ namespace ManiacEditor
                 TilesClipboard = null;
                 entitiesClipboard = null;
             }
+            if (Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
+            {
+                entitiesClipboard = null;
+            }
 
 
             entities = null;
@@ -2338,7 +2342,11 @@ Error: {ex.Message}");
 
             // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
             if (Properties.Settings.Default.EnableWindowsClipboard)
-                Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
+            {
+                if (!Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
+                    Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
+            }
+                
 
             // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
             entitiesClipboard = copyData;
