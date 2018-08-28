@@ -126,8 +126,8 @@
             this.selectedPositionLabel = new System.Windows.Forms.ToolStripLabel();
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
             this.scrollLockButton = new System.Windows.Forms.ToolStripButton();
-            this.GraphicPanel = new ManiacEditor.DevicePanel();
             this.nudgeFasterButton = new System.Windows.Forms.ToolStripButton();
+            this.GraphicPanel = new ManiacEditor.DevicePanel();
             this.menuStrip1.SuspendLayout();
             this.mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -1076,8 +1076,22 @@
             this.scrollLockButton.Name = "scrollLockButton";
             this.scrollLockButton.Size = new System.Drawing.Size(68, 22);
             this.scrollLockButton.Text = "Scroll Lock";
-            this.scrollLockButton.ToolTipText = "Prevent the Mouse Wheel from Scrolling with the vertical scroll bar\r\n";
+            this.scrollLockButton.ToolTipText = "Prevent the Mouse Wheel from Scrolling with the vertical scroll bar\r\nShortcut Key" +
+    ": B";
             this.scrollLockButton.Click += new System.EventHandler(this.scrollLockButton_Click);
+            // 
+            // nudgeFasterButton
+            // 
+            this.nudgeFasterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.nudgeFasterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.nudgeFasterButton.Image = ((System.Drawing.Image)(resources.GetObject("nudgeFasterButton.Image")));
+            this.nudgeFasterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.nudgeFasterButton.Name = "nudgeFasterButton";
+            this.nudgeFasterButton.Size = new System.Drawing.Size(81, 22);
+            this.nudgeFasterButton.Text = "Nudge Faster";
+            this.nudgeFasterButton.ToolTipText = "Move entities/tiles in a larger increment. (Configurable in Options)\r\nShortcut Ke" +
+    "y: N";
+            this.nudgeFasterButton.Click += new System.EventHandler(this.nudgeFasterButton_Click);
             // 
             // GraphicPanel
             // 
@@ -1103,18 +1117,6 @@
             this.GraphicPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseUp);
             this.GraphicPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_MouseWheel);
             // 
-            // nudgeFasterButton
-            // 
-            this.nudgeFasterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.nudgeFasterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.nudgeFasterButton.Image = ((System.Drawing.Image)(resources.GetObject("nudgeFasterButton.Image")));
-            this.nudgeFasterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.nudgeFasterButton.Name = "nudgeFasterButton";
-            this.nudgeFasterButton.Size = new System.Drawing.Size(81, 22);
-            this.nudgeFasterButton.Text = "Nudge Faster";
-            this.nudgeFasterButton.ToolTipText = "Move entities/tiles in a larger increment. (Configurable in Options)";
-            this.nudgeFasterButton.Click += new System.EventHandler(this.nudgeFasterButton_Click);
-            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1131,7 +1133,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(600, 398);
             this.Name = "Editor";
-            this.Text = "Maniac Editor - BETA (Positivity)";
+            this.Text = "Maniac Editor - Generations Edition (" + ProductVersion + " BETA)";
             this.Activated += new System.EventHandler(this.MapEditor_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Editor_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);

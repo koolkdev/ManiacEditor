@@ -343,6 +343,11 @@ namespace ManiacEditor
             selectTool.Enabled = enabled && IsTilesEdit();
             placeTilesButton.Enabled = enabled && IsTilesEdit();
 
+            showGridButton.Enabled = enabled && StageConfig != null;
+            showCollisionAButton.Enabled = enabled && StageConfig != null;
+            showCollisionBButton.Enabled = enabled && StageConfig != null;
+            showTileIDButton.Enabled = enabled && StageConfig != null;
+
             if (enabled && IsTilesEdit() && (TilesClipboard != null || Clipboard.ContainsData("ManiacTiles")))
                 pasteToolStripMenuItem.Enabled = true;
             else
@@ -677,7 +682,7 @@ namespace ManiacEditor
                     TilesToolbar.SetSelectTileOption(0, false);
             }
             else if (e.KeyCode == Keys.ShiftKey)
-            {
+            {   
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, false);
             }
@@ -2659,69 +2664,90 @@ Error: {ex.Message}");
         private void RunScene_Click(object sender, EventArgs e)
         {
             // Ask where Sonic Mania ia located when not set
-            if (string.IsNullOrEmpty(GamePath))
+            if (string.IsNullOrEmpty(Properties.Settings.Default.RunGamePath))
             {
                 var ofd = new OpenFileDialog();
                 ofd.Title = "Select SonicMania.exe";
                 ofd.Filter = "Windows PE Executable|*.exe";
                 if (ofd.ShowDialog() == DialogResult.OK)
-                    GamePath = ofd.FileName;
-            }else
+                    Properties.Settings.Default.RunGamePath = ofd.FileName;
+            }
+            else
             {
-                if (!File.Exists(GamePath))
+                if (!File.Exists(Properties.Settings.Default.RunGamePath))
                 {
-                    GamePath = "";
+                    Properties.Settings.Default.RunGamePath = "";
                     return;
                 }
             }
 
-            // TODO: Find workaround to get Mania to boot into a Scene
-            ProcessStartInfo psi = new ProcessStartInfo(GamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
-            string maniaDir = Path.GetDirectoryName(GamePath);
-            // Check if the mod loader is installed
-            if (File.Exists(Path.Combine(maniaDir, "d3d9.dll")))
-                psi.WorkingDirectory = maniaDir;
-            else
-                psi.WorkingDirectory = Path.GetDirectoryName(DataDirectory);
-            var p = Process.Start(psi);
-            GameRunning = true;
-            UpdateControls();
-            // Patches
-            GameMemory.Attach(p);
-            // Disable Background Pausing
-            GameMemory.WriteByte(0x005FDD00, 0xEB);
-            // Enable Debug
-            GameMemory.WriteByte(0x00E48768, 0x01);
-            // Enable DevMenu
-            GameMemory.WriteByte(0x006F1806, 0x01);
+            ProcessStartInfo psi;
 
-
-
-            new Thread(() =>
+            if (Properties.Settings.Default.RunGameInsteadOfScene == true)
             {
-                /* Level != Main Menu*/
-                while (GameMemory.ReadByte(0x00CCF6F8) != 0x02)
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath);
+            }
+            else
+            {
+                if (Properties.Settings.Default.UsePrePlusOffsets == true)
                 {
-                    // Check if the user closed the game
-                    if (p.HasExited)
-                    {
-                        GameRunning = false;
-                        Invoke(new Action(() => UpdateControls()));
-                        return;
-                    }
-                    // Restrict to Player 1
-                    if (GameMemory.ReadByte(0xA4C860) == 0x01)
-                    {
-                        GameMemory.WriteByte(0xA4C860, 0x00);
-                    }
-                    Thread.Sleep(300);
+                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
                 }
-                // User is on the Main Menu
-                // Close the game
-                GameMemory.WriteByte(0x628094, 0);
-                GameRunning = false;
-                Invoke(new Action(() => UpdateControls()));
-            }).Start();
+                else
+                {
+                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
+                    // TODO: Find workaround to get Mania to boot into a Scene Post Plus
+                }
+
+            }
+            if (Properties.Settings.Default.RunGamePath != "")
+            {
+                string maniaDir = Path.GetDirectoryName(Properties.Settings.Default.RunGamePath);
+                // Check if the mod loader is installed
+                if (File.Exists(Path.Combine(maniaDir, "d3d9.dll")))
+                    psi.WorkingDirectory = maniaDir;
+                else
+                    psi.WorkingDirectory = Path.GetDirectoryName(DataDirectory);
+                var p = Process.Start(psi);
+                GameRunning = true;
+                UpdateControls();
+                // Patches
+                GameMemory.Attach(p);
+                // Disable Background Pausing
+                GameMemory.WriteByte(0x005FDD00, 0xEB);
+                // Enable Debug
+                GameMemory.WriteByte(0x00E48768, 0x01);
+                // Enable DevMenu
+                GameMemory.WriteByte(0x006F1806, 0x01);
+
+
+
+                new Thread(() =>
+                {
+                    /* Level != Main Menu*/
+                    while (GameMemory.ReadByte(0x00CCF6F8) != 0x02)
+                    {
+                        // Check if the user closed the game
+                        if (p.HasExited)
+                        {
+                            GameRunning = false;
+                            Invoke(new Action(() => UpdateControls()));
+                            return;
+                        }
+                        // Restrict to Player 1
+                        if (GameMemory.ReadByte(0xA4C860) == 0x01)
+                        {
+                            GameMemory.WriteByte(0xA4C860, 0x00);
+                        }
+                        Thread.Sleep(300);
+                    }
+                    // User is on the Main Menu
+                    // Close the game
+                    GameMemory.WriteByte(0x628094, 0);
+                    GameRunning = false;
+                    Invoke(new Action(() => UpdateControls()));
+                }).Start();
+            }
 
         }
 

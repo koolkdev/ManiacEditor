@@ -503,5 +503,41 @@ namespace ManiacEditor.Properties {
                 this["FasterNudgeValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RunGameInsteadOfScene {
+            get {
+                return ((bool)(this["RunGameInsteadOfScene"]));
+            }
+            set {
+                this["RunGameInsteadOfScene"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UsePrePlusOffsets {
+            get {
+                return ((bool)(this["UsePrePlusOffsets"]));
+            }
+            set {
+                this["UsePrePlusOffsets"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RunGamePath {
+            get {
+                return ((string)(this["RunGamePath"]));
+            }
+            set {
+                this["RunGamePath"] = value;
+            }
+        }
     }
 }
