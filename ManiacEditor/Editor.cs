@@ -602,12 +602,25 @@ namespace ManiacEditor
                     else if (e.KeyData == Keys.Up || e.KeyData == Keys.Down || e.KeyData == Keys.Left || e.KeyData == Keys.Right)
                     {
                         int x = 0, y = 0;
-                        switch (e.KeyData)
+                        if (Properties.Settings.Default.EnableFasterNudge == false)
                         {
-                            case Keys.Up: y = -1; break;
-                            case Keys.Down: y = 1; break;
-                            case Keys.Left: x = -1; break;
-                            case Keys.Right: x = 1; break;
+                            switch (e.KeyData)
+                            {
+                                case Keys.Up: y = -1; break;
+                                case Keys.Down: y = 1; break;
+                                case Keys.Left: x = -1; break;
+                                case Keys.Right: x = 1; break;
+                            }
+                        }
+                        else
+                        {
+                            switch (e.KeyData)
+                            {
+                                case Keys.Up: y = -1 - Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Down: y = 1 + Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Left: x = -1 - Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Right: x = 1 + Properties.Settings.Default.FasterNudgeValue; break;
+                            }
                         }
                         EditLayer?.MoveSelectedQuonta(new Point(x, y));
                         UpdateEditLayerActions();
@@ -667,6 +680,14 @@ namespace ManiacEditor
             {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, false);
+            }
+            else if (e.KeyCode == Keys.N)
+            {
+                nudgeFasterButton_Click(sender,e);
+            }
+            else if (e.KeyCode == Keys.M)
+            {
+                scrollLockButton_Click(sender, e);
             }
         }
 
@@ -2891,6 +2912,20 @@ Error: {ex.Message}");
                 showCollisionAButton.Checked = false;
                 showCollisionA = false;
                 ReloadToolStripButton_Click(sender, e);
+            }
+        }
+
+        private void nudgeFasterButton_Click(object sender, EventArgs e)
+        {
+            if (nudgeFasterButton.Checked == false)
+            {
+                nudgeFasterButton.Checked = true;
+                Properties.Settings.Default.EnableFasterNudge = true;
+            }
+            else
+            {
+                nudgeFasterButton.Checked = false;
+                Properties.Settings.Default.EnableFasterNudge = false;
             }
         }
 

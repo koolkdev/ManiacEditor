@@ -127,6 +127,7 @@
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
             this.scrollLockButton = new System.Windows.Forms.ToolStripButton();
             this.GraphicPanel = new ManiacEditor.DevicePanel();
+            this.nudgeFasterButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -998,7 +999,8 @@
             this.toolStripSeparator13,
             this.selectedPositionLabel,
             this.pixelModeButton,
-            this.scrollLockButton});
+            this.scrollLockButton,
+            this.nudgeFasterButton});
             this.toolStrip3.Location = new System.Drawing.Point(0, 712);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(1184, 25);
@@ -1100,6 +1102,18 @@
             this.GraphicPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseMove);
             this.GraphicPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseUp);
             this.GraphicPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_MouseWheel);
+            // 
+            // nudgeFasterButton
+            // 
+            this.nudgeFasterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.nudgeFasterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.nudgeFasterButton.Image = ((System.Drawing.Image)(resources.GetObject("nudgeFasterButton.Image")));
+            this.nudgeFasterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.nudgeFasterButton.Name = "nudgeFasterButton";
+            this.nudgeFasterButton.Size = new System.Drawing.Size(81, 22);
+            this.nudgeFasterButton.Text = "Nudge Faster";
+            this.nudgeFasterButton.ToolTipText = "Move entities/tiles in a larger increment. (Configurable in Options)";
+            this.nudgeFasterButton.Click += new System.EventHandler(this.nudgeFasterButton_Click);
             // 
             // Editor
             // 
@@ -1240,6 +1254,7 @@
         private System.Windows.Forms.ToolStripButton showCollisionBButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
         private System.Windows.Forms.ToolStripButton showCollisionAButton;
+        private System.Windows.Forms.ToolStripButton nudgeFasterButton;
     }
 }
 

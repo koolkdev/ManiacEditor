@@ -297,5 +297,49 @@ namespace ManiacEditor
         {
             Properties.Settings.Default.Reset();
         }
+
+        private void nudgeValueDownMoreButton_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.FasterNudgeValue <= 100 && Properties.Settings.Default.FasterNudgeValue >= 0)
+                Properties.Settings.Default.FasterNudgeValue -= 5;
+            if (Properties.Settings.Default.FasterNudgeValue < 0)
+                Properties.Settings.Default.FasterNudgeValue = 1;
+            if (Properties.Settings.Default.FasterNudgeValue > 100)
+                Properties.Settings.Default.FasterNudgeValue = 100;
+            this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
+        }
+
+        private void nudgeValueDownButton_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.FasterNudgeValue <= 100 && Properties.Settings.Default.FasterNudgeValue >= 0)
+                Properties.Settings.Default.FasterNudgeValue -= 1;
+            if (Properties.Settings.Default.FasterNudgeValue <= 0)
+                Properties.Settings.Default.FasterNudgeValue = 1;
+            if (Properties.Settings.Default.FasterNudgeValue > 100)
+                Properties.Settings.Default.FasterNudgeValue = 100;
+            this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
+        }
+
+        private void nudgeValueUpButton_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.FasterNudgeValue != 100 && Properties.Settings.Default.FasterNudgeValue >= 0)
+                Properties.Settings.Default.FasterNudgeValue += 1;
+            if (Properties.Settings.Default.FasterNudgeValue <= 0)
+                Properties.Settings.Default.FasterNudgeValue = 1;
+            if (Properties.Settings.Default.FasterNudgeValue > 100)
+                Properties.Settings.Default.FasterNudgeValue = 100;
+            this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
+        }
+
+        private void nudgeValueUpMoreButton_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.FasterNudgeValue != 100 && Properties.Settings.Default.FasterNudgeValue >= 0)
+                Properties.Settings.Default.FasterNudgeValue += 5;
+            if (Properties.Settings.Default.FasterNudgeValue <= 0)
+                Properties.Settings.Default.FasterNudgeValue = 1;
+            if (Properties.Settings.Default.FasterNudgeValue > 100)
+                Properties.Settings.Default.FasterNudgeValue = 100;
+            this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
+        }
     }
 }

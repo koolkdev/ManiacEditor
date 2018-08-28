@@ -119,9 +119,9 @@ namespace ManiacEditor
 
      
                 _device = new Device(direct3d, 0, DeviceType.Hardware, this.Handle, createFlags, presentParams);
-                _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.None);
-                _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.None);
-                _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.None);
+                _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Point);
+                _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Point);
+                _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.Point);
 
                 if (OnCreateDevice != null)
                     OnCreateDevice(this, new DeviceEventArgs(_device));
@@ -328,9 +328,9 @@ namespace ManiacEditor
                 if (zoom > 1)
                 {
                     // If zoomin, just do near-neighbor scaling
-                    _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.None);
-                    _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.None);
-                    _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.None);
+                    _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Point);
+                    _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Point);
+                    _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.Point);
                 }
                 sprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.DoNotModifyRenderState);
 

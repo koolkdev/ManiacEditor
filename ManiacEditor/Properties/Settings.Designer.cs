@@ -479,5 +479,29 @@ namespace ManiacEditor.Properties {
                 this["enableMightySupport"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableFasterNudge {
+            get {
+                return ((bool)(this["EnableFasterNudge"]));
+            }
+            set {
+                this["EnableFasterNudge"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int FasterNudgeValue {
+            get {
+                return ((int)(this["FasterNudgeValue"]));
+            }
+            set {
+                this["FasterNudgeValue"] = value;
+            }
+        }
     }
 }

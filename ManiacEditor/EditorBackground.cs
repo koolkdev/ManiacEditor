@@ -74,8 +74,8 @@ namespace ManiacEditor
                     {
                             d.DrawLine(x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
                             d.DrawLine(x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
-                            d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
-                            d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
+                            //d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
+                            //d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
                     }
                 }
             }
