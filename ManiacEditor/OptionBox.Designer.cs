@@ -76,6 +76,12 @@
             this.layerHide = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.label21 = new System.Windows.Forms.Label();
+            this.nudgeValueDownButton = new System.Windows.Forms.Button();
+            this.nudgeValueDownMoreButton = new System.Windows.Forms.Button();
+            this.nudgeValueUpButton = new System.Windows.Forms.Button();
+            this.nudgeValueUpMoreButton = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
             this.animationsDefault = new System.Windows.Forms.CheckBox();
             this.entitiesDefault = new System.Windows.Forms.CheckBox();
             this.fgLowerDefault = new System.Windows.Forms.CheckBox();
@@ -109,12 +115,7 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.label16 = new System.Windows.Forms.Label();
-            this.nudgeValueUpMoreButton = new System.Windows.Forms.Button();
-            this.nudgeValueUpButton = new System.Windows.Forms.Button();
-            this.nudgeValueDownButton = new System.Windows.Forms.Button();
-            this.nudgeValueDownMoreButton = new System.Windows.Forms.Button();
-            this.label21 = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -545,6 +546,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(0, 8);
             this.tabControl1.Name = "tabControl1";
@@ -754,6 +756,68 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(168, 404);
             this.panel7.TabIndex = 0;
+            // 
+            // label21
+            // 
+            this.label21.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label21.Location = new System.Drawing.Point(68, 349);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(32, 23);
+            this.label21.TabIndex = 103;
+            this.label21.Text = "0";
+            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // nudgeValueDownButton
+            // 
+            this.nudgeValueDownButton.Location = new System.Drawing.Point(39, 349);
+            this.nudgeValueDownButton.Name = "nudgeValueDownButton";
+            this.nudgeValueDownButton.Size = new System.Drawing.Size(23, 23);
+            this.nudgeValueDownButton.TabIndex = 102;
+            this.nudgeValueDownButton.Text = "<";
+            this.nudgeValueDownButton.UseVisualStyleBackColor = true;
+            this.nudgeValueDownButton.Click += new System.EventHandler(this.nudgeValueDownButton_Click);
+            // 
+            // nudgeValueDownMoreButton
+            // 
+            this.nudgeValueDownMoreButton.Location = new System.Drawing.Point(7, 349);
+            this.nudgeValueDownMoreButton.Name = "nudgeValueDownMoreButton";
+            this.nudgeValueDownMoreButton.Size = new System.Drawing.Size(28, 23);
+            this.nudgeValueDownMoreButton.TabIndex = 101;
+            this.nudgeValueDownMoreButton.Text = "<<";
+            this.nudgeValueDownMoreButton.UseVisualStyleBackColor = true;
+            this.nudgeValueDownMoreButton.Click += new System.EventHandler(this.nudgeValueDownMoreButton_Click);
+            // 
+            // nudgeValueUpButton
+            // 
+            this.nudgeValueUpButton.Location = new System.Drawing.Point(106, 349);
+            this.nudgeValueUpButton.Name = "nudgeValueUpButton";
+            this.nudgeValueUpButton.Size = new System.Drawing.Size(23, 23);
+            this.nudgeValueUpButton.TabIndex = 100;
+            this.nudgeValueUpButton.Text = ">";
+            this.nudgeValueUpButton.UseVisualStyleBackColor = true;
+            this.nudgeValueUpButton.Click += new System.EventHandler(this.nudgeValueUpButton_Click);
+            // 
+            // nudgeValueUpMoreButton
+            // 
+            this.nudgeValueUpMoreButton.Location = new System.Drawing.Point(132, 349);
+            this.nudgeValueUpMoreButton.Name = "nudgeValueUpMoreButton";
+            this.nudgeValueUpMoreButton.Size = new System.Drawing.Size(28, 23);
+            this.nudgeValueUpMoreButton.TabIndex = 99;
+            this.nudgeValueUpMoreButton.Text = ">>";
+            this.nudgeValueUpMoreButton.UseVisualStyleBackColor = true;
+            this.nudgeValueUpMoreButton.Click += new System.EventHandler(this.nudgeValueUpMoreButton_Click);
+            // 
+            // label16
+            // 
+            this.label16.BackColor = System.Drawing.Color.Transparent;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label16.Location = new System.Drawing.Point(3, 307);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(162, 13);
+            this.label16.TabIndex = 95;
+            this.label16.Text = "Faster Nudge Amount:";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // animationsDefault
             // 
@@ -1180,67 +1244,15 @@
             this.button3.TabIndex = 102;
             this.button3.Text = "&OK";
             // 
-            // label16
+            // tabPage5
             // 
-            this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label16.Location = new System.Drawing.Point(3, 307);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(162, 13);
-            this.label16.TabIndex = 95;
-            this.label16.Text = "Faster Nudge Amount:";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // nudgeValueUpMoreButton
-            // 
-            this.nudgeValueUpMoreButton.Location = new System.Drawing.Point(132, 349);
-            this.nudgeValueUpMoreButton.Name = "nudgeValueUpMoreButton";
-            this.nudgeValueUpMoreButton.Size = new System.Drawing.Size(28, 23);
-            this.nudgeValueUpMoreButton.TabIndex = 99;
-            this.nudgeValueUpMoreButton.Text = ">>";
-            this.nudgeValueUpMoreButton.UseVisualStyleBackColor = true;
-            this.nudgeValueUpMoreButton.Click += new System.EventHandler(this.nudgeValueUpMoreButton_Click);
-            // 
-            // nudgeValueUpButton
-            // 
-            this.nudgeValueUpButton.Location = new System.Drawing.Point(106, 349);
-            this.nudgeValueUpButton.Name = "nudgeValueUpButton";
-            this.nudgeValueUpButton.Size = new System.Drawing.Size(23, 23);
-            this.nudgeValueUpButton.TabIndex = 100;
-            this.nudgeValueUpButton.Text = ">";
-            this.nudgeValueUpButton.UseVisualStyleBackColor = true;
-            this.nudgeValueUpButton.Click += new System.EventHandler(this.nudgeValueUpButton_Click);
-            // 
-            // nudgeValueDownButton
-            // 
-            this.nudgeValueDownButton.Location = new System.Drawing.Point(39, 349);
-            this.nudgeValueDownButton.Name = "nudgeValueDownButton";
-            this.nudgeValueDownButton.Size = new System.Drawing.Size(23, 23);
-            this.nudgeValueDownButton.TabIndex = 102;
-            this.nudgeValueDownButton.Text = "<";
-            this.nudgeValueDownButton.UseVisualStyleBackColor = true;
-            this.nudgeValueDownButton.Click += new System.EventHandler(this.nudgeValueDownButton_Click);
-            // 
-            // nudgeValueDownMoreButton
-            // 
-            this.nudgeValueDownMoreButton.Location = new System.Drawing.Point(7, 349);
-            this.nudgeValueDownMoreButton.Name = "nudgeValueDownMoreButton";
-            this.nudgeValueDownMoreButton.Size = new System.Drawing.Size(28, 23);
-            this.nudgeValueDownMoreButton.TabIndex = 101;
-            this.nudgeValueDownMoreButton.Text = "<<";
-            this.nudgeValueDownMoreButton.UseVisualStyleBackColor = true;
-            this.nudgeValueDownMoreButton.Click += new System.EventHandler(this.nudgeValueDownMoreButton_Click);
-            // 
-            // label21
-            // 
-            this.label21.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label21.Location = new System.Drawing.Point(68, 349);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(32, 23);
-            this.label21.TabIndex = 103;
-            this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
-            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(400, 574);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Controls";
+            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // OptionBox
             // 
@@ -1369,5 +1381,6 @@
         private System.Windows.Forms.Button nudgeValueUpButton;
         private System.Windows.Forms.Button nudgeValueUpMoreButton;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TabPage tabPage5;
     }
 }

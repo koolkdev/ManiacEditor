@@ -685,7 +685,7 @@ namespace ManiacEditor
             {
                 nudgeFasterButton_Click(sender,e);
             }
-            else if (e.KeyCode == Keys.M)
+            else if (e.KeyCode == Keys.B)
             {
                 scrollLockButton_Click(sender, e);
             }
