@@ -1,4 +1,4 @@
-Maniac Editor - Generations Edition (0.2.26.0 BETA)
+```Maniac Editor - Generations Edition (0.2.26.0 BETA)
 
 Continuing from the version numbers OtherworldBob's fork left us with, we will continue development in hopes to see Maniac Editor reach something beyond an Ongoing Beta.
 
@@ -20,8 +20,9 @@ New Features:
 - Renamed Tile Unkown's because now we know that they are simply two sides of a tiles collision. They are now named Plane 1 and Plane 2.
 - Added PlaneSwitch Rendering that resembles it's in game counter part
 - Added ForceUnstick Rendering that resembles it's in game counter part
-- Added CollapsingPlatform Rendering that resembles it's in game counter part
-- Added BreakableWall Rendering that resembles it's in game counter part (with the exception that it will display an icon for mighty or knuckles depending on the wall's value)
+- Added CollapsingPlatform Rendering that resembles it's in game counter part```
+
+```- Added BreakableWall Rendering that resembles it's in game counter part (with the exception that it will display an icon for mighty or knuckles depending on the wall's value)
 - Added ForceSpin Rendering that resembles it's in game counter part
 - Improved the Rendering of Spikes to Allow you to see them increase in length depending on the "count" variable
 - Improved Bridge Rendering?
@@ -34,8 +35,9 @@ New Features:
 - Added Faster Nudge which allows you to increase the amount of pixels/tile spaces your tiles move at a time, the amount is configurable.
 - Added Warnings when leaving a scene from Exit, Open, Open Data Directory, and simply trying to close the program. (This can be turned off)
 - Added a Developer Warning on Startup (Currently can't be disabled due to the way the an option such as "Never show again" would prevent the warning from being displayed between updates. Looking into a solution)
-- Special Assets for the Warning Boxes (Created by Discord User Turtleman#4711)
-- Added a whole ton of new customizable options:
+- Special Assets for the Warning Boxes (Created by Discord User Turtleman#4711)```
+
+```- Added a whole ton of new customizable options:
 	> Copy Between Scenes Toggle (Does not work for Entities, works fine with tiles)
 	> Keep Extra Layers on when Editing Extra Layers Toggle
 	> Never Load Entity Textures/Annimations
@@ -53,6 +55,6 @@ New Features:
 	> Experimental Windows Clipboard Mode Toggle. Allows you to copy between two maniac editors (Does not work for Entities, works fine with tiles)
 	> Experimental Remove Object Lock. Allows you to import objects that already have the same name as one you have in you scene. (Only Partialy Tested, use with Extreme Risk!)
 	> Option to Reset all Options to Default
-- Other minor changes/fixes
+- Other minor changes/fixes```
 
 	

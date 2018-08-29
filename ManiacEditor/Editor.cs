@@ -1603,14 +1603,15 @@ namespace ManiacEditor
                         SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                     }
 
-                CollisionLayerA.Clear();
-                CollisionLayerB.Clear();
+                //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
+                //CollisionLayerA.Clear();
+                //CollisionLayerB.Clear();
 
                 for (int i = 0; i < 1024; i++)
                 {
                     CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                     CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
-                }//Loads collsions but the EditorLayer.Draw Can't get them? (they have a size of 0)
+                }
 
                 EditorScene = new EditorScene(SceneFilename);
                     StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");

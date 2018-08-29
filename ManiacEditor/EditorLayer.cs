@@ -8,6 +8,7 @@ using RSDKv5;
 using SharpDX.Direct3D9;
 using ManiacEditor.Actions;
 using ManiacEditor.Enums;
+using System.Diagnostics;
 
 namespace ManiacEditor
 {
@@ -20,7 +21,6 @@ namespace ManiacEditor
 
         public const int TILE_SIZE = 16;
 
-        
         Texture[][] TileChunksTextures;
 
         public PointsMap SelectedTiles;
@@ -718,21 +718,26 @@ namespace ManiacEditor
         public void DrawTile(Graphics g, ushort tile, int x, int y)
         {
             ushort TileIndex = (ushort)(tile & 0x3ff);
+            int TileIndexInt = (int)TileIndex;
             bool flipX = ((tile >> 10) & 1) == 1;
             bool flipY = ((tile >> 11) & 1) == 1;
             bool SolidTopA = ((tile >> 12) & 1) == 1;
             bool SolidLrbA = ((tile >> 13) & 1) == 1;
             bool SolidTopB = ((tile >> 14) & 1) == 1;
             bool SolidLrbB = ((tile >> 15) & 1) == 1;
+            Debug.Print("GIVE ME A F***ING RESPONSE!");
+
+            
 
             g.DrawImage(Editor.Instance.StageTiles.Image.GetBitmap(new Rectangle(0, TileIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
                 new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+
             if (Editor.Instance.showCollisionA == true)
             {
                 if (SolidLrbA || SolidTopA)
                 {
                     //Get a bitmap of the collision
-                    Bitmap cm = Editor.Instance.CollisionLayerA[TileIndex];
+                    Bitmap cm = Editor.Instance.CollisionLayerA[TileIndexInt].Clone(new Rectangle(0, 0, 16, 16), System.Drawing.Imaging.PixelFormat.DontCare);
 
                     if (SolidTopA && !SolidLrbA)
                     {
@@ -776,7 +781,7 @@ namespace ManiacEditor
                 if (SolidLrbB || SolidTopB)
                 {
                     //Get a bitmap of the collision
-                    Bitmap cm = Editor.Instance.CollisionLayerB[TileIndex];
+                    Bitmap cm = Editor.Instance.CollisionLayerB[TileIndex].Clone(new Rectangle(0, 0, 16, 16), System.Drawing.Imaging.PixelFormat.DontCare);
 
                     if (SolidTopB && !SolidLrbB)
                     {

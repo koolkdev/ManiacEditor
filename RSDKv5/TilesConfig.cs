@@ -93,8 +93,9 @@ namespace RSDKv5
                 { b = new Bitmap(16, 16); }
                 else
                 {
-                    b = tile.Clone(new Rectangle(0, 0, tile.Width, tile.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                 b = tile.Clone(new Rectangle(0, 0, tile.Width, tile.Height), System.Drawing.Imaging.PixelFormat.DontCare);
                     HasTile = true;
+
                 }
 
                 if (!HasTile && !IsCeiling)
@@ -193,7 +194,7 @@ namespace RSDKv5
                 {
                     for (int w = 0; w < 16; w++) //Set the Active/Main (FG) colour
                     {
-                        int hs = 15;
+                        int hs = 0;
                         if (Collision[w] <= 15 && HasCollision[hs])
                         {
                             b.SetPixel(w, 15, bg);
@@ -258,7 +259,7 @@ namespace RSDKv5
                         {
                             b.SetPixel(w, 0, bg);
                         }
-                        hs--;
+                        hs++;
                     }
                 }
                 return b;

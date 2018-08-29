@@ -290,7 +290,7 @@ namespace ManiacEditor
                     var info = RSDKv5.Objects.GetObjectInfo(new RSDKv5.NameIdentifier(value as string));
                     if (info == null)
                     {
-                        MessageBox.Show("Unknown Object", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        System.Windows.Forms.MessageBox.Show("Unknown Object", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     var objects = ((BindingList<RSDKv5.SceneObject>)_bindingSceneObjectsSource.DataSource).ToList();
@@ -337,7 +337,7 @@ namespace ManiacEditor
                     {
                         if (obj.Entities.Any(t => t.SlotID == newSlot))
                         {
-                            MessageBox.Show($"Slot {newSlot} is currently being used by a {obj.Name.ToString()}",
+                            System.Windows.Forms.MessageBox.Show($"Slot {newSlot} is currently being used by a {obj.Name.ToString()}",
                                 "Slot in use!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }

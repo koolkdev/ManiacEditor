@@ -479,7 +479,7 @@ namespace ManiacEditor.Properties {
                 this["enableMightySupport"] = value;
             }
         }
-        
+            
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
