@@ -65,3 +65,4 @@ Lots still do here!
 * Data Directory switching. You can now switch parent Data directories without closing the application.
 * Extra crashes! Save often, backup well.
 * Non-descript Undo/Redo helpers that don't tell you much most of the time.
+* A Viewer for each tile's collision properties that's ttyled like the in-game one! (Contributed by [rubberduckycooly](https://github.com/Rubberduckycooly))
