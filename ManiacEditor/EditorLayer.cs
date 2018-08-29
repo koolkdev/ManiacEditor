@@ -732,7 +732,7 @@ namespace ManiacEditor
                 if (SolidLrbA || SolidTopA)
                 {
                     //Get a bitmap of the collision
-                    Bitmap cm = Editor.Instance.StageTiles.Config.CollisionPath1[TileIndex].DrawCMask(System.Drawing.Color.FromArgb(0, 0, 0, 0), System.Drawing.Color.FromArgb(255, 255, 255));
+                    Bitmap cm = Editor.Instance.CollisionLayerA[TileIndex];
 
                     if (SolidTopA && !SolidLrbA)
                     {
@@ -776,7 +776,7 @@ namespace ManiacEditor
                 if (SolidLrbB || SolidTopB)
                 {
                     //Get a bitmap of the collision
-                    Bitmap cm = Editor.Instance.StageTiles.Config.CollisionPath2[TileIndex].DrawCMask(System.Drawing.Color.FromArgb(0, 0, 0, 0), System.Drawing.Color.FromArgb(255, 255, 255));//.Clone(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), System.Drawing.Imaging.PixelFormat.DontCare);
+                    Bitmap cm = Editor.Instance.CollisionLayerB[TileIndex];
 
                     if (SolidTopB && !SolidLrbB)
                     {

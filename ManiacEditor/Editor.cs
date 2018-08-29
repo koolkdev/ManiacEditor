@@ -29,6 +29,9 @@ namespace ManiacEditor
         public bool showCollisionA;
         public bool showCollisionB;
 
+        public List<Bitmap> CollisionLayerA = new List<Bitmap>();
+        public List<Bitmap> CollisionLayerB = new List<Bitmap>();
+
         int ClickedX = -1, ClickedY = -1;
         string scrollDirection = "X";
 
@@ -1588,20 +1591,28 @@ namespace ManiacEditor
                         SelectedScene = Path.GetFileName(select.Result);
 
                         StageTiles = new StageTiles(directoryPath);
+
                         SceneFilename = select.Result;
                     }
                     else
-                    {
-                        string[] splitted = select.Result.Split('/');
-
-                        SelectedZone = splitted[0];
-                        SelectedScene = splitted[1];
+                    {                    
+                        SelectedZone = select.Result.Replace(Path.GetFileName(select.Result),"");
+                        SelectedScene = Path.GetFileName(select.Result);
 
                         StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
                         SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                     }
 
-                    EditorScene = new EditorScene(SceneFilename);
+                CollisionLayerA.Clear();
+                CollisionLayerB.Clear();
+
+                for (int i = 0; i < 1024; i++)
+                {
+                    CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                    CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                }//Loads collsions but the EditorLayer.Draw Can't get them? (they have a size of 0)
+
+                EditorScene = new EditorScene(SceneFilename);
                     StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
                     if (File.Exists(StageConfigFileName))
                     {
@@ -2994,6 +3005,8 @@ Error: {ex.Message}");
             if (FGLow != null) FGLow.DisposeTextures();
             if (FGHigher != null) FGHigh.DisposeTextures();
             if (FGLower != null) FGLow.DisposeTextures();
+            CollisionLayerA.Clear();
+            CollisionLayerB.Clear();
             foreach (var el in EditorScene.OtherLayers)
             {
                 el.DisposeTextures();
