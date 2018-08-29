@@ -101,10 +101,15 @@ namespace ManiacEditor
         public static bool GameRunning = false;
         public static string GamePath = "";
 
+        public SharpPresence.Discord.RichPresence RPCcontrol = new SharpPresence.Discord.RichPresence(); //For Discord RPC
+        public SharpPresence.Discord.EventHandlers RPCEventHandler = new SharpPresence.Discord.EventHandlers(); //For Discord RPC
+        public string ScenePath = ""; //For Discord RPC
+
         public Editor()
         {
             Instance = this;
             InitializeComponent();
+            InitDiscord();
 
             this.splitContainer1.Panel2MinSize = 254;
 
@@ -124,6 +129,77 @@ namespace ManiacEditor
             TryLoadSettings();
         }
 
+        public void InitDiscord()
+        {
+            SharpPresence.Discord.Initialize("484279851830870026", RPCEventHandler);
+
+            if (Properties.Settings.Default.ShowDiscordRPC)
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "Idle";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "maniac-small";
+
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                int secondsSinceEpoch = (int)t.TotalSeconds;
+
+                RPCcontrol.startTimestamp = secondsSinceEpoch;
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+            else
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "Maniac Editor";
+
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                int secondsSinceEpoch = (int)t.TotalSeconds;
+
+                RPCcontrol.startTimestamp = secondsSinceEpoch;
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+        }
+
+        public void UpdateDiscord(string Details = null)
+        {
+            if (Properties.Settings.Default.ShowDiscordRPC)
+            {
+                SharpPresence.Discord.RunCallbacks();
+                if (Details != null)
+                {
+                    RPCcontrol.details = Details;
+                }
+                else
+                {
+                    RPCcontrol.details = "Idle";
+                }
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+            else
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "Maniac Editor";
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+        }
+
+        public void DisposeDiscord()
+        {
+            RPCcontrol.startTimestamp = 0;
+            SharpPresence.Discord.Shutdown();
+        }
 
         /// <summary>
         /// Try to load settings from the Application Settings file(s).
@@ -1632,6 +1708,8 @@ namespace ManiacEditor
                 {
                     ObjectList.Add(StageConfig.ObjectsNames[i]);
                 }
+                ScenePath = select.Result;
+                UpdateDiscord("Editing " + select.Result);
 
             }
                 catch (Exception ex)

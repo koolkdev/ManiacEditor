@@ -134,5 +134,8 @@
     <Setting Name="ProhibitEntityUseOnExternalClipboard" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="ShowDiscordRPC" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

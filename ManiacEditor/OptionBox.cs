@@ -341,5 +341,19 @@ namespace ManiacEditor
                 Properties.Settings.Default.FasterNudgeValue = 100;
             this.label21.Text = Properties.Settings.Default.FasterNudgeValue.ToString();
         }
+
+        private void RPCCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.ShowDiscordRPC == false)
+            {
+                Properties.Settings.Default.ShowDiscordRPC = RPCCheckBox.Checked = true;
+                Editor.Instance.UpdateDiscord(Editor.Instance.ScenePath);
+            }
+            else
+            {
+                Properties.Settings.Default.ShowDiscordRPC = RPCCheckBox.Checked = false;
+                Editor.Instance.UpdateDiscord();
+            }
+        }
     }
 }

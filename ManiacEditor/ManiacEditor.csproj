@@ -88,6 +88,7 @@
     <Compile Include="DeviceLostBox.Designer.cs">
       <DependentUpon>DeviceLostBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Discord.cs" />
     <Compile Include="EditorBackground.cs" />
     <Compile Include="EditorScene.cs" />
     <Compile Include="EditSceneSelectInfoForm.cs">
@@ -258,6 +259,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="discord-rpc.dll">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="EditorAssets.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

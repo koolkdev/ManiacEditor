@@ -59,9 +59,7 @@ namespace ManiacEditor.Properties {
                 resourceCulture = value;
             }
         }
-
-        [System.ComponentModel.Browsable(false)]
-
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
@@ -85,7 +83,9 @@ namespace ManiacEditor.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
         ///{\colortbl ;\red255\green0\blue0;}
-        ///\viewkind4\uc1\pard\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 . Any changes made will be reflected when this window is closed. Don&apos;t forget to save after! You did take that backup, didn&apos;t you?\lang9\f1\fs22\par
+        ///\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 . \par
+        ///Any changes made will be reflected when this window is closed. Don&apos;t forget to save after! \par
+        ///You did take that backup, didn&apos;t you?\lang9\f1\fs22\par
         ///}
         ///.
         /// </summary>
