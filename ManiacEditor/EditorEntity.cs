@@ -72,7 +72,22 @@ namespace ManiacEditor
                 Editor.GameMemory.WriteInt16(ObbjectAddress + 2, entity.Position.X.High);
                 Editor.GameMemory.WriteInt16(ObbjectAddress + 6, entity.Position.Y.High);
             }
-        } 
+        }
+
+        public void SnapToGrid()
+        {
+            entity.Position.X.High = (short)((entity.Position.X.High + 8) / 16 * 16);
+            entity.Position.Y.High = (short)((entity.Position.Y.High + 8) / 16 * 16);
+            if (Editor.GameRunning)
+            {
+                // TODO: Find out if this is constent
+                int ObjectStart = 0x00A5DCC0;
+                int ObjectSize = 0x458;
+                int ObbjectAddress = ObjectStart + (ObjectSize * entity.SlotID);
+                Editor.GameMemory.WriteInt16(ObbjectAddress + 2, entity.Position.X.High);
+                Editor.GameMemory.WriteInt16(ObbjectAddress + 6, entity.Position.Y.High);
+            }
+        }
 
         public Rectangle GetDimensions()
         {
@@ -438,7 +453,8 @@ namespace ManiacEditor
                 name == "UFO_Sphere"      || name == "UFO_Player"         || name == "UFO_ItemBox" ||
                 name == "UFO_Springboard" || name == "Decoration"         || name == "WaterGush"   ||
                 name == "BreakBar"        || name == "InvisibleBlock"     || name == "ForceUnstick"||
-                name == "BreakableWall"   || name == "CollapsingPlatform" || name == "PlaneSwitch")
+                name == "BreakableWall"   || name == "CollapsingPlatform" || name == "PlaneSwitch" ||
+                name == "ChemicalPool" )
             {
                 if (!Properties.Settings.Default.NeverLoadEntityTextures)
                 {
@@ -448,6 +464,10 @@ namespace ManiacEditor
             }
             else if (editorAnim != null && editorAnim.Frames.Count > 0)
             {
+                // Special cases that always display a set frame(?)
+                if (entity.Object.Name.Name == "StarPost")
+                    index = 1;
+
                 // Just incase
                 if (index >= editorAnim.Frames.Count)
                     index = 0;
@@ -593,7 +613,7 @@ namespace ManiacEditor
                 else if (dir == 3) // Down
                 {
                     flipv = true;
-                    offset.Y = 1;
+                    //offset.Y = 1;
                 }
             }
             return offset;
@@ -1133,7 +1153,6 @@ namespace ManiacEditor
             }
             else if (entity.Object.Name.Name == "CollapsingPlatform")
             {
-                var type = entity.attributesMap["type"].ValueUInt8;
                 var widthPixels = (int)(entity.attributesMap["size"].ValuePosition.X.High);
                 var heightPixels = (int)(entity.attributesMap["size"].ValuePosition.Y.High);
                 var width = (int)widthPixels / 16;
@@ -1196,6 +1215,58 @@ namespace ManiacEditor
                                 d.DrawBitmap(frame.Texture,
                                     (x + widthPixels / (right ? 2 : -2)) - (right ? frame.Frame.Width : 0),
                                     (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + j) * frame.Frame.Height),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "ChemicalPool")
+            {
+                var type = entity.attributesMap["type"].ValueVar;
+                var widthPixels = (int)(entity.attributesMap["size"].ValuePosition.X.High);
+                var heightPixels = (int)(entity.attributesMap["size"].ValuePosition.Y.High);
+                var width = (int)widthPixels / 16 - 1;
+                var height = (int)heightPixels / 16 - 1;
+
+                EditorAnimation editorAnim;
+
+                if (width != -1 && height != -1)
+                {
+                    // draw inside
+                    // TODO this is really heavy on resources, so maybe switch to just drawing a rectangle??
+                    for (int i = 0; i <= height; i++)
+                    {
+                        editorAnim = LoadAnimation2("EditorAssets", d, 1, 1 + (int)type * 2, false, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            bool hEven = height % 2 == 0;
+                            for (int j = 0; j <= width; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (((width + 1) * 16) - widthPixels) / 2 + (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + j) * frame.Frame.Width),
+                                    y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + i) * frame.Frame.Height,
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // draw top and botton
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool bottom = !((i & 1) > 0);
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 1, (bottom ? 1 : 0) + (int)type * 2, false, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            bool hEven = height % 2 == 0;
+                            for (int j = 0; j <= width; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (((width+1) * 16) - widthPixels)/2 + (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + j) * frame.Frame.Width),
+                                    (y + heightPixels / (bottom ? 2 : -2) - (bottom ? frame.Frame.Height : 0)),
                                     frame.Frame.Width, frame.Frame.Height, false, Transparency);
                         }
                     }
