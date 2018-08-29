@@ -32,6 +32,8 @@ namespace ManiacEditor
         public List<Bitmap> CollisionLayerA = new List<Bitmap>();
         public List<Bitmap> CollisionLayerB = new List<Bitmap>();
 
+        public List<string> ObjectList = new List<string>(); //All Gameconfig + Stageconfig Object names
+
         int ClickedX = -1, ClickedY = -1;
         string scrollDirection = "X";
 
@@ -388,7 +390,8 @@ namespace ManiacEditor
             {
                 if (entitiesToolbar == null)
                 {
-                    entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
+                    //entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
+                    entitiesToolbar = new EntitiesToolbar(ObjectList);
                     entitiesToolbar.SelectedEntity = new Action<int>(x =>
                     {
                         entities.SelectSlot(x);
@@ -1604,8 +1607,8 @@ namespace ManiacEditor
                     }
 
                 //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
-                //CollisionLayerA.Clear();
-                //CollisionLayerB.Clear();
+                CollisionLayerA.Clear();
+                CollisionLayerB.Clear();
 
                 for (int i = 0; i < 1024; i++)
                 {
@@ -1619,7 +1622,18 @@ namespace ManiacEditor
                     {
                         StageConfig = new StageConfig(StageConfigFileName);
                     }
+
+                ObjectList.Clear();
+                for (int i = 0; i < GameConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(GameConfig.ObjectsNames[i]);
                 }
+                for (int i = 0; i < StageConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(StageConfig.ObjectsNames[i]);
+                }
+
+            }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Load failed. Error: " + ex.ToString());
@@ -3006,8 +3020,8 @@ Error: {ex.Message}");
             if (FGLow != null) FGLow.DisposeTextures();
             if (FGHigher != null) FGHigh.DisposeTextures();
             if (FGLower != null) FGLow.DisposeTextures();
-            CollisionLayerA.Clear();
-            CollisionLayerB.Clear();
+            //CollisionLayerA.Clear();
+            //CollisionLayerB.Clear();
             foreach (var el in EditorScene.OtherLayers)
             {
                 el.DisposeTextures();

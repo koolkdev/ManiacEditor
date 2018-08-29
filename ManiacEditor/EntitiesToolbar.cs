@@ -58,6 +58,32 @@ namespace ManiacEditor
             defaultFilter.Items.Add("Other (0)");
         }
 
+        public EntitiesToolbar(List<string> ConfigObjects) //An Attempt to load Object Lists from Gameconfig + Stageconfig, seems to work well!
+        {
+            InitializeComponent();
+
+            List<RSDKv5.SceneObject> sceneObjects = new List<RSDKv5.SceneObject>();
+
+            for (int i = 0; i < ConfigObjects.Count; i++)
+            {
+                RSDKv5.NameIdentifier Ni = new RSDKv5.NameIdentifier(ConfigObjects[i]);
+                RSDKv5.AttributeTypes AT = new RSDKv5.AttributeTypes();
+                List<RSDKv5.AttributeInfo> AttributeInfos = new List<RSDKv5.AttributeInfo>();
+                AttributeInfos.Add(new RSDKv5.AttributeInfo(Ni, AT));
+
+                RSDKv5.SceneObject so = new RSDKv5.SceneObject(Ni,AttributeInfos);
+                sceneObjects.Add(so);
+            }
+
+            RefreshObjects(sceneObjects);
+
+            defaultFilter.Items.Add("Mania (2)");
+            defaultFilter.Items.Add("Encore (4)");
+            defaultFilter.Items.Add("Both (1)");
+            defaultFilter.Items.Add("Pinball (255)");
+            defaultFilter.Items.Add("Other (0)");
+        }
+
         private void UpdateEntitiesList()
         {
             entitiesList.Items.Clear();
