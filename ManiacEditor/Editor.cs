@@ -79,8 +79,9 @@ namespace ManiacEditor
 
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
-        internal int SelectedTilesCount;
+        public int SelectedTilesCount;
         internal int SelectedTilesCountTemp;
+        public int DeselectTilesCount;
         internal int SelectedTileX;
         internal int SelectedTileY;
         internal bool controlWindowOpen;
@@ -933,23 +934,13 @@ namespace ManiacEditor
             }
             if (Properties.Settings.Default.pixelCountMode == false)
             { 
-                selectionSizeLabel.Text = "Amount of Tiles in Selection: " + SelectedTilesCount;
+                selectionSizeLabel.Text = "Amount of Tiles in Selection: " + (SelectedTilesCount - DeselectTilesCount);
                 selectionSizeLabel.ToolTipText = "The Size of the Selection";
             }
             else
             {
-                selectionSizeLabel.Text = "Length of Pixels in Selection: " + SelectedTilesCount * 16;
+                selectionSizeLabel.Text = "Length of Pixels in Selection: " + (SelectedTilesCount - DeselectTilesCount) * 16;
                 selectionSizeLabel.ToolTipText = "The Length of all the Tiles (by Pixels) in the Selection";
-            }
-            if (Properties.Settings.Default.pixelCountMode == false)
-            { 
-                tempSelectionSizeLabel.Text = "Temporary Tile Selection Count: " + SelectedTilesCountTemp;
-                tempSelectionSizeLabel.ToolTipText = "The Amount of Tiles in the Temporary Selection (Includes Deselected Tiles)";
-            }
-            else
-            {
-                tempSelectionSizeLabel.Text = "Temporary Length of Pixels in Selection: " + SelectedTilesCountTemp * 16;
-                tempSelectionSizeLabel.ToolTipText = "The Amount of Pixels(of the Temporary Selected Tiles by their Length) in the Temporary Selection (Includes Deselected Pixels/Tiles)";
             }
 
             //
@@ -1953,6 +1944,8 @@ a valid Data Directory.",
             {
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
+                if (IsTilesEdit())
+                    //Background.DrawEdit(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
                 if (ShowFGLower.Checked || EditFGLower.Checked)

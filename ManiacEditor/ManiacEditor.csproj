@@ -260,7 +260,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="discord-rpc.dll">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="EditorAssets.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -304,6 +304,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="128x128.ico" />
+    <Content Include="16x16Tiles_Edit.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="16x16Tiles_ID.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

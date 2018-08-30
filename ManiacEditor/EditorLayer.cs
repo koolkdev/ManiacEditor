@@ -29,7 +29,9 @@ namespace ManiacEditor
         public Dictionary<Point, ushort> SelectedTilesValue = new Dictionary<Point, ushort>();
 
         public PointsMap TempSelectionTiles;
+        public PointsMap TempSelectionDeselectTiles;
         bool TempSelectionDeselect;
+        public int GlobalSelectedTiles;
 
         bool FirstDrag;
         bool isDragOver;
@@ -197,6 +199,7 @@ namespace ManiacEditor
 
             SelectedTiles = new PointsMap(Width, Height);
             TempSelectionTiles = new PointsMap(Width, Height);
+            TempSelectionDeselectTiles = new PointsMap(Width, Height);
 
             _horizontalLayerRules = ReadHorizontalLineRules();
         }
@@ -291,6 +294,7 @@ namespace ManiacEditor
             Deselect();
             isDragOver = true;
             DragOver(point, value);
+            RefreshTileCount();
         }
 
         public void DragOver(Point point, ushort value)
@@ -300,6 +304,7 @@ namespace ManiacEditor
             point = new Point(point.X / TILE_SIZE, point.Y / TILE_SIZE);
             SelectedTiles.Add(point);
             SelectedTilesValue[point] = value;
+            RefreshTileCount();
         }
 
         public void EndDragOver(bool remove)
@@ -310,8 +315,10 @@ namespace ManiacEditor
                 {
                     SelectedTiles.Clear();
                     SelectedTilesValue.Clear();
+                    RefreshTileCount();
                 }
                 isDragOver = false;
+                RefreshTileCount();
             }
         }
 
@@ -324,6 +331,7 @@ namespace ManiacEditor
                     // Not moved yet
                     SelectedTilesValue[point] = _layer.Tiles[point.Y][point.X];
                     RemoveTile(point);
+                    RefreshTileCount();
                 }
             }
         }
@@ -338,7 +346,6 @@ namespace ManiacEditor
                 FirstDrag = false;
                 Dictionary<Point, ushort> newDict = new Dictionary<Point, ushort>();
                 List<Point> newPoints = new List<Point>(SelectedTiles.Count);
-                Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
                 foreach (Point point in SelectedTiles.PopAll())
                 {
                     Point newPoint = new Point(point.X + (newPos.X - oldPos.X), point.Y + (newPos.Y - oldPos.Y));
@@ -359,8 +366,9 @@ namespace ManiacEditor
                     Deselect();
                     // Create new actions group
                     Actions.Add(new ActionDummy());
-                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+                    RefreshTileCount();
                 }
+                RefreshTileCount();
                 SelectedTilesValue = newDict;
                 SelectedTiles.AddPoints(newPoints);
             }
@@ -383,9 +391,12 @@ namespace ManiacEditor
                 }
             }
             if (removedSomething)
+            {
                 Actions.Add(new ActionsGroupCloseMarker());
+            }
+
             SelectedTilesValue.Clear();
-            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+            RefreshTileCount();
 
         }
 
@@ -505,6 +516,7 @@ namespace ManiacEditor
                 if (SelectedTiles.Contains(point)) continue;
                 selectedValues.Add(_layer.Tiles[point.Y][point.X]);
             }
+            RefreshTileCount();
             return selectedValues;
         }
 
@@ -542,7 +554,7 @@ namespace ManiacEditor
             }
             // Create new actions group
             Actions.Add(new ActionDummy());
-            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+            RefreshTileCount();
         }
 
         public void Select(Rectangle area, bool addSelection = false, bool deselectIfSelected = false)
@@ -561,7 +573,7 @@ namespace ManiacEditor
                             {
                                 // Deselect
                                 DeselectPoint(p);
-                                Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+                                RefreshTileCount();
                             }
                             // Don't add already selected tile, or if it was just deslected
                             continue;
@@ -570,7 +582,7 @@ namespace ManiacEditor
                     if (_layer.Tiles[y][x] != 0xffff)
                     {
                         SelectedTiles.Add(new Point(x, y));
-                        Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+                        RefreshTileCount();
                     }
                 }
             }
@@ -588,13 +600,13 @@ namespace ManiacEditor
                 {
                     // Deselect
                     DeselectPoint(point);
-                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+                    RefreshTileCount();
                 }
                 else if (this._layer.Tiles[point.Y][point.X] != 0xffff)
                 {
                     // Just add the point
                     SelectedTiles.Add(point);
-                    Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+                    RefreshTileCount();
                 }
             }
         }
@@ -602,6 +614,7 @@ namespace ManiacEditor
         public void TempSelection(Rectangle area, bool deselectIfSelected)
         {
             TempSelectionTiles.Clear();
+            TempSelectionDeselectTiles.Clear();
             TempSelectionDeselect = deselectIfSelected;
             for (int y = Math.Max(area.Y / TILE_SIZE, 0); y < Math.Min(DivideRoundUp(area.Y + area.Height, TILE_SIZE), _layer.Height); ++y)
             {
@@ -610,7 +623,12 @@ namespace ManiacEditor
                     if (SelectedTiles.Contains(new Point(x, y)) || _layer.Tiles[y][x] != 0xffff)
                     {
                         TempSelectionTiles.Add(new Point(x, y));
-                        Editor.Instance.SelectedTilesCountTemp = TempSelectionTiles.Count;
+                        if (SelectedTiles.Contains(new Point(x, y)) && TempSelectionTiles.Contains(new Point(x, y)))
+                        {
+                            TempSelectionDeselectTiles.Add(new Point(x, y));
+                        }
+                        RefreshTileCount();
+
 
                     }
                 }
@@ -620,7 +638,8 @@ namespace ManiacEditor
         public void EndTempSelection()
         {
             TempSelectionTiles.Clear();
-            Editor.Instance.SelectedTilesCountTemp = TempSelectionTiles.Count;
+            TempSelectionDeselectTiles.Clear();
+            RefreshTileCount();
         }
 
         private void InvalidateChunk(int x, int y)
@@ -646,7 +665,7 @@ namespace ManiacEditor
         private void RemoveTile(Point point)
         {
             SetTile(point, 0xffff);
-            Editor.Instance.SelectedTilesCount = SelectedTiles.Count;
+            RefreshTileCount();
         }
 
         private void DeselectPoint(Point p)
@@ -823,6 +842,7 @@ namespace ManiacEditor
                             new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
             }
 
+
         }
 
         public void DrawTile(DevicePanel d, ushort tile, int x, int y, bool selected, int Transperncy)
@@ -876,6 +896,7 @@ namespace ManiacEditor
                             if (this._layer.Tiles[ty][tx] != 0xffff)
                             {
                                 DrawTile(g, _layer.Tiles[ty][tx], tx - rect.X, ty - rect.Y);
+                                //DrawTile(g, _layer.Tiles[y][x], x, y);
                             }
                         }
                     }
@@ -913,13 +934,13 @@ namespace ManiacEditor
                 if (SelectedTilesValue.ContainsKey(p))
                     DrawTile(d, SelectedTilesValue[p], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
 
+
                 else // It is still in the original place
                     DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, !TempSelectionDeselect || !TempSelectionTiles.Contains(p), Transperncy);
 
             foreach (Point p in TempSelectionTiles.GetChunkPoint(x, y)) {
                 if (SelectedTiles.Contains(p))
                 {
-
                     continue;
                 }
                 DrawTile(d, _layer.Tiles[p.Y][p.X], p.X, p.Y, true, Transperncy);
@@ -1011,6 +1032,13 @@ namespace ManiacEditor
                     }
                 }
             }
+        }
+
+        public void RefreshTileCount()
+        {
+            GlobalSelectedTiles = SelectedTiles.Count + TempSelectionTiles.Count;
+            Editor.Instance.DeselectTilesCount = TempSelectionDeselectTiles.Count;
+            Editor.Instance.SelectedTilesCount = GlobalSelectedTiles - Editor.Instance.DeselectTilesCount;
         }
     }
 }
