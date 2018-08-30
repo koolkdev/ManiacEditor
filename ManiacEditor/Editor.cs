@@ -399,6 +399,7 @@ namespace ManiacEditor
             EditFGHigher.Enabled = enabled && FGHigher != null;
             EditEntities.Enabled = enabled;
             importObjectsToolStripMenuItem.Enabled = enabled && StageConfig != null;
+            removeObjectToolStripMenuItem.Enabled = enabled && StageConfig != null;
             importSoundsToolStripMenuItem.Enabled = enabled && StageConfig != null;
             layerManagerToolStripMenuItem.Enabled = enabled;
 
@@ -1952,12 +1953,12 @@ a valid Data Directory.",
                     FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
+                if (ShowEntities.Checked && !EditEntities.Checked)
+                    entities.Draw(GraphicPanel);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
                 if (ShowFGHigher.Checked || EditFGHigher.Checked)
                     FGHigher.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
 
@@ -3057,6 +3058,27 @@ Error: {ex.Message}");
             {
                 nudgeFasterButton.Checked = false;
                 Properties.Settings.Default.EnableFasterNudge = false;
+            }
+        }
+
+        private void removeObjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                using (var ObjectRemover = new ObjectRemover(EditorScene.Objects, EditorScene.Objects, StageConfig))
+                {
+                    if (ObjectRemover.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // user clicked Import, get to it!
+                    UpdateControls();
+                    entitiesToolbar?.RefreshObjects(EditorScene.Objects);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import Objects. " + ex.Message);
             }
         }
 
