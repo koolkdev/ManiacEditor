@@ -126,7 +126,9 @@
     <Compile Include="ObjectImporter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ObjectImporter.Designer.cs" />
+    <Compile Include="ObjectImporter.designer.cs">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -241,7 +243,9 @@
     <EmbeddedResource Include="LayerManager.resx">
       <DependentUpon>LayerManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObjectImporter.resx" />
+    <EmbeddedResource Include="ObjectImporter.resx">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ObjectRemover.resx">
       <DependentUpon>ObjectRemover.cs</DependentUpon>
     </EmbeddedResource>

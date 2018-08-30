@@ -355,5 +355,10 @@ namespace ManiacEditor
                 Editor.Instance.UpdateDiscord();
             }
         }
+
+        private void checkBox20_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

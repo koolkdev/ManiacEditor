@@ -18,7 +18,7 @@ namespace ManiacEditor
         private IList<SceneObject> _targetSceneObjects;
         private StageConfig _stageConfig;
 
-        public ObjectRemover(IList<SceneObject> sourceSceneObjects, IList<SceneObject> targetSceneObjects, StageConfig stageConfig)
+        public ObjectRemover(IList<SceneObject> targetSceneObjects, StageConfig stageConfig)
         {
             InitializeComponent();
             rtbWarning.Rtf = Resources.ObjectWarning;
@@ -27,7 +27,7 @@ namespace ManiacEditor
             _stageConfig = stageConfig;
 
             var targetNames = targetSceneObjects.Select(tso => tso.Name.ToString());
-            var importableObjects = sourceSceneObjects.Where(sso => targetNames.Contains(sso.Name.ToString()))
+            var importableObjects = targetSceneObjects.Where(sso => targetNames.Contains(sso.Name.ToString()))
                                                         .OrderBy(sso => sso.Name.ToString());
             
 

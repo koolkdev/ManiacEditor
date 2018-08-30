@@ -80,7 +80,6 @@ namespace ManiacEditor
         internal Dictionary<Point, ushort> TilesClipboard;
         private List<EditorEntity> entitiesClipboard;
         public int SelectedTilesCount;
-        internal int SelectedTilesCountTemp;
         public int DeselectTilesCount;
         internal int SelectedTileX;
         internal int SelectedTileY;
@@ -307,7 +306,11 @@ namespace ManiacEditor
             DataDirectory = newDataDirectory;
             AddRecentDataFolder(newDataDirectory);
             SetGameConfig();
-            OpenScene();
+            if (Properties.Settings.Default.forceBrowse == true)
+                OpenSceneManual();
+            else
+                OpenScene();
+
         }
 
         private bool IsEditing()
@@ -1630,7 +1633,11 @@ namespace ManiacEditor
             {
                 AllowSceneChange = false;
                 if (!load()) return;
-                OpenScene();
+                if (Properties.Settings.Default.forceBrowse == true)
+                    OpenSceneManual();
+                else
+                    OpenScene();
+
             }
             else
             {
@@ -1710,6 +1717,95 @@ namespace ManiacEditor
                     return;
                 }
             
+
+            SetupLayerButtons();
+
+            Background = new EditorBackground();
+
+            entities = new EditorEntities(EditorScene);
+
+            SetViewSize(SceneWidth, SceneHeight);
+
+            UpdateControls();
+
+            SceneLoaded = true;
+        }
+
+        private void OpenSceneManual()
+        {
+            string Result = null;
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Scene File|*.bin";
+            if (open.ShowDialog() != DialogResult.Cancel)
+            {
+                Result = open.FileName;
+            }
+
+            if (Result == null)
+                return;
+
+            UnloadScene();
+            UseVisibilityPrefrences();
+
+            try
+            {
+                if (File.Exists(Result))
+                {
+                    // Selected file
+                    // Don't forget to populate these Members
+                    string directoryPath = Path.GetDirectoryName(Result);
+                    SelectedZone = new DirectoryInfo(directoryPath).Name;
+                    SelectedScene = Path.GetFileName(Result);
+
+                    StageTiles = new StageTiles(directoryPath);
+
+                    SceneFilename = Result;
+                }
+                else
+                {
+                    SelectedZone = Result.Replace(Path.GetFileName(Result), "");
+                    SelectedScene = Path.GetFileName(Result);
+
+                    StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
+                    SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
+                }
+
+                //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
+                CollisionLayerA.Clear();
+                CollisionLayerB.Clear();
+
+                for (int i = 0; i < 1024; i++)
+                {
+                    CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                    CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                }
+
+                EditorScene = new EditorScene(SceneFilename);
+                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
+                if (File.Exists(StageConfigFileName))
+                {
+                    StageConfig = new StageConfig(StageConfigFileName);
+                }
+
+                ObjectList.Clear();
+                for (int i = 0; i < GameConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(GameConfig.ObjectsNames[i]);
+                }
+                for (int i = 0; i < StageConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(StageConfig.ObjectsNames[i]);
+                }
+                ScenePath = Result;
+                UpdateDiscord("Editing " + Result);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Load failed. Error: " + ex.ToString());
+                return;
+            }
+
 
             SetupLayerButtons();
 
@@ -3066,7 +3162,7 @@ Error: {ex.Message}");
             try
             {
 
-                using (var ObjectRemover = new ObjectRemover(EditorScene.Objects, EditorScene.Objects, StageConfig))
+                using (var ObjectRemover = new ObjectRemover(EditorScene.Objects, StageConfig))
                 {
                     if (ObjectRemover.ShowDialog() != DialogResult.OK)
                         return; // nothing to do

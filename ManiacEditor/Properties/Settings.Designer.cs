@@ -575,5 +575,17 @@ namespace ManiacEditor.Properties {
                 this["DeleteObjectsInsteadOfImport"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool forceBrowse {
+            get {
+                return ((bool)(this["forceBrowse"]));
+            }
+            set {
+                this["forceBrowse"] = value;
+            }
+        }
     }
 }
