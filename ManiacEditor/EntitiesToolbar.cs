@@ -45,7 +45,7 @@ namespace ManiacEditor
 
         /*private RSDKv5.SceneObject currentObject;*/
 
-        /*public EntitiesToolbar(List<RSDKv5.SceneObject> sceneObjects)
+        public EntitiesToolbar(List<RSDKv5.SceneObject> sceneObjects)
         {
             InitializeComponent();
 
@@ -56,9 +56,9 @@ namespace ManiacEditor
             defaultFilter.Items.Add("Both (1)");
             defaultFilter.Items.Add("Pinball (255)");
             defaultFilter.Items.Add("Other (0)");
-        }*/
+        }
 
-        public EntitiesToolbar(List<string> ConfigObjects) //An Attempt to load Object Lists from Gameconfig + Stageconfig, seems to work well!
+        /*public EntitiesToolbar(List<string> ConfigObjects) //An Attempt to load Object Lists from Gameconfig + Stageconfig, seems to work well!
         {
             InitializeComponent();
 
@@ -82,7 +82,7 @@ namespace ManiacEditor
             defaultFilter.Items.Add("Both (1)");
             defaultFilter.Items.Add("Pinball (255)");
             defaultFilter.Items.Add("Other (0)");
-        }
+        }*/
 
         private void UpdateEntitiesList()
         {

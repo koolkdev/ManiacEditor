@@ -468,8 +468,8 @@ namespace ManiacEditor
             {
                 if (entitiesToolbar == null)
                 {
-                    //entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
-                    entitiesToolbar = new EntitiesToolbar(ObjectList);
+                    entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
+                    //entitiesToolbar = new EntitiesToolbar(ObjectList);
                     entitiesToolbar.SelectedEntity = new Action<int>(x =>
                     {
                         entities.SelectSlot(x);
