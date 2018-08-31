@@ -195,5 +195,36 @@ namespace RSDKv5
                     break;
             }
         }
+
+        public override string ToString()
+        {
+            switch (Type)
+            {
+                case AttributeTypes.UINT8:
+                    return value_uint8.ToString();
+                case AttributeTypes.UINT16:
+                    return value_uint16.ToString();
+                case AttributeTypes.UINT32:
+                    return value_uint32.ToString();
+                case AttributeTypes.INT8:
+                    return value_int8.ToString();
+                case AttributeTypes.INT16:
+                    return value_int16.ToString();
+                case AttributeTypes.INT32:
+                    return value_int32.ToString();
+                case AttributeTypes.VAR:
+                    return value_var.ToString();
+                case AttributeTypes.BOOL:
+                    return value_bool.ToString();
+                case AttributeTypes.STRING:
+                    return value_string.ToString();
+                case AttributeTypes.POSITION:
+                    return value_position.ToString();
+                case AttributeTypes.COLOR:
+                    return value_color.ToString();
+                default:
+                    return "Unhandled Type for ToString()";
+            }
+        }
     }
 }

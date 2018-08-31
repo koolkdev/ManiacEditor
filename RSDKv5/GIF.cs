@@ -96,7 +96,7 @@ namespace RSDKv5
         {
             if (null == _texturesCache) return;
             foreach (Texture texture in _texturesCache.Values)
-                texture.Dispose();
+                texture?.Dispose();
             _texturesCache.Clear();
         }
 
@@ -117,7 +117,7 @@ namespace RSDKv5
             _bitmap.Dispose();
             DisposeTextures();
             foreach (Bitmap b in _bitmapCache.Values)
-                b.Dispose();
+                b?.Dispose();
             _bitmapCache.Clear();
         }
 

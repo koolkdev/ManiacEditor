@@ -597,11 +597,15 @@ namespace ManiacEditor
                     {
                         if (IsTilesEdit())
                             flipVerticalToolStripMenuItem_Click(sender, e);
+                        else if (IsEntitiesEdit())
+                            FlipEntities(FlipDirection.Veritcal);
                     }
                     else if (e.KeyData == Keys.M)
                     {
                         if (IsTilesEdit())
                             flipHorizontalToolStripMenuItem_Click(sender, e);
+                        else if (IsEntitiesEdit())
+                            FlipEntities(FlipDirection.Horizontal);
                     }
                     if (e.Control)
                     {
@@ -620,6 +624,12 @@ namespace ManiacEditor
                     }
                 }
             }
+        }
+
+        private void FlipEntities(FlipDirection direction)
+        {
+            entities.Flip(direction);
+            entitiesToolbar.UpdateCurrentEntityProperites();
         }
 
         public void GraphicPanel_OnKeyUp(object sender, KeyEventArgs e)
