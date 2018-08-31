@@ -62,6 +62,8 @@ namespace ManiacEditor
 
         string SceneFilename = null;
         string StageConfigFileName = null;
+        bool enableShowFGHigher = true;
+        bool enableShowFGLower = true;
 
         internal EditorLayer FGHigher => EditorScene?.HighDetails;
         internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
