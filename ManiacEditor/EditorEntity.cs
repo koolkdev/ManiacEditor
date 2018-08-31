@@ -32,13 +32,11 @@ namespace ManiacEditor
         public DateTime lastFrametime;
         public int index = 0;
         public SceneEntity Entity { get { return entity; } }
-        public bool hasFilter;
 
         public EditorEntity(SceneEntity entity)
         {
             this.entity = entity;
             lastFrametime = DateTime.Now;
-            hasFilter = entity.attributesMap.ContainsKey("filter");
         }
  
         public void Draw(Graphics g)
@@ -401,7 +399,7 @@ namespace ManiacEditor
 
         public bool SetFilter()
         {
-            if (hasFilter)
+            if (HasFilter())
             {
                 int filter = entity.GetAttribute("filter").ValueUInt8;
 
@@ -1510,6 +1508,11 @@ namespace ManiacEditor
 
             int[] results = { (int)Math.Round(finalX), (int)Math.Round(finalY) };
             return results;
+        }
+
+        public bool HasFilter()
+        {
+            return entity.attributesMap.ContainsKey("filter") && entity.attributesMap["filter"].Type == AttributeTypes.UINT8;
         }
 
         public static void ReleaseResources()

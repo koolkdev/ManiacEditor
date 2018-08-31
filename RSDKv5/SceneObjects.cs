@@ -54,5 +54,13 @@ namespace RSDKv5
             foreach (SceneEntity entity in Entities)
                 entity.Write(writer);
         }
+
+        public void AddAttribute(AttributeInfo att)
+        {
+            Console.WriteLine("Attempted to add attribute of name \"" + att.Name + "\" to object \"" + Name + "\"");
+            Attributes.Add(att);
+            foreach (SceneEntity entity in Entities)
+                entity.AddAttributeToEntity(att);
+        }
     }
 }

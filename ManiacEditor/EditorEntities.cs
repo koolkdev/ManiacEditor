@@ -281,7 +281,7 @@ namespace ManiacEditor
 
             EditorEntity entity = new EditorEntity(sceneEntity);
 
-            if (entity.hasFilter && DefaultFilter > -1)
+            if (entity.HasFilter() && DefaultFilter > -1)
             {
                 entity.Entity.GetAttribute("filter").ValueUInt8 = (byte)DefaultFilter;
                 DefaultFilter = -1;

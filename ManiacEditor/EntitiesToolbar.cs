@@ -500,5 +500,24 @@ namespace ManiacEditor
         {
             EditorEntities.FilterRefreshNeeded = true;
         }
+
+        // Temporary solution to "filter" attribute being missing in old Scenes
+        // TODO: Replace with proper Object/Entity Manager
+        private void addFilterButton_Click(object sender, EventArgs e)
+        {
+            if (currentEntity != null && !currentEntity.attributesMap.ContainsKey("filter"))
+            {
+                currentEntity.AddAttributeToObject("filter", RSDKv5.AttributeTypes.UINT8);
+                PropertiesRefresh();
+            }
+        }
+
+        private void addAllFiltersButton_Click(object sender, EventArgs e)
+        {
+            foreach (RSDKv5.SceneEntity entity in _entities)
+                if (entity != null && !entity.attributesMap.ContainsKey("filter"))
+                    entity.AddAttributeToObject("filter", RSDKv5.AttributeTypes.UINT8);
+            PropertiesRefresh();
+        }
     }
 }
