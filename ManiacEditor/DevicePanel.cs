@@ -175,9 +175,12 @@ namespace ManiacEditor
         {
             if (enableDevWarning == true)
             {
-                using (var devWarnBox = new DevWarningBox())
+                if (Properties.Settings.Default.NeverShowThisAgain == false)
                 {
-                    devWarnBox.ShowDialog();
+                    using (var devWarnBox = new DevWarningBox())
+                    {
+                        devWarnBox.ShowDialog();
+                    }
                 }
             }
             RenderLoop.Run(this, () =>

@@ -28,6 +28,7 @@ namespace ManiacEditor
         public bool showGrid;
         public bool showCollisionA;
         public bool showCollisionB;
+        public int backupType = 0;
 
         public List<Bitmap> CollisionLayerA = new List<Bitmap>();
         public List<Bitmap> CollisionLayerB = new List<Bitmap>();
@@ -348,7 +349,7 @@ namespace ManiacEditor
         {
             saveToolStripMenuItem.Enabled = enabled;
             saveAsToolStripMenuItem.Enabled = enabled;
-            exportToolStripMenuItem.Enabled = enabled;
+            backupToolStripMenuItem.Enabled = enabled;
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
             ShowFGLow.Enabled = enabled && FGLow != null;
@@ -2821,7 +2822,7 @@ Error: {ex.Message}");
             using (var optionBox = new OptionBox())
             {
                 optionBox.ShowDialog();
-            }
+            }   
         }
 
         private void controlsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3178,6 +3179,127 @@ Error: {ex.Message}");
             {
                 MessageBox.Show("Unable to import Objects. " + ex.Message);
             }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void backupScene()
+        {
+        backupType = 1;
+        backupToolStripMenuItem_Click(null, null);
+        backupType = 0;
+        }
+        public void backupSceneBeforeCrash()
+        {
+        backupType = 2;
+        backupToolStripMenuItem_Click(null, null);
+        backupType = 0;
+        }
+        public void autoBackupScene()
+        {
+        backupType = 3;
+        backupToolStripMenuItem_Click(null, null);
+        backupType = 0;
+        }
+
+        private void backupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+                backupTool(null, null);
+        }
+
+        private void backupTool(object sender, EventArgs e)
+        {
+            //Backup Types:
+            // 1: Manual Backups - Made by the user, and infinite amount
+            // 2: Emergency Backups - Made by the editor, right before a crash or something progress losing, and only is made
+            // 3: Automatic Backups - Made by the editor by user choice (toggle in options) automatically every so often
+            if (EditorScene == null) return;
+
+            if (IsTilesEdit())
+            {
+                // Apply changes
+                Deselect();
+            }
+
+            try
+            {
+                if (backupType == 1)
+                {
+                    String SceneFilenameBak = SceneFilename + ".bak";
+                    int i = 1;
+                    while ((File.Exists(SceneFilenameBak)))
+                    {
+                        SceneFilenameBak = SceneFilename.Substring(0, SceneFilename.Length - 4) + "." + i + ".bin.bak";
+                        i++;
+                    }
+                    EditorScene.Save(SceneFilenameBak);
+                }
+                if (backupType == 2)
+                {
+                    String SceneFilenameBak = SceneFilename + ".crash.bak";
+                    EditorScene.Save(SceneFilenameBak);
+                }
+                else
+                {
+                    String SceneFilenameBak = SceneFilename + ".idk.bak";
+                    int i = 1;
+                    while ((File.Exists(SceneFilenameBak)))
+                    {
+                        SceneFilenameBak = SceneFilename.Substring(0, SceneFilename.Length - 4) + "." + i + ".bin.bak";
+                        i++;
+                    }
+                    EditorScene.Save(SceneFilenameBak);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to backup the scene to file '{SceneFilename}'
+Error: {ex.Message}");
+            }
+
+            try
+            {
+                StageConfig?.Write(StageConfigFileName);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to backup the StageConfig to file '{StageConfigFileName}'
+Error: {ex.Message}");
+            }
+        }
+
+        private void backupRecoverButton_Click(object sender, EventArgs e)
+        {
+            string Result = null, ResultOriginal = null, ResultOld = null;
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Backup Scene|*.bin.bak|Old Scene|*.bin.old|Crash Backup Scene|*.bin.crash.bak";
+            if (open.ShowDialog() != DialogResult.Cancel)
+            {
+                Result = open.FileName;
+                ResultOriginal = Result.Split('.')[0] + ".bin";
+                ResultOld = ResultOriginal + ".old";
+                int i = 1;
+                while ((File.Exists(ResultOld)))
+                {
+                    ResultOld = ResultOriginal.Substring(0, ResultOriginal.Length - 4) + "." + i + ".bin.old";
+                    i++;
+                }
+
+
+
+            }
+
+            if (Result == null)
+                return;
+
+            UnloadScene();
+            UseVisibilityPrefrences();
+            File.Replace(Result, ResultOriginal, ResultOld);
+
         }
 
         private void vScrollBar1_Entered(object sender, EventArgs e)

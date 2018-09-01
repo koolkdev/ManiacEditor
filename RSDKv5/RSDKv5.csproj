@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CF5496F8-002B-408F-9B3D-67C88F610283}</ProjectGuid>
+    <ProjectGuid>{D10DC6B1-EB04-46BC-8C7A-62914AF396B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RSDKv5</RootNamespace>

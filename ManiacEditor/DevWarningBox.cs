@@ -16,5 +16,10 @@ namespace ManiacEditor
         {
             InitializeComponent();
         }
+
+        private void DevWarningBox_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

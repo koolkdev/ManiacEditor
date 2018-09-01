@@ -11,7 +11,7 @@ using ManiacEditor.Enums;
 
 namespace ManiacEditor
 {
-    public class EditorLayer : IDrawable, IDisposable
+    public class EditorLayer : IDrawable
     {
         private SceneLayer _layer;
         internal SceneLayer Layer { get => _layer; }

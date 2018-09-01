@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DevWarningBox));
             this.button3 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.neverShowAgainCheckbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,11 +67,23 @@
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             // 
+            // neverShowAgainCheckbox
+            // 
+            this.neverShowAgainCheckbox.Checked = global::ManiacEditor.Properties.Settings.Default.NeverShowThisAgain;
+            this.neverShowAgainCheckbox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "NeverShowThisAgain", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.neverShowAgainCheckbox.Location = new System.Drawing.Point(8, 143);
+            this.neverShowAgainCheckbox.Name = "neverShowAgainCheckbox";
+            this.neverShowAgainCheckbox.Size = new System.Drawing.Size(104, 48);
+            this.neverShowAgainCheckbox.TabIndex = 5;
+            this.neverShowAgainCheckbox.Text = "Never Show this Again";
+            this.neverShowAgainCheckbox.UseVisualStyleBackColor = true;
+            // 
             // DevWarningBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(363, 201);
+            this.Controls.Add(this.neverShowAgainCheckbox);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
@@ -78,6 +93,7 @@
             this.Name = "DevWarningBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WARNING";
+            this.Load += new System.EventHandler(this.DevWarningBox_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -87,5 +103,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox neverShowAgainCheckbox;
     }
 }

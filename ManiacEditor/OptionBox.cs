@@ -295,7 +295,14 @@ namespace ManiacEditor
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Reset();
+            if (MessageBox.Show("Are you sure you want to wipe your settings?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Properties.Settings.Default.Reset();
+            }
+            else
+            {
+                
+            }
         }
 
         private void nudgeValueDownMoreButton_Click(object sender, EventArgs e)
@@ -359,6 +366,16 @@ namespace ManiacEditor
         private void checkBox20_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not Implemented Yet!");
+        }
+
+        private void importOptionsButton_Click(object sender, EventArgs e)
+        {
+           MessageBox.Show("Not Implemented Yet!");
         }
     }
 }
