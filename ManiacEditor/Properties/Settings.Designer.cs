@@ -599,5 +599,17 @@ namespace ManiacEditor.Properties {
                 this["NeverShowThisAgain"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseObjectRenderingImprovements {
+            get {
+                return ((bool)(this["UseObjectRenderingImprovements"]));
+            }
+            set {
+                this["UseObjectRenderingImprovements"] = value;
+            }
+        }
     }
 }

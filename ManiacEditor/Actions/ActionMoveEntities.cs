@@ -61,7 +61,14 @@ namespace ManiacEditor.Actions
         public void Undo()
         {
             foreach (var entity in entities)
-                entity.Move(diff);
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(diff);
+                else
+                {
+                    entity.Move(diff);
+                    //entity.SnapToGrid(diff);
+                }
+
         }
 
         public IAction Redo()

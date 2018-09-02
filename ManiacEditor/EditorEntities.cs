@@ -151,7 +151,13 @@ namespace ManiacEditor
             if (duplicate) DuplicateEntities(selectedEntities);
             foreach (var entity in selectedEntities)
             {
-                entity.Move(diff);
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(diff);
+                else
+                {
+                    entity.Move(diff);
+                    //entity.SnapToGrid(diff);
+                }
             }
         }
 
@@ -178,7 +184,11 @@ namespace ManiacEditor
             {
                 minX = copiedEntities.Min(x => x.Entity.Position.X.High);
                 minY = copiedEntities.Min(x => x.Entity.Position.Y.High);
-                copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                if (Editor.Instance.showGrid == false)
+                    copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                else
+                    copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                    //copiedEntities.ForEach(x => x.SnapToGrid(new Point(-minX, -minY)));
             }
 
             return copiedEntities;
@@ -190,7 +200,11 @@ namespace ManiacEditor
             foreach (var entity in selectedEntities)
             {
                 // Move them
-                entity.Move(newPos);
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(newPos);
+                else
+                    entity.Move(newPos);
+                    //entity.SnapToGrid(newPos);
             }
         }
 

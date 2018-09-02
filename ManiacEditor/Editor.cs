@@ -2081,7 +2081,7 @@ a valid Data Directory.",
                         y2 = (int)(selectingY / Zoom);
                     }
 
-                    GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(50, Color.Purple));
+                    GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
 
                     GraphicPanel.DrawLine(x1, y1, x2, y1, Color.Purple);
                     GraphicPanel.DrawLine(x1, y1, x1, y2, Color.Purple);
@@ -3428,6 +3428,11 @@ Error: {ex.Message}");
                 AllowSceneChange = true;
             }
 
+        }
+
+        public void UpdateRender()
+        {
+            GraphicPanel.Render();
         }
     }
 }

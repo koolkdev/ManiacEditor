@@ -61,6 +61,7 @@ namespace ManiacEditor
         {
             entity.Position.X.High += (short)diff.X;
             entity.Position.Y.High += (short)diff.Y;
+            Editor.Instance.UpdateRender();
             if (Editor.GameRunning)
             {
                 // TODO: Find out if this is constent
@@ -72,10 +73,10 @@ namespace ManiacEditor
             }
         }
 
-        public void SnapToGrid()
+        public void SnapToGrid(Point diff)
         {
-            entity.Position.X.High = (short)((entity.Position.X.High + 8) / 16 * 16);
-            entity.Position.Y.High = (short)((entity.Position.Y.High + 8) / 16 * 16);
+            entity.Position.X.High = (short)((diff.X + 8) / 16 * 16);
+            entity.Position.Y.High = (short)((diff.Y + 8) / 16 * 16);
             if (Editor.GameRunning)
             {
                 // TODO: Find out if this is constent
@@ -426,7 +427,8 @@ namespace ManiacEditor
         {
             if (filteredOut) return;
 
-            if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
+            //This causes some objects not to load, which is problamatic
+            //if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
             System.Drawing.Color color = Selected ? System.Drawing.Color.MediumPurple : System.Drawing.Color.MediumTurquoise;
             System.Drawing.Color color2 = System.Drawing.Color.DarkBlue;
             int Transparency = (Editor.Instance.EditLayer == null) ? 0xff : 0x32;
@@ -463,8 +465,15 @@ namespace ManiacEditor
             else if (editorAnim != null && editorAnim.Frames.Count > 0)
             {
                 // Special cases that always display a set frame(?)
-                if (entity.Object.Name.Name == "StarPost")
-                    index = 1;
+                if (Editor.Instance.ShowAnimations.Enabled == true)
+                {
+                    if (entity.Object.Name.Name == "StarPost")
+                        index = 1;
+                    //else if (entity.Object.Name.Name == "SpecialRing")
+                    //    index = 9;
+                }
+
+
 
                 // Just incase
                 if (index >= editorAnim.Frames.Count)
@@ -498,8 +507,8 @@ namespace ManiacEditor
             d.DrawLine(x, y, x, y + NAME_BOX_HEIGHT, System.Drawing.Color.FromArgb(Transparency, color2));
             d.DrawLine(x, y + NAME_BOX_HEIGHT, x + NAME_BOX_WIDTH, y + NAME_BOX_HEIGHT, System.Drawing.Color.FromArgb(Transparency, color2));
             d.DrawLine(x + NAME_BOX_WIDTH, y, x + NAME_BOX_WIDTH, y + NAME_BOX_HEIGHT, System.Drawing.Color.FromArgb(Transparency, color2));
-
-            if (Editor.Instance.GetZoom() >= 1) d.DrawTextSmall(String.Format("{0} (ID: {1})", entity.Object.Name, entity.SlotID), x + 2, y + 2, NAME_BOX_WIDTH - 4, System.Drawing.Color.FromArgb(Transparency, System.Drawing.Color.Black), true);
+            if (Properties.Settings.Default.UseObjectRenderingImprovements == false)
+                if (Editor.Instance.GetZoom() >= 1) d.DrawTextSmall(String.Format("{0} (ID: {1})", entity.Object.Name, entity.SlotID), x + 2, y + 2, NAME_BOX_WIDTH - 4, System.Drawing.Color.FromArgb(Transparency, System.Drawing.Color.Black), true);
         }
 
         public EditorAnimation.EditorFrame GetFrameFromAttribute(EditorAnimation anim, AttributeValue attribute, string key = "frameID")
