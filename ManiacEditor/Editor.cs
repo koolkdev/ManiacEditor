@@ -2055,6 +2055,7 @@ a valid Data Directory.",
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
                 if (IsTilesEdit())
+                    if (Properties.Settings.Default.ShowEditLayerBackground == true)
                     Background.DrawEdit(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
@@ -2091,8 +2092,10 @@ a valid Data Directory.",
                         y2 = (int)(selectingY / Zoom);
                     }
 
-                    //GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
-
+                    if (Properties.Settings.Default.UseFasterSelectionRendering == false)
+                    {
+                        GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
+                    }
                     GraphicPanel.DrawLine(x1, y1, x2, y1, Color.Purple);
                     GraphicPanel.DrawLine(x1, y1, x1, y2, Color.Purple);
                     GraphicPanel.DrawLine(x2, y2, x2, y1, Color.Purple);

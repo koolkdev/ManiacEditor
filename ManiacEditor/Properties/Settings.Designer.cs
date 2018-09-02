@@ -602,13 +602,61 @@ namespace ManiacEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool UseObjectRenderingImprovements {
             get {
                 return ((bool)(this["UseObjectRenderingImprovements"]));
             }
             set {
                 this["UseObjectRenderingImprovements"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowEditLayerBackground {
+            get {
+                return ((bool)(this["ShowEditLayerBackground"]));
+            }
+            set {
+                this["ShowEditLayerBackground"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseFasterSelectionRendering {
+            get {
+                return ((bool)(this["UseFasterSelectionRendering"]));
+            }
+            set {
+                this["UseFasterSelectionRendering"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlwaysRenderObjects {
+            get {
+                return ((bool)(this["AlwaysRenderObjects"]));
+            }
+            set {
+                this["AlwaysRenderObjects"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AllowMoreRenderUpdates {
+            get {
+                return ((bool)(this["AllowMoreRenderUpdates"]));
+            }
+            set {
+                this["AllowMoreRenderUpdates"] = value;
             }
         }
     }

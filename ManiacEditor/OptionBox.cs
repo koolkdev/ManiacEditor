@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -376,6 +377,30 @@ namespace ManiacEditor
         private void importOptionsButton_Click(object sender, EventArgs e)
         {
            MessageBox.Show("Not Implemented Yet!");
+        }
+
+        private void tabPage5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            String title = "Save Settings";
+            String details = "Are you sure you want to save your settings, if the editor breaks because of one of these settings, you will have to redownload or manually reset you editor's config file! It's best you use the OK button to 'test' out the features before you save them.";
+            if (MessageBox.Show(details, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                 Properties.Settings.Default.Save();
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

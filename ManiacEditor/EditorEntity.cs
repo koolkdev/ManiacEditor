@@ -62,7 +62,7 @@ namespace ManiacEditor
         {
             entity.Position.X.High += (short)diff.X;
             entity.Position.Y.High += (short)diff.Y;
-            Editor.Instance.UpdateRender();
+            if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
             if (Editor.GameRunning)
             {
                 // TODO: Find out if this is constent
@@ -428,8 +428,12 @@ namespace ManiacEditor
         {
             if (filteredOut) return;
 
-            //This causes some objects not to load, which is problamatic
-            if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
+            
+            if (Properties.Settings.Default.AlwaysRenderObjects == false)
+            {
+                //This causes some objects not to load ever, which is problamatic, so I made a toggle. It can also have some performance benifits
+                if (!d.IsObjectOnScreen(entity.Position.X.High, entity.Position.Y.High, NAME_BOX_WIDTH, NAME_BOX_HEIGHT)) return;
+            }
             System.Drawing.Color color = Selected ? System.Drawing.Color.MediumPurple : System.Drawing.Color.MediumTurquoise;
             System.Drawing.Color color2 = System.Drawing.Color.DarkBlue;
             int Transparency = (Editor.Instance.EditLayer == null) ? 0xff : 0x32;

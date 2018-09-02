@@ -338,7 +338,7 @@ namespace ManiacEditor
 
         public void MoveSelected(Point oldPos, Point newPos, bool duplicate)
         {
-            Editor.Instance.UpdateRender();
+            if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
             oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
             newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
             if (oldPos != newPos)
@@ -850,16 +850,12 @@ namespace ManiacEditor
         {
             bool flipX = ((tile >> 10) & 1) == 1;
             bool flipY = ((tile >> 11) & 1) == 1;
-            if (selected)
-            {
-                d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
-                    x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, false, Transperncy);
-            }
-            else
-            {
-                d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
-    x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
-            }
+            if (Properties.Settings.Default.UseFasterSelectionRendering == true)
+                {
+                    selected = false;
+                }
+                    d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
+        x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
 
             if (Editor.Instance.showTileID == true)
             {
@@ -868,11 +864,18 @@ namespace ManiacEditor
             }
             if (selected)
             {
-                //d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
-                //d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
-                //d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
-                //d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
-                d.DrawBitmap(Editor.Instance.StageTiles.EditorImage.GetTexture(d._device, new Rectangle(0, (1 & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, false, Transperncy);
+                if (Properties.Settings.Default.UseFasterSelectionRendering == false)
+                {
+                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
+                }
+                else
+                {
+                    d.DrawBitmap(Editor.Instance.StageTiles.EditorImage.GetTexture(d._device, new Rectangle(0, (1 & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, false, Transperncy);
+                }
+                    
             }
         }
 
