@@ -59,8 +59,8 @@ namespace ManiacEditor
             RSDKv5Color rcolor1 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor1;
             RSDKv5Color rcolor2 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor2;
 
-            Color color1 = Color.FromArgb(rcolor1.A, rcolor1.R, rcolor1.G, rcolor1.B);
-            Color color2 = Color.FromArgb(rcolor2.A, rcolor2.R, rcolor2.G, rcolor2.B);
+            Color color1 = Color.FromArgb(30, rcolor1.R, rcolor1.G, rcolor1.B);
+            Color color2 = Color.FromArgb(30, rcolor2.R, rcolor2.G, rcolor2.B);
 
             int start_x = screen.X / (BOX_SIZE * EditorLayer.TILE_SIZE);
             int end_x = Math.Min(DivideRoundUp(screen.X + screen.Width, BOX_SIZE * EditorLayer.TILE_SIZE), Editor.Instance.SceneWidth);

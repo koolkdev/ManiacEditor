@@ -537,6 +537,7 @@ namespace ManiacEditor
             if (!IsObjectOnScreen(x, y, width, height)) return;
             //tx = new Texture(_device, txb, Usage.Dynamic, Pool.Default);
 
+
             sprite.Transform = Matrix.Scaling(1f, 1f, 1f); 
             if (width == 0 || height == 0)
             {
@@ -550,7 +551,7 @@ namespace ManiacEditor
             {
                 DrawLinePBP(X1, Y1, X2, Y2, color);
             }
-            sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f); 
+            sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f);
         }
 
         public void DrawArrow(int x0, int y0, int x1, int y1, Color color)

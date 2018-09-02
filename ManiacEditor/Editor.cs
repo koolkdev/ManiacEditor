@@ -928,9 +928,9 @@ namespace ManiacEditor
                     {
                         hScrollBar1.Value = x;
                     }
-                    GraphicPanel.Render();
                     GraphicPanel.OnMouseMoveEventCreate();
                 }
+                GraphicPanel.Render();
             }
 
             //
@@ -2055,19 +2055,19 @@ a valid Data Directory.",
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
                 if (IsTilesEdit())
-                    //Background.DrawEdit(GraphicPanel);
+                    Background.DrawEdit(GraphicPanel);
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
                 if (ShowFGLower.Checked || EditFGLower.Checked)
                     FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
                 if (ShowFGHigher.Checked || EditFGHigher.Checked)
                     FGHigher.Draw(GraphicPanel);
+                if (ShowEntities.Checked && !EditEntities.Checked)
+                    entities.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
 
@@ -2091,7 +2091,7 @@ a valid Data Directory.",
                         y2 = (int)(selectingY / Zoom);
                     }
 
-                    GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
+                    //GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
 
                     GraphicPanel.DrawLine(x1, y1, x2, y1, Color.Purple);
                     GraphicPanel.DrawLine(x1, y1, x1, y2, Color.Purple);
