@@ -1,4 +1,5 @@
-﻿using RSDKv5;
+﻿using ManiacEditor.Enums;
+using RSDKv5;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
@@ -814,11 +815,13 @@ namespace ManiacEditor
                 var flipFlag = entity.attributesMap["flipFlag"].ValueVar;
                 bool fliph = false;
                 bool flipv = false;
+
+                // Handle springs being flipped in both planes
                 // Down
-                if (flipFlag == 2)
+                if ((flipFlag & 0x02) == 0x02)
                     flipv = true;
                 // Left
-                if (flipFlag == 1)
+                if ((flipFlag & 0x01) == 0x01)
                     fliph = true;
 
                 var editorAnim = LoadAnimation2("Springs", d, animID % 6, -1, fliph, flipv, false);
@@ -1522,6 +1525,21 @@ namespace ManiacEditor
         public bool HasFilter()
         {
             return entity.attributesMap.ContainsKey("filter") && entity.attributesMap["filter"].Type == AttributeTypes.UINT8;
+        }
+
+        internal void Flip(FlipDirection flipDirection)
+        {
+            if (entity.attributesMap.ContainsKey("flipFlag"))
+            {
+                if (flipDirection == FlipDirection.Horizontal)
+                {
+                    entity.attributesMap["flipFlag"].ValueVar ^= 0x01;
+                }
+                else
+                {
+                    entity.attributesMap["flipFlag"].ValueVar ^= 0x02;
+                }
+            }
         }
 
         public static void ReleaseResources()

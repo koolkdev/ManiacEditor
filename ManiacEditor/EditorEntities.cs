@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using ManiacEditor.Enums;
+using RSDKv5;
 
 namespace ManiacEditor
 {
@@ -33,7 +35,14 @@ namespace ManiacEditor
             {
                 entities.AddRange(obj.Entities.Select(x => GenerateEditorEntity(x)));
             }
+            FindDuplicateIds();
             entitiesBySlot = entities.ToDictionary(x => x.Entity.SlotID);
+        }
+
+        private void FindDuplicateIds()
+        {
+            var groupedById = entities.GroupBy(e => e.Entity.SlotID)
+                                      .Where(g => g.Count()>1);
         }
 
         private ushort getFreeSlot(RSDKv5.SceneEntity preferred)
@@ -311,6 +320,47 @@ namespace ManiacEditor
             FilterRefreshNeeded = false;
             foreach (EditorEntity entity in entities)
                 entity.SetFilter();
+        }
+        internal void Flip(FlipDirection direction)
+        {
+            var positions = selectedEntities.Select(se => se.Entity.Position);
+            IEnumerable<Position.Value> monoCoordinatePositions;
+            if (direction == FlipDirection.Horizontal)
+            {
+                monoCoordinatePositions = positions.Select(p => p.X);
+            }
+            else
+            {
+                monoCoordinatePositions = positions.Select(p => p.Y);
+            }
+
+            short min = monoCoordinatePositions.Min(m => m.High);
+            short max = monoCoordinatePositions.Max(m => m.High);
+            int diff = max - min;
+
+            foreach (var entity in selectedEntities)
+            {
+                if (direction == FlipDirection.Horizontal)
+                {
+                    short xPos = entity.Entity.Position.X.High;
+                    int fromLeft = xPos - min;
+                    int fromRight = max - xPos;
+
+                    int newX = fromLeft < fromRight ? max - fromLeft : min + fromRight;
+                    entity.Entity.Position.X.High = (short)newX;
+                }
+                else
+                {
+                    short yPos = entity.Entity.Position.Y.High;
+                    int fromBottom = yPos - min;
+                    int fromTop = max - yPos;
+
+                    int newY = fromBottom < fromTop ? max - fromBottom : min + fromTop;
+                    entity.Entity.Position.Y.High = (short)newY;
+                }
+
+                entity.Flip(direction);
+            }
         }
     }
 }

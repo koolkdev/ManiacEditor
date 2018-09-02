@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace RSDKv5
 {
@@ -99,19 +97,21 @@ namespace RSDKv5
 
         public List<ConfigurableMemoryEntry> ConfigMemory = new List<ConfigurableMemoryEntry>();
 
-        public GameConfig(string filename) : this(new Reader(filename), true)
+        public GameConfig(string filename)
         {
-
+            using (var reader = new Reader(filename))
+                Read(reader);
         }
 
-        public GameConfig(Stream stream) : this(new Reader(stream), false)
+        public GameConfig(Stream stream)
         {
-
+            using (var reader = new Reader(stream))
+                Read(reader);
         }
 
-        private GameConfig(Reader reader, bool closeStream = false)
+        private void Read(Reader reader)
         {
-            base.ReadMagic(reader);
+            ReadMagic(reader);
 
             GameName = reader.ReadRSDKString();
             GameSubname = reader.ReadRSDKString();
@@ -122,7 +122,7 @@ namespace RSDKv5
             StartSceneCategoryIndex = reader.ReadByte();
             StartSceneIndex = reader.ReadUInt16();
 
-            base.ReadCommonConfig(reader);
+            ReadCommonConfig(reader);
 
             ushort TotalScenes = reader.ReadUInt16();
 
@@ -133,9 +133,6 @@ namespace RSDKv5
             byte config_memory_count = reader.ReadByte();
             for (int i = 0; i < config_memory_count; ++i)
                 ConfigMemory.Add(new ConfigurableMemoryEntry(reader));
-
-            if (closeStream)
-                reader.Close();
         }
 
         private void InterpretVersion()
@@ -151,18 +148,18 @@ namespace RSDKv5
         public void Write(string filename)
         {
             using (Writer writer = new Writer(filename))
-                this.Write(writer);
+                Write(writer);
         }
 
         public void Write(Stream stream)
         {
             using (Writer writer = new Writer(stream))
-                this.Write(writer);
+                Write(writer);
         }
 
         internal void Write(Writer writer)
         {
-            base.WriteMagic(writer);
+            WriteMagic(writer);
 
             writer.WriteRSDKString(GameName);
             writer.WriteRSDKString(GameSubname);
@@ -171,7 +168,7 @@ namespace RSDKv5
             writer.Write(StartSceneCategoryIndex);
             writer.Write(StartSceneIndex);
 
-            base.WriteCommonConfig(writer);
+            WriteCommonConfig(writer);
 
             writer.Write((ushort)Categories.Select(x => x.Scenes.Count).Sum());
 
