@@ -733,7 +733,7 @@ namespace ManiacEditor
                     animID = 1;
                 }
 
-                int count = (int)entity.attributesMap["count"].ValueUInt8;
+                int count = (entity.attributesMap.ContainsKey("count") ? (int)entity.attributesMap["count"].ValueUInt8 : 2);
 
                 // Is it a value that defaults to 2?
                 if (count < 2)
