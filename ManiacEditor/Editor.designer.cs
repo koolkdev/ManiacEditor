@@ -395,7 +395,6 @@
             this.importObjectsToolStripMenuItem.Name = "importObjectsToolStripMenuItem";
             this.importObjectsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.importObjectsToolStripMenuItem.Text = "Import Objects";
-            this.importObjectsToolStripMenuItem.Click += new System.EventHandler(this.importObjectsToolStripMenuItem_Click);
             // 
             // importSoundsToolStripMenuItem
             // 

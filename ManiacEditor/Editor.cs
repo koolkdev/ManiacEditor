@@ -60,6 +60,7 @@ namespace ManiacEditor
         internal StageTiles StageTiles;
         internal EditorScene EditorScene;
         internal StageConfig StageConfig;
+        public ObjectRemover objectRemover;
 
         string SceneFilename = null;
         string StageConfigFileName = null;
@@ -2747,7 +2748,7 @@ Error: {ex.Message}");
             }
         }
 
-        private void importObjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        public void importObjectsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -2758,8 +2759,9 @@ Error: {ex.Message}");
                 {
                     if (objectImporter.ShowDialog() != DialogResult.OK)
                         return; // nothing to do
-
+                    
                     // user clicked Import, get to it!
+                    objectRemover.RefreshList();
                     UpdateControls();
                     entitiesToolbar?.RefreshObjects(EditorScene.Objects);
                 }
