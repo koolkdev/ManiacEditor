@@ -812,6 +812,10 @@ namespace ManiacEditor
 
         private void GraphicPanel_OnMouseMove(object sender, MouseEventArgs e)
         {
+            if (Properties.Settings.Default.AllowMoreRenderUpdates)
+            {
+                UpdateRender();
+            }
             if (ClickedX != -1)
             {
                 Point clicked_point = new Point((int)(ClickedX / Zoom), (int)(ClickedY / Zoom));
@@ -1351,6 +1355,7 @@ namespace ManiacEditor
                                 int y = vScrollBar1.Value - e.Delta * 2;
                                 if (y < 0) y = 0;
                                 if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (y <= -1) y = 0;
                                 vScrollBar1.Value = y;
                             }
                             else
@@ -1358,6 +1363,7 @@ namespace ManiacEditor
                                 int x = vScrollBar1.Value - e.Delta * 2;
                                 if (x < 0) x = 0;
                                 if (x > vScrollBar1.Maximum - vScrollBar1.LargeChange) x = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (x <= -1) x = 0;
                                 vScrollBar1.Value = x;
                             }
                         }
@@ -1368,6 +1374,7 @@ namespace ManiacEditor
                                 int x = hScrollBar1.Value - e.Delta * 2;
                                 if (x < 0) x = 0;
                                 if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                                if (x <= -1) x = 0;
                                 hScrollBar1.Value = x;
                             }
                             else
@@ -1375,6 +1382,7 @@ namespace ManiacEditor
                                 int y = vScrollBar1.Value - e.Delta;
                                 if (y < 0) y = 0;
                                 if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (y <= -1) y = 0;
                                 vScrollBar1.Value = y;
                             }
                         }
@@ -1428,6 +1436,10 @@ namespace ManiacEditor
             }
 
             zooming = false;
+            if (Properties.Settings.Default.AllowMoreRenderUpdates)
+            {
+                UpdateRender();
+            }
 
             UpdateControls();
         }
@@ -1722,6 +1734,7 @@ namespace ManiacEditor
                 }
                 ScenePath = select.Result;
                 UpdateDiscord("Editing " + select.Result);
+                SceneLoaded = true;
 
             }
                 catch (Exception ex)
@@ -1763,7 +1776,7 @@ namespace ManiacEditor
             try
             {
                 if (File.Exists(Result))
-                {
+                {   
                     // Selected file
                     // Don't forget to populate these Members
                     string directoryPath = Path.GetDirectoryName(Result);
@@ -1811,6 +1824,7 @@ namespace ManiacEditor
                 }
                 ScenePath = Result;
                 UpdateDiscord("Editing " + Result);
+                SceneLoaded = true;
 
             }
             catch (Exception ex)
@@ -1830,7 +1844,6 @@ namespace ManiacEditor
 
             UpdateControls();
 
-            SceneLoaded = true;
         }
 
         private void SetupLayerButtons()
@@ -2528,9 +2541,12 @@ Error: {ex.Message}");
             }
             else if (IsEntitiesEdit())
             {
-                CopyEntitiesToClipboard();
-                DeleteSelected();
-                UpdateControls();
+                if (entitiesToolbar.ContainsFocus.Equals(false))
+                {
+                    CopyEntitiesToClipboard();
+                    DeleteSelected();
+                    UpdateControls();
+                }
             }
         }
 
@@ -2548,18 +2564,21 @@ Error: {ex.Message}");
 
         private void CopyEntitiesToClipboard()
         {
-            List<EditorEntity> copyData = entities.CopyToClipboard();
-
-            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
-            if (Properties.Settings.Default.EnableWindowsClipboard)
+            if (entitiesToolbar.ContainsFocus.Equals(false))
             {
-                if (!Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
-                    Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
-            }
-                
+                List<EditorEntity> copyData = entities.CopyToClipboard();
 
-            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
-            entitiesClipboard = copyData;
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                {
+                    if (!Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
+                        Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
+                }
+
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                entitiesClipboard = copyData;
+            }
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2582,6 +2601,8 @@ Error: {ex.Message}");
             }
             else if (IsEntitiesEdit())
             {
+                if (entitiesToolbar.ContainsFocus.Equals(false))
+                {
                 try
                 {
                     // check if there are entities on the Windows clipboard; if so, use those
@@ -2605,6 +2626,7 @@ Error: {ex.Message}");
                 }
                 UpdateEntitiesToolbarList();
                 SetSelectOnlyButtonsState();
+                }
             }
         }
 
@@ -2653,8 +2675,8 @@ Error: {ex.Message}");
         private void zoomInButton_Click(object sender, EventArgs e)
         {
             ZoomLevel += 1;
-            if (ZoomLevel > 5) ZoomLevel = 5;
-            if (ZoomLevel < -5) ZoomLevel = -5;
+            if (ZoomLevel >= 5) ZoomLevel = 5;
+            if (ZoomLevel <= -5) ZoomLevel = -5;
 
             SetZoomLevel(ZoomLevel, new Point(0, 0));
         }
@@ -2662,8 +2684,8 @@ Error: {ex.Message}");
         private void zoomOutButton_Click(object sender, EventArgs e)
         {
             ZoomLevel -= 1;
-            if (ZoomLevel > 5) ZoomLevel = 5;
-            if (ZoomLevel < -5) ZoomLevel = -5;
+            if (ZoomLevel >= 5) ZoomLevel = 5;
+            if (ZoomLevel <= -5) ZoomLevel = -5;
 
             SetZoomLevel(ZoomLevel, new Point(0, 0));
         }
@@ -3372,14 +3394,27 @@ Error: {ex.Message}");
                 deviceLostBox.ShowDialog();
                 deviceExceptionResult = deviceLostBox.DialogResult;
             }
-            if (deviceExceptionResult == DialogResult.Yes)
+            if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
             {
+                Editor.Instance.backupSceneBeforeCrash();
+                Environment.Exit(1);
+
+            }
+            else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
+            {
+                //GraphicPanel.Dispose();
+                //GraphicPanel.ResetDevice();
+
+            }
+            else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
+            {
+                Editor.Instance.backupSceneBeforeCrash();
                 GraphicPanel.Dispose();
                 //GraphicPanel.ResetDevice();
             }
-            else
+            else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
             {
-                
+                Environment.Exit(1);
             }
         }
         private void Editor_FormClosing1(object sender, System.Windows.Forms.FormClosingEventArgs e)

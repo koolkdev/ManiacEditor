@@ -249,13 +249,14 @@ namespace ManiacEditor
             if (result == ResultCode.DeviceNotReset) { 
                 try
                 {
-                    Editor.Instance.DeviceExceptionDialog();
+                    //Editor.Instance.DeviceExceptionDialog();
+                    ResetDevice();
                 }
                 catch (SharpDXException ex)
                 {
                     // If it's still lost or lost again, just do nothing
                     if (ex.ResultCode == ResultCode.DeviceLost) return;
-                    else Editor.Instance.DeviceExceptionDialog();
+                    //else Editor.Instance.DeviceExceptionDialog();
                 }
             }
         }
@@ -359,8 +360,6 @@ namespace ManiacEditor
             catch (SharpDXException ex)
             {
                 if (ex.ResultCode == ResultCode.DeviceLost)
-                    Editor.Instance.DeviceExceptionDialog();
-                else
                     Editor.Instance.DeviceExceptionDialog();
             }
         }

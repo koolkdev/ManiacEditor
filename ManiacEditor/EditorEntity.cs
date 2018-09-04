@@ -62,7 +62,8 @@ namespace ManiacEditor
         {
             entity.Position.X.High += (short)diff.X;
             entity.Position.Y.High += (short)diff.Y;
-            if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
+            //Since the Editor can now update without the use of this render, I removed it
+            //if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
             if (Editor.GameRunning)
             {
                 // TODO: Find out if this is constent

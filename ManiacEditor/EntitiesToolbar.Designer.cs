@@ -26,7 +26,7 @@
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        public void InitializeComponent()
         {
             this.entitiesList = new System.Windows.Forms.ComboBox();
             this.entityProperties = new System.Windows.Forms.PropertyGrid();
@@ -35,13 +35,13 @@
             this.btnSpawn = new System.Windows.Forms.Button();
             this.cbSpawn = new System.Windows.Forms.ComboBox();
             this.gbEditor = new System.Windows.Forms.GroupBox();
+            this.addAllFiltersButton = new System.Windows.Forms.Button();
             this.addFilterButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.otherFilterCheck = new System.Windows.Forms.CheckBox();
             this.bothFilterCheck = new System.Windows.Forms.CheckBox();
             this.encoreFilterCheck = new System.Windows.Forms.CheckBox();
             this.maniaFilterCheck = new System.Windows.Forms.CheckBox();
-            this.addAllFiltersButton = new System.Windows.Forms.Button();
             this.gbSpawn.SuspendLayout();
             this.gbEditor.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -64,6 +64,7 @@
             this.entityProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.entityProperties.CausesValidation = false;
             this.entityProperties.HelpVisible = false;
             this.entityProperties.LineColor = System.Drawing.SystemColors.ControlDark;
             this.entityProperties.Location = new System.Drawing.Point(7, 46);
@@ -138,6 +139,17 @@
             this.gbEditor.TabIndex = 3;
             this.gbEditor.TabStop = false;
             this.gbEditor.Text = "Entity Editor";
+            // 
+            // addAllFiltersButton
+            // 
+            this.addAllFiltersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addAllFiltersButton.Location = new System.Drawing.Point(126, 314);
+            this.addAllFiltersButton.Name = "addAllFiltersButton";
+            this.addAllFiltersButton.Size = new System.Drawing.Size(115, 23);
+            this.addAllFiltersButton.TabIndex = 3;
+            this.addAllFiltersButton.Text = "Add filter to all";
+            this.addAllFiltersButton.UseVisualStyleBackColor = true;
+            this.addAllFiltersButton.Click += new System.EventHandler(this.addAllFiltersButton_Click);
             // 
             // addFilterButton
             // 
@@ -225,17 +237,6 @@
             this.maniaFilterCheck.Text = "Mania (2)";
             this.maniaFilterCheck.UseVisualStyleBackColor = true;
             this.maniaFilterCheck.CheckedChanged += new System.EventHandler(this.maniaFilterCheck_CheckedChanged);
-            // 
-            // addAllFiltersButton
-            // 
-            this.addAllFiltersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addAllFiltersButton.Location = new System.Drawing.Point(126, 314);
-            this.addAllFiltersButton.Name = "addAllFiltersButton";
-            this.addAllFiltersButton.Size = new System.Drawing.Size(115, 23);
-            this.addAllFiltersButton.TabIndex = 3;
-            this.addAllFiltersButton.Text = "Add filter to all";
-            this.addAllFiltersButton.UseVisualStyleBackColor = true;
-            this.addAllFiltersButton.Click += new System.EventHandler(this.addAllFiltersButton_Click);
             // 
             // EntitiesToolbar
             // 
