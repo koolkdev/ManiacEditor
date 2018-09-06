@@ -113,6 +113,12 @@ namespace ManiacEditor
             InitializeComponent();
             InitDiscord();
 
+            /*using (var customMsgBox = new CustomMsgBox($"The specified Data Directory {1} is not valid. Please Try again with a Better Data Directory. It could be outdated, corrupted or worse something else", "Invalid Data Directory!", 2, 1))
+            {
+                customMsgBox.ShowDialog();
+
+            }*/
+
             this.splitContainer1.Panel2MinSize = 254;
 
             GraphicPanel.GotFocus += new EventHandler(OnGotFocus);
@@ -129,6 +135,7 @@ namespace ManiacEditor
             UpdateControls();
 
             TryLoadSettings();
+            
         }
 
         public void InitDiscord()
@@ -297,6 +304,7 @@ namespace ManiacEditor
                                 MessageBoxIcon.Error);
                 dataDirectories.Remove(dataDirectory);
                 RefreshDataDirectories(dataDirectories);
+
             }
             Properties.Settings.Default.Save();
         }
@@ -1547,6 +1555,7 @@ namespace ManiacEditor
 
         void UnloadScene()
         {
+
             SceneLoaded = false;
             EditorScene?.Dispose();
             EditorScene = null;
@@ -1596,6 +1605,9 @@ namespace ManiacEditor
             // clear memory a little more aggressively 
             EditorEntity.ReleaseResources();
             GC.Collect();
+
+            CollisionLayerA.Clear();
+            CollisionLayerB.Clear();
         }
 
         void UseVisibilityPrefrences()
@@ -2075,12 +2087,12 @@ a valid Data Directory.",
                     FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
+                if (ShowEntities.Checked && !EditEntities.Checked)
+                    entities.Draw(GraphicPanel);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
                 if (ShowFGHigher.Checked || EditFGHigher.Checked)
                     FGHigher.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
-                    entities.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
 
@@ -3368,8 +3380,9 @@ Error: {ex.Message}");
             if (FGLow != null) FGLow.DisposeTextures();
             if (FGHigher != null) FGHigh.DisposeTextures();
             if (FGLower != null) FGLow.DisposeTextures();
-            //CollisionLayerA.Clear();
-            //CollisionLayerB.Clear();
+            //if (CollisionLayerA != null) CollisionLayerA.Clear();
+            //if (CollisionLayerB != null) CollisionLayerB.Clear();
+
             foreach (var el in EditorScene.OtherLayers)
             {
                 el.DisposeTextures();
@@ -3402,8 +3415,7 @@ Error: {ex.Message}");
             }
             else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
             {
-                //GraphicPanel.Dispose();
-                //GraphicPanel.ResetDevice();
+                GraphicPanel.ResetDevice();
 
             }
             else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart

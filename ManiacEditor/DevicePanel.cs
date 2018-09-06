@@ -45,6 +45,7 @@ namespace ManiacEditor
         Bitmap hcursorb;
         Bitmap tcircleb;
         Bitmap tecircleb;
+        int attemptCount = 0;
 
         public bool bRender = true;
 
@@ -249,8 +250,8 @@ namespace ManiacEditor
             if (result == ResultCode.DeviceNotReset) { 
                 try
                 {
-                    //Editor.Instance.DeviceExceptionDialog();
-                    ResetDevice();
+                    Editor.Instance.DeviceExceptionDialog();
+                    //ResetDevice();
                 }
                 catch (SharpDXException ex)
                 {
@@ -263,11 +264,12 @@ namespace ManiacEditor
 
         public void ResetDevice()
         {
-            DisposeDeviceResources();
-            _parent.DisposeTextures();
-            _device.Reset(presentParams);
-            deviceLost = false;
-            InitDeviceResources();
+                DisposeDeviceResources();
+                _parent.DisposeTextures();
+                _device.Reset(presentParams);
+                deviceLost = false;
+                InitDeviceResources();
+
         }
 
         private void MakeGray(Bitmap image)
@@ -484,7 +486,12 @@ namespace ManiacEditor
 
         public void DrawBitmap(Texture image, int x, int y, int width, int height, bool selected, int transparency)
         {
-            if (!IsObjectOnScreen(x, y, width, height)) return;
+            if (Properties.Settings.Default.AlwaysRenderTextures == true)
+            {
+                if (!IsObjectOnScreen(x, y, width, height)) return;
+            }
+
+
 
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();
@@ -533,7 +540,11 @@ namespace ManiacEditor
             int y = Math.Min(Y1, Y2);
             int pixel_width = Math.Max((int)zoom, 1);
 
-            if (!IsObjectOnScreen(x, y, width, height)) return;
+            if (Properties.Settings.Default.AlwaysRenderLines != true)
+            {
+                if (!IsObjectOnScreen(x, y, width, height)) return;
+            }
+
             //tx = new Texture(_device, txb, Usage.Dynamic, Pool.Default);
 
 
@@ -620,7 +631,7 @@ namespace ManiacEditor
 
         public void DrawRectangle(int x1, int y1, int x2, int y2, Color color)
         {
-            if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
+            //if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
 
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();

@@ -1051,7 +1051,13 @@ namespace ManiacEditor
             {
                 var width = (int)(entity.attributesMap["width"].ValueUInt8);
                 var height = (int)(entity.attributesMap["height"].ValueUInt8);
-                var editorAnim = LoadAnimation2("ItemBox", d, 2, 9, false, false, false);
+                bool breakClimb = entity.attributesMap["breakClimb"].ValueBool;
+                int type;
+                if (breakClimb)
+                    type = 9;
+                else
+                    type = 6;
+                var editorAnim = LoadAnimation2("ItemBox", d, 2, type, false, false, false);
                 if (editorAnim != null && editorAnim.Frames.Count != 0)
                 {
                     var frame = editorAnim.Frames[index];

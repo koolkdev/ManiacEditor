@@ -977,17 +977,18 @@ namespace ManiacEditor
                 for (int x = start_x; x < end_x; ++x)
                 {
                     Rectangle rect = GetTilesChunkArea(x, y);
-                    if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
+                    /* (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
                     {
                         // TODO: If the full chunk isDrawTilesChunk selected, cache it
                         // draw one by one
                         DrawTilesChunk(d, x, y, Transperncy);
-                    }
-                    else
-                    {
+                    }*/
+                    //else
+                    //{
                         d.DrawBitmap(GetTilesChunkTexture(d, x, y), rect.X * TILE_SIZE, rect.Y * TILE_SIZE, rect.Width * TILE_SIZE, rect.Height * TILE_SIZE, false, Transperncy);
-                    }
-                    DrawSelectedTiles(d, x, y, Transperncy);
+                    //}
+                                        DrawSelectedTiles(d, x, y, Transperncy);
+                    
                 }
             }
         }

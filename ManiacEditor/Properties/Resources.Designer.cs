@@ -61,6 +61,16 @@ namespace ManiacEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ErrorMonitor {
+            get {
+                object obj = ResourceManager.GetObject("ErrorMonitor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon file {
@@ -118,6 +128,16 @@ namespace ManiacEditor.Properties {
         internal static string SoundWarning {
             get {
                 return ResourceManager.GetString("SoundWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningMonitor {
+            get {
+                object obj = ResourceManager.GetObject("WarningMonitor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

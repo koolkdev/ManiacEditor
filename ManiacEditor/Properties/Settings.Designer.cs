@@ -659,5 +659,29 @@ namespace ManiacEditor.Properties {
                 this["AllowMoreRenderUpdates"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlwaysRenderLines {
+            get {
+                return ((bool)(this["AlwaysRenderLines"]));
+            }
+            set {
+                this["AlwaysRenderLines"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlwaysRenderTextures {
+            get {
+                return ((bool)(this["AlwaysRenderTextures"]));
+            }
+            set {
+                this["AlwaysRenderTextures"] = value;
+            }
+        }
     }
 }
