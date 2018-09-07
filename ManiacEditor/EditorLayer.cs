@@ -735,6 +735,38 @@ namespace ManiacEditor
             return new Rectangle(x_start, y_start, x_end - x_start, y_end - y_start);
         }
 
+        public void DrawTile(DevicePanel d, ushort tile, int x, int y, bool selected, int Transperncy)
+        {
+            bool flipX = ((tile >> 10) & 1) == 1;
+            bool flipY = ((tile >> 11) & 1) == 1;
+            if (Properties.Settings.Default.UseFasterSelectionRendering == true)
+            {
+                selected = false;
+            }
+            d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
+x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
+
+            if (Editor.Instance.showTileID == true)
+            {
+                d.DrawBitmap(Editor.Instance.StageTiles.IDImage.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
+                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
+            }
+            if (selected)
+            {
+                if (Properties.Settings.Default.UseFasterSelectionRendering == false)
+                {
+                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
+                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
+                }
+                else
+                {
+                    d.DrawBitmap(Editor.Instance.StageTiles.EditorImage.GetTexture(d._device, new Rectangle(0, (1 & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, false, Transperncy);
+                }
+
+            }
+        }
         public void DrawTile(Graphics g, ushort tile, int x, int y)
         {
             ushort TileIndex = (ushort)(tile & 0x3ff);
@@ -846,38 +878,7 @@ namespace ManiacEditor
 
         }
 
-        public void DrawTile(DevicePanel d, ushort tile, int x, int y, bool selected, int Transperncy)
-        {
-            bool flipX = ((tile >> 10) & 1) == 1;
-            bool flipY = ((tile >> 11) & 1) == 1;
-            if (Properties.Settings.Default.UseFasterSelectionRendering == true)
-                {
-                    selected = false;
-                }
-                    d.DrawBitmap(Editor.Instance.StageTiles.Image.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), flipX, flipY),
-        x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
 
-            if (Editor.Instance.showTileID == true)
-            {
-                d.DrawBitmap(Editor.Instance.StageTiles.IDImage.GetTexture(d._device, new Rectangle(0, (tile & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false),
-                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, selected, Transperncy);
-            }
-            if (selected)
-            {
-                if (Properties.Settings.Default.UseFasterSelectionRendering == false)
-                {
-                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
-                    d.DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
-                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE, System.Drawing.Color.Brown);
-                    d.DrawLine(x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE, x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE, System.Drawing.Color.Brown);
-                }
-                else
-                {
-                    d.DrawBitmap(Editor.Instance.StageTiles.EditorImage.GetTexture(d._device, new Rectangle(0, (1 & 0x3ff) * TILE_SIZE, TILE_SIZE, TILE_SIZE), false, false), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, false, Transperncy);
-                }
-                    
-            }
-        }
 
         public void Draw(Graphics g)
         {
@@ -977,16 +978,16 @@ namespace ManiacEditor
                 for (int x = start_x; x < end_x; ++x)
                 {
                     Rectangle rect = GetTilesChunkArea(x, y);
-                    /* (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
+                    if (SelectedTiles.IsChunkUsed(x, y) || TempSelectionTiles.IsChunkUsed(x, y))
                     {
                         // TODO: If the full chunk isDrawTilesChunk selected, cache it
                         // draw one by one
                         DrawTilesChunk(d, x, y, Transperncy);
-                    }*/
-                    //else
-                    //{
+                    }
+                    else
+                    {
                         d.DrawBitmap(GetTilesChunkTexture(d, x, y), rect.X * TILE_SIZE, rect.Y * TILE_SIZE, rect.Width * TILE_SIZE, rect.Height * TILE_SIZE, false, Transperncy);
-                    //}
+                    }
                                         DrawSelectedTiles(d, x, y, Transperncy);
                     
                 }
