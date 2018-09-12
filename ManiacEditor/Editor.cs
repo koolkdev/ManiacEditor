@@ -309,6 +309,27 @@ namespace ManiacEditor
             Properties.Settings.Default.Save();
         }
 
+        private void RecentDataDirectoryClicked(object sender, EventArgs e, String dataDirectory)
+        {
+            var dataDirectories = Properties.Settings.Default.DataDirectories;
+            Properties.Settings.Default.GamePath = GamePath;
+            if (IsDataDirectoryValid(dataDirectory))
+            {
+                ResetDataDirectoryToAndResetScene(dataDirectory);
+            }
+            else
+            {
+                MessageBox.Show($"The specified Data Directory {dataDirectory} is not valid.",
+                                "Invalid Data Directory!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                dataDirectories.Remove(dataDirectory);
+                RefreshDataDirectories(dataDirectories);
+
+            }
+            Properties.Settings.Default.Save();
+        }
+
         private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
         {
             UnloadScene();
@@ -643,10 +664,16 @@ namespace ManiacEditor
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(0, true);
             }
-            else if (e.KeyCode == Keys.ShiftKey)
+            else if (e.KeyCode == Keys.Alt)
             {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, true);
+            }
+            else if (e.KeyCode == Keys.ShiftKey)
+            {
+                e.Handled = true;
+                nudgeFasterButton.Checked = true;
+                Properties.Settings.Default.EnableFasterNudge = true;
             }
             else if (e.Control && e.KeyCode == Keys.O)
             {
@@ -788,14 +815,15 @@ namespace ManiacEditor
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(0, false);
             }
-            else if (e.KeyCode == Keys.ShiftKey)
+            else if (e.KeyCode == Keys.Alt)
             {   
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, false);
             }
-            else if (e.KeyCode == Keys.N)
+            else if (e.KeyCode == Keys.ShiftKey)
             {
-                nudgeFasterButton_Click(sender,e);
+                nudgeFasterButton.Checked = false;
+                Properties.Settings.Default.EnableFasterNudge = false;
             }
             else if (e.KeyCode == Keys.B)
             {
@@ -810,7 +838,7 @@ namespace ManiacEditor
 
         private bool ShiftPressed()
         {
-            return ModifierKeys.HasFlag(Keys.Shift);
+            return ModifierKeys.HasFlag(Keys.Alt);
         }
 
         private void GraphicPanel_OnMouseDoubleClick(object sender, MouseEventArgs e)
@@ -3361,6 +3389,47 @@ Error: {ex.Message}");
             }
             
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            string dataDirectory = _recentDataItems[0].Tag.ToString();
+            if (dataDirectory != null)
+            {
+                RecentDataDirectoryClicked(sender, e, dataDirectory);
+            }
+        }
+
+        private void openSceneFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", "/select, " + ScenePath);
+        }
+
+        private void openDataDirectoryFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", "/select, " + DataDirectory);
+        }
+
+        private void openSonicManiaFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string GameFolder = GamePath.Replace("//SonicMania.exe", "");
+            Process.Start("explorer.exe", "/select, " + GameFolder);
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void rSDKAnnimationEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void hScrollBar1_Entered(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.scrollLock == false)
