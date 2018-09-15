@@ -350,15 +350,21 @@ namespace ManiacEditor
 
         private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
         {
-            UnloadScene();
-            UseVisibilityPrefrences();
-            DataDirectory = newDataDirectory;
-            AddRecentDataFolder(newDataDirectory);
-            SetGameConfig();
-            if (Properties.Settings.Default.forceBrowse == true)
-                OpenSceneManual();
-            else
-                OpenScene();
+            Editor.Instance.SceneChangeWarning(null, null);
+            if (AllowSceneChange == true || SceneLoaded == false || Properties.Settings.Default.DisableSaveWarnings == true)
+            {
+                AllowSceneChange = false;
+                UnloadScene();
+                UseVisibilityPrefrences();
+                DataDirectory = newDataDirectory;
+                AddRecentDataFolder(newDataDirectory);
+                SetGameConfig();
+                if (Properties.Settings.Default.forceBrowse == true)
+                    OpenSceneManual();
+                else
+                    OpenScene();
+            }
+
 
         }
 

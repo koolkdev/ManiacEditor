@@ -135,14 +135,14 @@
             this.selectionSizeLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.selectedPositionLabel = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.statusLabel = new System.Windows.Forms.ToolStripLabel();
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
             this.scrollLockButton = new System.Windows.Forms.ToolStripButton();
             this.nudgeFasterButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip4 = new System.Windows.Forms.ToolStrip();
             this.preLoadSceneButton = new System.Windows.Forms.ToolStripButton();
             this.GraphicPanel = new ManiacEditor.DevicePanel();
-            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
-            this.statusLabel = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip1.SuspendLayout();
             this.mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -861,6 +861,9 @@
             this.toolStripSplitButton1.Name = "toolStripSplitButton1";
             this.toolStripSplitButton1.Size = new System.Drawing.Size(32, 22);
             this.toolStripSplitButton1.Text = "Open Data Directory";
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.openDataDirectoryMenuButton);
+            this.toolStripSplitButton1.DropDownClosed += new System.EventHandler(this.openDataDirectoryButton_DropDownClosed);
+            this.toolStripSplitButton1.DropDownOpened += new System.EventHandler(this.openDataDirectoryButton_DropDownOpened);
             // 
             // noRecentDataDirectoriesToolStripMenuItem
             // 
@@ -1167,6 +1170,16 @@
             this.selectedPositionLabel.Size = new System.Drawing.Size(0, 22);
             this.selectedPositionLabel.ToolTipText = "The Position of the Selected Tile";
             // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 22);
+            // 
             // pixelModeButton
             // 
             this.pixelModeButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -1256,16 +1269,6 @@
             this.GraphicPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseMove);
             this.GraphicPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseUp);
             this.GraphicPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_MouseWheel);
-            // 
-            // toolStripSeparator13
-            // 
-            this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 22);
             // 
             // Editor
             // 
