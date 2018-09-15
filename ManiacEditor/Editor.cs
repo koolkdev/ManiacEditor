@@ -2183,7 +2183,7 @@ a valid Data Directory.",
                 Background.DrawGrid(GraphicPanel);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public void Form1_Load(object sender, EventArgs e)
         {
             GraphicPanel.Init(this);
         }
@@ -3518,63 +3518,73 @@ Error: {ex.Message}");
         DialogResult deviceExceptionResult;
         public void DeviceExceptionDialog()
         {
-            using (var deviceLostBox = new DeviceLostBox())
-            {
-                deviceLostBox.ShowDialog();
-                deviceExceptionResult = deviceLostBox.DialogResult;
-            }
-            if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
-            {
-                Editor.Instance.backupSceneBeforeCrash();
-                Environment.Exit(1);
-
-            }
-            else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
-            {
-                GraphicPanel.ResetDevice();
-
-            }
-            else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
-            {
-                Editor.Instance.backupSceneBeforeCrash();
-                GraphicPanel.Dispose();
-                //GraphicPanel.ResetDevice();
-            }
-            else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
-            {
-                Environment.Exit(1);
-            }
-        }
-        private void Editor_FormClosing1(object sender, System.Windows.Forms.FormClosingEventArgs e)
-        {
-            if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
-            {
-                DialogResult exitBoxResult;
-                using (var exitBox = new ExitWarningBox())
+                try
                 {
-                    exitBox.ShowDialog();
-                    exitBoxResult = exitBox.DialogResult;
+                    GraphicPanel.DisposeDeviceResources();
+                    GraphicPanel.Init(this);
                 }
-                if (exitBoxResult == DialogResult.Yes)
+                catch (SharpDX.SharpDXException ex)
                 {
-                    Save_Click(sender, e);
-                    Environment.Exit(1);
+                    using (var deviceLostBox = new DeviceLostBox())
+                    {
+                        deviceLostBox.ShowDialog();
+                        deviceExceptionResult = deviceLostBox.DialogResult;
+                    }
+                    if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
+                    {
+                        Editor.Instance.backupSceneBeforeCrash();
+                        Environment.Exit(1);
+
+                    }
+                    else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
+                    {
+                        GraphicPanel.DisposeDeviceResources();
+                        GraphicPanel.Init(this);
+
+                    }
+                    else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
+                    {
+                        Editor.Instance.backupSceneBeforeCrash();
+                        GraphicPanel.DisposeDeviceResources();
+                        GraphicPanel.Init(this);
+                    }
+                    else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
+                    {
+                        Environment.Exit(1);
+                    }
                 }
-                else if (exitBoxResult == DialogResult.No)
+            }
+            private void Editor_FormClosing1(object sender, System.Windows.Forms.FormClosingEventArgs e)
+            {
+                if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
                 {
-                    Environment.Exit(1);
+                    DialogResult exitBoxResult;
+                    using (var exitBox = new ExitWarningBox())
+                    {
+                        exitBox.ShowDialog();
+                        exitBoxResult = exitBox.DialogResult;
+                    }
+                    if (exitBoxResult == DialogResult.Yes)
+                    {
+                        Save_Click(sender, e);
+                        Environment.Exit(1);
+                    }
+                    else if (exitBoxResult == DialogResult.No)
+                    {
+                        Environment.Exit(1);
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
                 }
                 else
                 {
-                    e.Cancel = true;
+                    Environment.Exit(1);
                 }
-            }
-            else
-            {
-                Environment.Exit(1);
+
             }
 
-        }
         private void SceneChangeWarning(object sender, EventArgs e)
         {
             if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
