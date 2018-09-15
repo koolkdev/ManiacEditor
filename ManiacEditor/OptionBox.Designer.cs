@@ -125,6 +125,7 @@
             this.checkBox15 = new System.Windows.Forms.CheckBox();
             this.layerHide = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.button8 = new System.Windows.Forms.Button();
             this.panel12 = new System.Windows.Forms.Panel();
@@ -143,7 +144,7 @@
             this.label31 = new System.Windows.Forms.Label();
             this.checkBox34 = new System.Windows.Forms.CheckBox();
             this.checkBox35 = new System.Windows.Forms.CheckBox();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.checkBox26 = new System.Windows.Forms.CheckBox();
             this.tabPage4.SuspendLayout();
             this.panel11.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -1398,6 +1399,16 @@
             this.tabControl1.Size = new System.Drawing.Size(408, 600);
             this.tabControl1.TabIndex = 0;
             // 
+            // tabPage6
+            // 
+            this.tabPage6.BackColor = System.Drawing.SystemColors.MenuBar;
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(400, 574);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Controls";
+            // 
             // tabPage5
             // 
             this.tabPage5.BackColor = System.Drawing.SystemColors.MenuBar;
@@ -1486,6 +1497,7 @@
             // panel14
             // 
             this.panel14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel14.Controls.Add(this.checkBox26);
             this.panel14.Controls.Add(this.checkBox25);
             this.panel14.Controls.Add(this.checkBox24);
             this.panel14.Controls.Add(this.checkBox21);
@@ -1498,7 +1510,7 @@
             this.panel14.Controls.Add(this.checkBox35);
             this.panel14.Location = new System.Drawing.Point(8, 6);
             this.panel14.Name = "panel14";
-            this.panel14.Size = new System.Drawing.Size(184, 424);
+            this.panel14.Size = new System.Drawing.Size(184, 499);
             this.panel14.TabIndex = 102;
             // 
             // checkBox25
@@ -1527,7 +1539,7 @@
             this.checkBox24.Name = "checkBox24";
             this.checkBox24.Size = new System.Drawing.Size(171, 32);
             this.checkBox24.TabIndex = 103;
-            this.checkBox24.Text = "Always Render Lines\r\n(HUGE Performance Increase)\r\n";
+            this.checkBox24.Text = "Always Render Lines\r\n";
             this.checkBox24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox24.UseVisualStyleBackColor = false;
             // 
@@ -1648,15 +1660,20 @@
             this.checkBox35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox35.UseVisualStyleBackColor = false;
             // 
-            // tabPage6
+            // checkBox26
             // 
-            this.tabPage6.BackColor = System.Drawing.SystemColors.MenuBar;
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(400, 574);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Controls";
+            this.checkBox26.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox26.Checked = global::ManiacEditor.Properties.Settings.Default.AlternativeRenderingMethod;
+            this.checkBox26.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "AlternativeRenderingMethod", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox26.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox26.Location = new System.Drawing.Point(5, 423);
+            this.checkBox26.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox26.Name = "checkBox26";
+            this.checkBox26.Size = new System.Drawing.Size(171, 35);
+            this.checkBox26.TabIndex = 105;
+            this.checkBox26.Text = "Use Alt. Rendering Method\r\n(Discouraged)\r\n\r\n";
+            this.checkBox26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox26.UseVisualStyleBackColor = false;
             // 
             // OptionBox
             // 
@@ -1818,5 +1835,6 @@
         private System.Windows.Forms.CheckBox checkBox24;
         private System.Windows.Forms.CheckBox checkBox25;
         private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.CheckBox checkBox26;
     }
 }

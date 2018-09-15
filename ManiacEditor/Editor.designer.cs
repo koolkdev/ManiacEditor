@@ -67,11 +67,24 @@
             this.importSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layerManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sceneToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openSceneFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDataDirectoryFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openSonicManiaFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rSDKAnnimationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorPaletteEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPanel = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.viewPanel = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this._baseDataDirectoryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.New = new System.Windows.Forms.ToolStripButton();
@@ -91,6 +104,8 @@
             this.EditEntities = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            this.noRecentDataDirectoriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomInButton = new System.Windows.Forms.ToolStripButton();
             this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
             this.resetDeviceButton = new System.Windows.Forms.ToolStripButton();
@@ -123,30 +138,21 @@
             this.pixelModeButton = new System.Windows.Forms.ToolStripButton();
             this.scrollLockButton = new System.Windows.Forms.ToolStripButton();
             this.nudgeFasterButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.sceneToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openSceneFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openDataDirectoryFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openSonicManiaFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rSDKAnnimationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorPaletteEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.viewPanel = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.toolStrip4 = new System.Windows.Forms.ToolStrip();
+            this.preLoadSceneButton = new System.Windows.Forms.ToolStripButton();
             this.GraphicPanel = new ManiacEditor.DevicePanel();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.statusLabel = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip1.SuspendLayout();
             this.mainPanel.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.toolStrip3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.viewPanel.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            this.toolStrip3.SuspendLayout();
+            this.toolStrip4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -432,6 +438,67 @@
             this.removeObjectToolStripMenuItem.Text = "Remove Objects (!)";
             this.removeObjectToolStripMenuItem.Click += new System.EventHandler(this.removeObjectToolStripMenuItem_Click);
             // 
+            // sceneToolStripMenuItem1
+            // 
+            this.sceneToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openSceneFolderToolStripMenuItem,
+            this.openDataDirectoryFolderToolStripMenuItem,
+            this.openSonicManiaFolderToolStripMenuItem});
+            this.sceneToolStripMenuItem1.Name = "sceneToolStripMenuItem1";
+            this.sceneToolStripMenuItem1.Size = new System.Drawing.Size(79, 20);
+            this.sceneToolStripMenuItem1.Text = "Scene/Data";
+            // 
+            // openSceneFolderToolStripMenuItem
+            // 
+            this.openSceneFolderToolStripMenuItem.Name = "openSceneFolderToolStripMenuItem";
+            this.openSceneFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.openSceneFolderToolStripMenuItem.Text = "Open Scene Folder";
+            this.openSceneFolderToolStripMenuItem.Click += new System.EventHandler(this.openSceneFolderToolStripMenuItem_Click);
+            // 
+            // openDataDirectoryFolderToolStripMenuItem
+            // 
+            this.openDataDirectoryFolderToolStripMenuItem.Name = "openDataDirectoryFolderToolStripMenuItem";
+            this.openDataDirectoryFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.openDataDirectoryFolderToolStripMenuItem.Text = "Open Data Directory Folder";
+            this.openDataDirectoryFolderToolStripMenuItem.Click += new System.EventHandler(this.openDataDirectoryFolderToolStripMenuItem_Click);
+            // 
+            // openSonicManiaFolderToolStripMenuItem
+            // 
+            this.openSonicManiaFolderToolStripMenuItem.Name = "openSonicManiaFolderToolStripMenuItem";
+            this.openSonicManiaFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.openSonicManiaFolderToolStripMenuItem.Text = "Open Sonic Mania Folder";
+            this.openSonicManiaFolderToolStripMenuItem.Click += new System.EventHandler(this.openSonicManiaFolderToolStripMenuItem_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rSDKAnnimationEditorToolStripMenuItem,
+            this.cToolStripMenuItem,
+            this.colorPaletteEditorToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // rSDKAnnimationEditorToolStripMenuItem
+            // 
+            this.rSDKAnnimationEditorToolStripMenuItem.Name = "rSDKAnnimationEditorToolStripMenuItem";
+            this.rSDKAnnimationEditorToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.rSDKAnnimationEditorToolStripMenuItem.Text = "Tile Maniac (Collision Editor)";
+            this.rSDKAnnimationEditorToolStripMenuItem.Click += new System.EventHandler(this.rSDKAnnimationEditorToolStripMenuItem_Click);
+            // 
+            // cToolStripMenuItem
+            // 
+            this.cToolStripMenuItem.Name = "cToolStripMenuItem";
+            this.cToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.cToolStripMenuItem.Text = "RSDK Animation Editor";
+            this.cToolStripMenuItem.Click += new System.EventHandler(this.cToolStripMenuItem_Click);
+            // 
+            // colorPaletteEditorToolStripMenuItem
+            // 
+            this.colorPaletteEditorToolStripMenuItem.Name = "colorPaletteEditorToolStripMenuItem";
+            this.colorPaletteEditorToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.colorPaletteEditorToolStripMenuItem.Text = "Color Palette Editor";
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -471,10 +538,84 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mainPanel.Controls.Add(this.splitContainer1);
-            this.mainPanel.Location = new System.Drawing.Point(12, 52);
+            this.mainPanel.Location = new System.Drawing.Point(34, 52);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(1160, 657);
+            this.mainPanel.Size = new System.Drawing.Size(1138, 657);
             this.mainPanel.TabIndex = 9;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.viewPanel);
+            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer1.Size = new System.Drawing.Size(1137, 656);
+            this.splitContainer1.SplitterDistance = 878;
+            this.splitContainer1.TabIndex = 5;
+            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
+            // 
+            // viewPanel
+            // 
+            this.viewPanel.Controls.Add(this.panel3);
+            this.viewPanel.Controls.Add(this.hScrollBar1);
+            this.viewPanel.Controls.Add(this.vScrollBar1);
+            this.viewPanel.Controls.Add(this.GraphicPanel);
+            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.viewPanel.Location = new System.Drawing.Point(0, 0);
+            this.viewPanel.Name = "viewPanel";
+            this.viewPanel.Size = new System.Drawing.Size(876, 654);
+            this.viewPanel.TabIndex = 8;
+            // 
+            // panel3
+            // 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.Location = new System.Drawing.Point(858, 636);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(18, 18);
+            this.panel3.TabIndex = 8;
+            this.panel3.Visible = false;
+            // 
+            // hScrollBar1
+            // 
+            this.hScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.hScrollBar1.LargeChange = 20;
+            this.hScrollBar1.Location = new System.Drawing.Point(0, 636);
+            this.hScrollBar1.Name = "hScrollBar1";
+            this.hScrollBar1.Size = new System.Drawing.Size(850, 18);
+            this.hScrollBar1.SmallChange = 20;
+            this.hScrollBar1.TabIndex = 2;
+            this.hScrollBar1.Visible = false;
+            this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
+            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            this.hScrollBar1.MouseEnter += new System.EventHandler(this.hScrollBar1_Entered);
+            // 
+            // vScrollBar1
+            // 
+            this.vScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScrollBar1.LargeChange = 20;
+            this.vScrollBar1.Location = new System.Drawing.Point(858, 0);
+            this.vScrollBar1.Name = "vScrollBar1";
+            this.vScrollBar1.Size = new System.Drawing.Size(18, 636);
+            this.vScrollBar1.SmallChange = 20;
+            this.vScrollBar1.TabIndex = 1;
+            this.vScrollBar1.Visible = false;
+            this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
+            this.vScrollBar1.ValueChanged += new System.EventHandler(this.vScrollBar1_ValueChanged);
+            this.vScrollBar1.MouseEnter += new System.EventHandler(this.vScrollBar1_Entered);
             // 
             // statusStrip1
             // 
@@ -666,7 +807,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.New,
             this.Open,
-            this.toolStripButton1,
+            this.toolStripSplitButton1,
             this.Save,
             this.toolStripSeparator1,
             this.zoomInButton,
@@ -708,6 +849,26 @@
             this.toolStrip1.Size = new System.Drawing.Size(1184, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "Open Most Recent Data Directory";
+            // 
+            // toolStripSplitButton1
+            // 
+            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.noRecentDataDirectoriesToolStripMenuItem});
+            this.toolStripSplitButton1.Image = global::ManiacEditor.Properties.Resources.toolStripButton1;
+            this.toolStripSplitButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(32, 22);
+            this.toolStripSplitButton1.Text = "Open Data Directory";
+            // 
+            // noRecentDataDirectoriesToolStripMenuItem
+            // 
+            this.noRecentDataDirectoriesToolStripMenuItem.Enabled = false;
+            this.noRecentDataDirectoriesToolStripMenuItem.Name = "noRecentDataDirectoriesToolStripMenuItem";
+            this.noRecentDataDirectoriesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.noRecentDataDirectoriesToolStripMenuItem.Text = "No Recent Data Directories";
+            this.noRecentDataDirectoriesToolStripMenuItem.Visible = false;
             // 
             // zoomInButton
             // 
@@ -962,6 +1123,8 @@
             this.selectionSizeLabel,
             this.toolStripSeparator12,
             this.selectedPositionLabel,
+            this.toolStripSeparator13,
+            this.statusLabel,
             this.pixelModeButton,
             this.scrollLockButton,
             this.nudgeFasterButton});
@@ -1044,155 +1207,35 @@
     "y: N";
             this.nudgeFasterButton.Click += new System.EventHandler(this.nudgeFasterButton_Click);
             // 
-            // toolStripButton1
+            // toolStrip4
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "Open Data Directory";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStrip4.AutoSize = false;
+            this.toolStrip4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.toolStrip4.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.preLoadSceneButton});
+            this.toolStrip4.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
+            this.toolStrip4.Location = new System.Drawing.Point(0, 49);
+            this.toolStrip4.Name = "toolStrip4";
+            this.toolStrip4.Size = new System.Drawing.Size(31, 663);
+            this.toolStrip4.TabIndex = 12;
+            this.toolStrip4.Text = "toolStrip4";
             // 
-            // sceneToolStripMenuItem1
+            // preLoadSceneButton
             // 
-            this.sceneToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openSceneFolderToolStripMenuItem,
-            this.openDataDirectoryFolderToolStripMenuItem,
-            this.openSonicManiaFolderToolStripMenuItem});
-            this.sceneToolStripMenuItem1.Name = "sceneToolStripMenuItem1";
-            this.sceneToolStripMenuItem1.Size = new System.Drawing.Size(79, 20);
-            this.sceneToolStripMenuItem1.Text = "Scene/Data";
-            // 
-            // openSceneFolderToolStripMenuItem
-            // 
-            this.openSceneFolderToolStripMenuItem.Name = "openSceneFolderToolStripMenuItem";
-            this.openSceneFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.openSceneFolderToolStripMenuItem.Text = "Open Scene Folder";
-            this.openSceneFolderToolStripMenuItem.Click += new System.EventHandler(this.openSceneFolderToolStripMenuItem_Click);
-            // 
-            // openDataDirectoryFolderToolStripMenuItem
-            // 
-            this.openDataDirectoryFolderToolStripMenuItem.Name = "openDataDirectoryFolderToolStripMenuItem";
-            this.openDataDirectoryFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.openDataDirectoryFolderToolStripMenuItem.Text = "Open Data Directory Folder";
-            this.openDataDirectoryFolderToolStripMenuItem.Click += new System.EventHandler(this.openDataDirectoryFolderToolStripMenuItem_Click);
-            // 
-            // openSonicManiaFolderToolStripMenuItem
-            // 
-            this.openSonicManiaFolderToolStripMenuItem.Name = "openSonicManiaFolderToolStripMenuItem";
-            this.openSonicManiaFolderToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.openSonicManiaFolderToolStripMenuItem.Text = "Open Sonic Mania Folder";
-            this.openSonicManiaFolderToolStripMenuItem.Click += new System.EventHandler(this.openSonicManiaFolderToolStripMenuItem_Click);
-            // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.rSDKAnnimationEditorToolStripMenuItem,
-            this.cToolStripMenuItem,
-            this.colorPaletteEditorToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // rSDKAnnimationEditorToolStripMenuItem
-            // 
-            this.rSDKAnnimationEditorToolStripMenuItem.Name = "rSDKAnnimationEditorToolStripMenuItem";
-            this.rSDKAnnimationEditorToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.rSDKAnnimationEditorToolStripMenuItem.Text = "Tile Maniac (Collision Editor)";
-            this.rSDKAnnimationEditorToolStripMenuItem.Click += new System.EventHandler(this.rSDKAnnimationEditorToolStripMenuItem_Click);
-            // 
-            // cToolStripMenuItem
-            // 
-            this.cToolStripMenuItem.Name = "cToolStripMenuItem";
-            this.cToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.cToolStripMenuItem.Text = "RSDK Animation Editor";
-            this.cToolStripMenuItem.Click += new System.EventHandler(this.cToolStripMenuItem_Click);
-            // 
-            // colorPaletteEditorToolStripMenuItem
-            // 
-            this.colorPaletteEditorToolStripMenuItem.Name = "colorPaletteEditorToolStripMenuItem";
-            this.colorPaletteEditorToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.colorPaletteEditorToolStripMenuItem.Text = "Color Palette Editor";
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.viewPanel);
-            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(1159, 656);
-            this.splitContainer1.SplitterDistance = 868;
-            this.splitContainer1.TabIndex = 5;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
-            // 
-            // viewPanel
-            // 
-            this.viewPanel.Controls.Add(this.panel3);
-            this.viewPanel.Controls.Add(this.hScrollBar1);
-            this.viewPanel.Controls.Add(this.vScrollBar1);
-            this.viewPanel.Controls.Add(this.GraphicPanel);
-            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 0);
-            this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(866, 654);
-            this.viewPanel.TabIndex = 8;
-            // 
-            // panel3
-            // 
-            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.Location = new System.Drawing.Point(848, 636);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(18, 18);
-            this.panel3.TabIndex = 8;
-            this.panel3.Visible = false;
-            // 
-            // hScrollBar1
-            // 
-            this.hScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.hScrollBar1.LargeChange = 20;
-            this.hScrollBar1.Location = new System.Drawing.Point(0, 636);
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(850, 18);
-            this.hScrollBar1.SmallChange = 20;
-            this.hScrollBar1.TabIndex = 2;
-            this.hScrollBar1.Visible = false;
-            this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
-            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            this.hScrollBar1.MouseEnter += new System.EventHandler(this.hScrollBar1_Entered);
-            // 
-            // vScrollBar1
-            // 
-            this.vScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollBar1.LargeChange = 20;
-            this.vScrollBar1.Location = new System.Drawing.Point(848, 0);
-            this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(18, 636);
-            this.vScrollBar1.SmallChange = 20;
-            this.vScrollBar1.TabIndex = 1;
-            this.vScrollBar1.Visible = false;
-            this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
-            this.vScrollBar1.ValueChanged += new System.EventHandler(this.vScrollBar1_ValueChanged);
-            this.vScrollBar1.MouseEnter += new System.EventHandler(this.vScrollBar1_Entered);
+            this.preLoadSceneButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.preLoadSceneButton.Image = global::ManiacEditor.Properties.Resources.ApplicationServiceOK_16x;
+            this.preLoadSceneButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.preLoadSceneButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.preLoadSceneButton.Name = "preLoadSceneButton";
+            this.preLoadSceneButton.Size = new System.Drawing.Size(29, 20);
+            this.preLoadSceneButton.Text = "Virtual Walkaround (Pre-Load all of the Scene)";
+            this.preLoadSceneButton.Click += new System.EventHandler(this.preLoadSceneButton_Click);
             // 
             // GraphicPanel
             // 
             this.GraphicPanel.AllowDrop = true;
+            this.GraphicPanel.AutoSize = true;
             this.GraphicPanel.DeviceBackColor = System.Drawing.Color.White;
             this.GraphicPanel.Location = new System.Drawing.Point(0, 0);
             this.GraphicPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -1214,11 +1257,22 @@
             this.GraphicPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_OnMouseUp);
             this.GraphicPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GraphicPanel_MouseWheel);
             // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 22);
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 759);
+            this.Controls.Add(this.toolStrip4);
             this.Controls.Add(this.toolStrip3);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainPanel);
@@ -1240,16 +1294,19 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.mainPanel.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.viewPanel.ResumeLayout(false);
+            this.viewPanel.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.viewPanel.ResumeLayout(false);
+            this.toolStrip4.ResumeLayout(false);
+            this.toolStrip4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1359,11 +1416,16 @@
         private System.Windows.Forms.ToolStripMenuItem openSceneFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openDataDirectoryFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSonicManiaFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rSDKAnnimationEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorPaletteEditorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.ToolStripMenuItem noRecentDataDirectoriesToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStrip4;
+        private System.Windows.Forms.ToolStripButton preLoadSceneButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripLabel statusLabel;
     }
 }
 

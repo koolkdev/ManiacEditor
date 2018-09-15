@@ -13,6 +13,7 @@ namespace RSDKv5
         public readonly GIF IDImage;
         public readonly GIF EditorImage;
         public readonly TilesConfig Config;
+        public readonly GIF CollisionA;
 
         public StageTiles(string stage_directory)
         {
@@ -20,7 +21,10 @@ namespace RSDKv5
             IDImage = new GIF(Path.Combine(Environment.CurrentDirectory, "16x16Tiles_ID.gif"));
             EditorImage = new GIF(Path.Combine(Environment.CurrentDirectory, "16x16Tiles_Edit.gif"));
             if (File.Exists(Path.Combine(stage_directory, "TileConfig.bin")))
+            {
                 Config = new TilesConfig(Path.Combine(stage_directory, "TileConfig.bin"));
+            }
+
         }
 
         public void Dispose()

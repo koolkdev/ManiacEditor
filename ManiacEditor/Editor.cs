@@ -99,6 +99,7 @@ namespace ManiacEditor
         public static Editor Instance;
 
         private IList<ToolStripMenuItem> _recentDataItems;
+        private IList<ToolStripMenuItem> _recentDataItems_Button;
         public static ProcessMemory GameMemory = new ProcessMemory();
         public static bool GameRunning = false;
         public static string GamePath = "";
@@ -129,6 +130,7 @@ namespace ManiacEditor
 
             _extraLayerButtons = new List<ToolStripButton>();
             _recentDataItems = new List<ToolStripMenuItem>();
+            _recentDataItems_Button = new List<ToolStripMenuItem>();
 
             SetViewSize();
 
@@ -250,17 +252,27 @@ namespace ManiacEditor
             CleanUpRecentList();
 
             var startRecentItems = fileToolStripMenuItem.DropDownItems.IndexOf(recentDataDirectoriesToolStripMenuItem);
+            var startRecentItemsButton = toolStripSplitButton1.DropDownItems.IndexOf(noRecentDataDirectoriesToolStripMenuItem);
 
             foreach (var dataDirectory in recentDataDirectories)
             {
                 _recentDataItems.Add(CreateDataDirectoryMenuLink(dataDirectory));
+                _recentDataItems_Button.Add(CreateDataDirectoryMenuLink(dataDirectory));
+
             }
+
 
             foreach (var menuItem in _recentDataItems.Reverse())
             {
-                fileToolStripMenuItem.DropDownItems.Insert(startRecentItems,
-                                                           menuItem);
+                fileToolStripMenuItem.DropDownItems.Insert(startRecentItems, menuItem);
             }
+
+            foreach (var menuItem in _recentDataItems_Button.Reverse())
+            {
+                toolStripSplitButton1.DropDownItems.Insert(startRecentItemsButton, menuItem);
+            }
+
+
         }
 
         /// <summary>
@@ -273,7 +285,13 @@ namespace ManiacEditor
                 menuItem.Click -= RecentDataDirectoryClicked;
                 fileToolStripMenuItem.DropDownItems.Remove(menuItem);
             }
+            foreach (var menuItem in _recentDataItems_Button)
+            {
+                menuItem.Click -= RecentDataDirectoryClicked;
+                toolStripSplitButton1.DropDownItems.Remove(menuItem);
+            }
             _recentDataItems.Clear();
+            _recentDataItems_Button.Clear();
         }
 
         private ToolStripMenuItem CreateDataDirectoryMenuLink(string target)
@@ -386,6 +404,7 @@ namespace ManiacEditor
             ShowEntities.Enabled = enabled;
             ShowAnimations.Enabled = enabled;
             ReloadToolStripButton.Enabled = enabled;
+            preLoadSceneButton.Enabled = enabled;
 
             Save.Enabled = enabled;
             
@@ -844,7 +863,7 @@ namespace ManiacEditor
         private void GraphicPanel_OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
         }
-
+        
         private void GraphicPanel_OnMouseMove(object sender, MouseEventArgs e)
         {
             if (Properties.Settings.Default.AllowMoreRenderUpdates)
@@ -1076,7 +1095,7 @@ namespace ManiacEditor
                         {
                             hScrollBar1.Value = x;
                         }
-                        GraphicPanel.Render();
+                        //GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
                     }
 
@@ -3390,7 +3409,7 @@ Error: {ex.Message}");
             
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void openDataDirectoryMenuButton(object sender, EventArgs e)
         {
             string dataDirectory = _recentDataItems[0].Tag.ToString();
             if (dataDirectory != null)
@@ -3428,6 +3447,34 @@ Error: {ex.Message}");
         private void cToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void openDataDirectoryButton_DropDownOpened(object sender, EventArgs e)
+        {
+            toolStripSplitButton1.AutoToolTip = false;
+        }
+
+        private void openDataDirectoryButton_DropDownClosed(object sender, EventArgs e)
+        {
+            toolStripSplitButton1.AutoToolTip = true;
+        }
+
+        private void preLoadSceneButton_Click(object sender, EventArgs e)
+        {
+            hScrollBar1.Value = 0;
+            vScrollBar1.Value = 0;
+            for (int y = 0; y < SceneHeight;) {
+                for (int x = 0; x < SceneWidth;)
+                {
+                    hScrollBar1.Value = x;
+                    x = x + 100;
+                    
+                }
+                vScrollBar1.Value = y;
+                y = y + 600;
+            }
+            hScrollBar1.Value = 0;
+            vScrollBar1.Value = 0;
         }
 
         private void hScrollBar1_Entered(object sender, EventArgs e)

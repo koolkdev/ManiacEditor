@@ -16,16 +16,17 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -40,7 +41,49 @@
   <PropertyGroup>
     <ApplicationIcon>64x64.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64 Release|AnyCPU'">
+    <OutputPath>bin\Release%28x64%29\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x86 Release|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release%28x86%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x86 Debug|AnyCPU'">
+    <OutputPath>bin\Debug%28x86%29\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64 Debug|AnyCPU'">
+    <OutputPath>bin\Debug%28x64%29\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.1.1.0\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.UI.Forms, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.UI.Forms.1.0.1\lib\MonoGame.UI.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -54,6 +97,7 @@
       <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -189,6 +233,7 @@
       <DependentUpon>SceneSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="ScrollInfoLines.cs" />
+    <Compile Include="SettingsReader.cs" />
     <Compile Include="SoundImporter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -220,6 +265,56 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Resources\zoomOutButton.Image1.png" />
+    <None Include="Resources\zoomInButton.Image1.png" />
+    <None Include="Resources\undoButton.Image1.png" />
+    <None Include="Resources\toolStripButton1.Image1.png" />
+    <None Include="Resources\showTileIDButton.Image1.png" />
+    <None Include="Resources\showGridButton.Image1.png" />
+    <None Include="Resources\ShowFGLower.Image1.png" />
+    <None Include="Resources\ShowFGLow.Image1.png" />
+    <None Include="Resources\ShowFGHigher.Image1.png" />
+    <None Include="Resources\ShowFGHigh.Image1.png" />
+    <None Include="Resources\ShowEntities.Image1.png" />
+    <None Include="Resources\showCollisionBButton.Image1.png" />
+    <None Include="Resources\showCollisionAButton.Image1.png" />
+    <None Include="Resources\ShowAnimations.Image1.png" />
+    <None Include="Resources\selectTool.Image1.png" />
+    <None Include="Resources\scrollLockButton.Image1.png" />
+    <None Include="Resources\Save.Image1.png" />
+    <None Include="Resources\RunScene.Image1.png" />
+    <None Include="Resources\resetDeviceButton.Image1.png" />
+    <None Include="Resources\ReloadToolStripButton.Image1.png" />
+    <None Include="Resources\redoButton.Image1.png" />
+    <None Include="Resources\pointerButton.Image1.png" />
+    <None Include="Resources\placeTilesButton.Image1.png" />
+    <None Include="Resources\pixelModeButton.Image1.png" />
+    <None Include="Resources\Open.Image1.png" />
+    <None Include="Resources\zoomOutButton.Image.png" />
+    <None Include="Resources\zoomInButton.Image.png" />
+    <None Include="Resources\undoButton.Image.png" />
+    <None Include="Resources\toolStripButton1.Image.png" />
+    <None Include="Resources\showTileIDButton.Image.png" />
+    <None Include="Resources\showGridButton.Image.png" />
+    <None Include="Resources\ShowFGLower.Image.png" />
+    <None Include="Resources\ShowFGLow.Image.png" />
+    <None Include="Resources\ShowFGHigher.Image.png" />
+    <None Include="Resources\ShowFGHigh.Image.png" />
+    <None Include="Resources\ShowEntities.Image.png" />
+    <None Include="Resources\showCollisionBButton.Image.png" />
+    <None Include="Resources\showCollisionAButton.Image.png" />
+    <None Include="Resources\ShowAnimations.Image.png" />
+    <None Include="Resources\selectTool.Image.png" />
+    <None Include="Resources\scrollLockButton.Image.png" />
+    <None Include="Resources\Save.Image.png" />
+    <None Include="Resources\RunScene.Image.png" />
+    <None Include="Resources\resetDeviceButton.Image.png" />
+    <None Include="Resources\ReloadToolStripButton.Image.png" />
+    <None Include="Resources\redoButton.Image.png" />
+    <None Include="Resources\pointerButton.Image.png" />
+    <None Include="Resources\placeTilesButton.Image.png" />
+    <None Include="Resources\pixelModeButton.Image.png" />
+    <None Include="Resources\Open.Image.png" />
     <None Include="Resources\WarningMonitor.gif" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
@@ -305,6 +400,23 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="Resources\ErrorMonitor.gif" />
+    <None Include="Resources\EditFGLow.Image.png" />
+    <None Include="Resources\EditEntities.Image.png" />
+    <None Include="Resources\EditFGHigh.Image.png" />
+    <None Include="Resources\EditFGHigher.Image.png" />
+    <None Include="Resources\EditFGLower.Image.png" />
+    <None Include="Resources\MagnetMode.Image.png" />
+    <None Include="Resources\New.Image.png" />
+    <None Include="Resources\nudgeFasterButton.Image.png" />
+    <None Include="Resources\EditEntities.Image1.png" />
+    <None Include="Resources\EditFGHigh.Image1.png" />
+    <None Include="Resources\EditFGHigher.Image1.png" />
+    <None Include="Resources\EditFGLow.Image1.png" />
+    <None Include="Resources\EditFGLower.Image1.png" />
+    <None Include="Resources\MagnetMode.Image1.png" />
+    <None Include="Resources\New.Image1.png" />
+    <None Include="Resources\nudgeFasterButton.Image1.png" />
+    <None Include="Resources\ApplicationServiceOK_16x.png" />
     <Content Include="Resources\objects_attributes.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -313,7 +425,9 @@
     <None Include="Resources\SoundWarning.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\file.ico" />

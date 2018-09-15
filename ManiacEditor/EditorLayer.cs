@@ -287,6 +287,7 @@ namespace ManiacEditor
         public void StartDrag()
         {
             FirstDrag = true;
+            RefreshTileCount();
         }
 
         public void StartDragOver(Point point, ushort value)
@@ -338,7 +339,7 @@ namespace ManiacEditor
 
         public void MoveSelected(Point oldPos, Point newPos, bool duplicate)
         {
-            if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
+            //if (Properties.Settings.Default.AllowMoreRenderUpdates == true) Editor.Instance.UpdateRender();
             oldPos = new Point(oldPos.X / TILE_SIZE, oldPos.Y / TILE_SIZE);
             newPos = new Point(newPos.X / TILE_SIZE, newPos.Y / TILE_SIZE);
             if (oldPos != newPos)
@@ -369,9 +370,9 @@ namespace ManiacEditor
                     Actions.Add(new ActionDummy());
                     RefreshTileCount();
                 }
-                RefreshTileCount();
                 SelectedTilesValue = newDict;
                 SelectedTiles.AddPoints(newPoints);
+                RefreshTileCount();
             }
         }
 

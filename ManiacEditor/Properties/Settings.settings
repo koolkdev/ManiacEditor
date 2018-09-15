@@ -2,16 +2,16 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ManiacEditor.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="IsMaximized" Type="System.Boolean" Scope="User">
+    <Setting Name="IsMaximized" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="DataDirectories" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="DataDirectories" Roaming="true" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+    <Setting Name="UpgradeRequired" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="GamePath" Type="System.String" Scope="User">
+    <Setting Name="GamePath" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ForceCopyUnlock" Roaming="true" Type="System.Boolean" Scope="User">
@@ -20,151 +20,154 @@
     <Setting Name="KeepLayersVisible" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="NeverLoadEntityTextures" Type="System.Boolean" Scope="User">
+    <Setting Name="NeverLoadEntityTextures" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SolidTopDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="SolidTopDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SolidAllButTopDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="SolidAllButTopDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Unkown1Default" Type="System.Boolean" Scope="User">
+    <Setting Name="Unkown1Default" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Unkown2Default" Type="System.Boolean" Scope="User">
+    <Setting Name="Unkown2Default" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CustomLayerHigh" Type="System.String" Scope="User">
+    <Setting Name="CustomLayerHigh" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="CustomLayerLow" Type="System.String" Scope="User">
+    <Setting Name="CustomLayerLow" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FGLowerDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="FGLowerDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="FGLowDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="FGLowDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="FGHighDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="FGHighDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="FGHigherDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="FGHigherDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="EntitiesDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="EntitiesDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="AnimationsDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="AnimationsDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="pixelCountMode" Type="System.Boolean" Scope="User">
+    <Setting Name="pixelCountMode" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="tileToolbarDefaultZoomLevel" Type="System.Int32" Scope="User">
+    <Setting Name="tileToolbarDefaultZoomLevel" Roaming="true" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="showManiaEntities" Type="System.Boolean" Scope="User">
+    <Setting Name="showManiaEntities" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="showEncoreEntities" Type="System.Boolean" Scope="User">
+    <Setting Name="showEncoreEntities" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="showBothEntities" Type="System.Boolean" Scope="User">
+    <Setting Name="showBothEntities" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="showOtherEntities" Type="System.Boolean" Scope="User">
+    <Setting Name="showOtherEntities" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="DefaultFilter" Type="System.String" Scope="User">
+    <Setting Name="DefaultFilter" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)">Mania (2)</Value>
     </Setting>
-    <Setting Name="EnableWindowsClipboard" Type="System.Boolean" Scope="User">
+    <Setting Name="EnableWindowsClipboard" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ReduceZoom" Type="System.Boolean" Scope="User">
+    <Setting Name="ReduceZoom" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="RemoveObjectImportLock" Type="System.Boolean" Scope="User">
+    <Setting Name="RemoveObjectImportLock" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="IsFilesViewDefault" Type="System.Boolean" Scope="User">
+    <Setting Name="IsFilesViewDefault" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SceneSelectRadioButton1On" Type="System.Boolean" Scope="User">
+    <Setting Name="SceneSelectRadioButton1On" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SceneSelectRadioButton2On" Type="System.Boolean" Scope="User">
+    <Setting Name="SceneSelectRadioButton2On" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="scrollLock" Type="System.Boolean" Scope="User">
+    <Setting Name="scrollLock" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ScrollLockDirection" Type="System.Boolean" Scope="User">
+    <Setting Name="ScrollLockDirection" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ScrollLockX" Type="System.Boolean" Scope="User">
+    <Setting Name="ScrollLockX" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="ScrollLockY" Type="System.Boolean" Scope="User">
+    <Setting Name="ScrollLockY" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="DisableSaveWarnings" Type="System.Boolean" Scope="User">
+    <Setting Name="DisableSaveWarnings" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="enableMightySupport" Type="System.Boolean" Scope="User">
+    <Setting Name="enableMightySupport" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="EnableFasterNudge" Type="System.Boolean" Scope="User">
+    <Setting Name="EnableFasterNudge" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="FasterNudgeValue" Type="System.Int32" Scope="User">
+    <Setting Name="FasterNudgeValue" Roaming="true" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="RunGameInsteadOfScene" Type="System.Boolean" Scope="User">
+    <Setting Name="RunGameInsteadOfScene" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UsePrePlusOffsets" Type="System.Boolean" Scope="User">
+    <Setting Name="UsePrePlusOffsets" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="RunGamePath" Type="System.String" Scope="User">
+    <Setting Name="RunGamePath" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ProhibitEntityUseOnExternalClipboard" Type="System.Boolean" Scope="User">
+    <Setting Name="ProhibitEntityUseOnExternalClipboard" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="ShowDiscordRPC" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowDiscordRPC" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="DeleteObjectsInsteadOfImport" Type="System.Boolean" Scope="User">
+    <Setting Name="DeleteObjectsInsteadOfImport" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="forceBrowse" Type="System.Boolean" Scope="User">
+    <Setting Name="forceBrowse" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="NeverShowThisAgain" Type="System.Boolean" Scope="User">
+    <Setting Name="NeverShowThisAgain" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UseObjectRenderingImprovements" Type="System.Boolean" Scope="User">
+    <Setting Name="UseObjectRenderingImprovements" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowEditLayerBackground" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowEditLayerBackground" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UseFasterSelectionRendering" Type="System.Boolean" Scope="User">
+    <Setting Name="UseFasterSelectionRendering" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AlwaysRenderObjects" Type="System.Boolean" Scope="User">
+    <Setting Name="AlwaysRenderObjects" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AllowMoreRenderUpdates" Type="System.Boolean" Scope="User">
+    <Setting Name="AllowMoreRenderUpdates" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AlwaysRenderLines" Type="System.Boolean" Scope="User">
+    <Setting Name="AlwaysRenderLines" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AlwaysRenderTextures" Type="System.Boolean" Scope="User">
+    <Setting Name="AlwaysRenderTextures" Roaming="true" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AlternativeRenderingMethod" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
