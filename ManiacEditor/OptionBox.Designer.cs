@@ -116,6 +116,7 @@
             this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.checkBox11 = new System.Windows.Forms.CheckBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.checkBox27 = new System.Windows.Forms.CheckBox();
             this.checkBox20 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
@@ -145,7 +146,7 @@
             this.label31 = new System.Windows.Forms.Label();
             this.checkBox34 = new System.Windows.Forms.CheckBox();
             this.checkBox35 = new System.Windows.Forms.CheckBox();
-            this.checkBox27 = new System.Windows.Forms.CheckBox();
+            this.checkBox28 = new System.Windows.Forms.CheckBox();
             this.tabPage4.SuspendLayout();
             this.panel11.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -301,13 +302,14 @@
             // 
             // panel10
             // 
+            this.panel10.Controls.Add(this.checkBox28);
             this.panel10.Controls.Add(this.checkBox19);
             this.panel10.Controls.Add(this.label12);
             this.panel10.Controls.Add(this.enableWindowsClipboard);
             this.panel10.Controls.Add(this.checkBox2);
             this.panel10.Location = new System.Drawing.Point(8, 8);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(176, 196);
+            this.panel10.Size = new System.Drawing.Size(176, 274);
             this.panel10.TabIndex = 102;
             // 
             // checkBox19
@@ -547,7 +549,8 @@
             this.label10.Size = new System.Drawing.Size(157, 13);
             this.label10.TabIndex = 67;
             this.label10.Text = "Entity Visibility Defaults:";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // animationsDefault
             // 
             this.animationsDefault.BackColor = System.Drawing.Color.Transparent;
@@ -597,7 +600,8 @@
             this.label9.Size = new System.Drawing.Size(157, 13);
             this.label9.TabIndex = 49;
             this.label9.Text = "Default Visible Layers:";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // fgLowDefault
             // 
             this.fgLowDefault.BackColor = System.Drawing.Color.Transparent;
@@ -973,7 +977,8 @@
             this.label8.Size = new System.Drawing.Size(160, 19);
             this.label8.TabIndex = 62;
             this.label8.Text = "Scene Select Default Format:";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1244,6 +1249,21 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(184, 400);
             this.panel3.TabIndex = 98;
+            // 
+            // checkBox27
+            // 
+            this.checkBox27.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox27.Checked = global::ManiacEditor.Properties.Settings.Default.forceBrowse;
+            this.checkBox27.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceBrowse", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox27.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox27.Location = new System.Drawing.Point(16, 339);
+            this.checkBox27.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox27.Name = "checkBox27";
+            this.checkBox27.Size = new System.Drawing.Size(160, 54);
+            this.checkBox27.TabIndex = 98;
+            this.checkBox27.Text = "Use File Explorer instead of Scene Select for Browsing Stages.";
+            this.checkBox27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox27.UseVisualStyleBackColor = false;
             // 
             // checkBox20
             // 
@@ -1645,20 +1665,19 @@
             this.checkBox35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox35.UseVisualStyleBackColor = false;
             // 
-            // checkBox27
+            // checkBox28
             // 
-            this.checkBox27.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox27.Checked = global::ManiacEditor.Properties.Settings.Default.forceBrowse;
-            this.checkBox27.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceBrowse", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBox27.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox27.Location = new System.Drawing.Point(16, 339);
-            this.checkBox27.Margin = new System.Windows.Forms.Padding(5);
-            this.checkBox27.Name = "checkBox27";
-            this.checkBox27.Size = new System.Drawing.Size(160, 54);
-            this.checkBox27.TabIndex = 98;
-            this.checkBox27.Text = "Use File Explorer instead of Scene Select for Browsing Stages.";
-            this.checkBox27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox27.UseVisualStyleBackColor = false;
+            this.checkBox28.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox28.Checked = global::ManiacEditor.Properties.Settings.Default.DisableEntityReading;
+            this.checkBox28.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "DisableEntityReading", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox28.Location = new System.Drawing.Point(8, 189);
+            this.checkBox28.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox28.Name = "checkBox28";
+            this.checkBox28.Size = new System.Drawing.Size(160, 32);
+            this.checkBox28.TabIndex = 61;
+            this.checkBox28.Text = "Disable Entity Reading\r\n(Scene Rescue Mode)";
+            this.checkBox28.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox28.UseVisualStyleBackColor = false;
             // 
             // OptionBox
             // 
@@ -1821,5 +1840,6 @@
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.CheckBox checkBox26;
         private System.Windows.Forms.CheckBox checkBox27;
+        private System.Windows.Forms.CheckBox checkBox28;
     }
 }

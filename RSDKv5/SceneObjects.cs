@@ -40,6 +40,7 @@ namespace RSDKv5
             ushort entities_count = reader.ReadUInt16();
             for (int i = 0; i < entities_count; ++i)
                 Entities.Add(new SceneEntity(reader, this));
+                
         }
 
         internal void Write(Writer writer)

@@ -61,6 +61,7 @@ namespace ManiacEditor
         internal EditorScene EditorScene;
         internal StageConfig StageConfig;
         public ObjectRemover objectRemover;
+        internal SceneObject sceneObject;
 
         string SceneFilename = null;
         string StageConfigFileName = null;
@@ -1779,8 +1780,12 @@ namespace ManiacEditor
                     CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                     CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                 }
-
+                if (Properties.Settings.Default.DisableEntityReading == true)
+                {
+                    EditorScene.readTilesOnly = true;
+                }
                 EditorScene = new EditorScene(SceneFilename);
+
                     StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
                     if (File.Exists(StageConfigFileName))
                     {
@@ -1869,7 +1874,14 @@ namespace ManiacEditor
                     CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                     CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                 }
-
+                if (Properties.Settings.Default.DisableEntityReading == true)
+                {
+                    RSDKv5.Scene.readTilesOnly = true;
+                }
+                else
+                {
+                    RSDKv5.Scene.readTilesOnly = false;
+                }
                 EditorScene = new EditorScene(SceneFilename);
                 StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
                 if (File.Exists(StageConfigFileName))

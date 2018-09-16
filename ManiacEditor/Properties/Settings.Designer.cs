@@ -748,5 +748,17 @@ namespace ManiacEditor.Properties {
                 this["AlternativeRenderingMethod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableEntityReading {
+            get {
+                return ((bool)(this["DisableEntityReading"]));
+            }
+            set {
+                this["DisableEntityReading"] = value;
+            }
+        }
     }
 }
