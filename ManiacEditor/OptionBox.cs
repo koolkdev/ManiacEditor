@@ -19,107 +19,6 @@ namespace ManiacEditor
 
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void OptionBox_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void copyUnlock_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void layerHide_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void animationsDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void entitiesDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void fgHigherDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void fgHighDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void fgLowDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void fgLowerDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             if (SceneSelectRadio2.Checked == true)
@@ -154,92 +53,6 @@ namespace ManiacEditor
             }
         }
 
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox2_CheckedChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
-        {
-
-        }
-
-        private void enableWindowsClipboard_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton4_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton6_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton5_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox10_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void radioButtonX_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButtonY_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void radioButtonY_CheckedChanged_1(object sender, EventArgs e)
         {
             if (radioButtonY.Checked == true)
@@ -272,26 +85,6 @@ namespace ManiacEditor
                 Properties.Settings.Default.ScrollLockY = false;
 
             }
-        }
-
-        private void tabPage2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tileToolbarZoomDefault_Scroll(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox2_CheckedChanged_2(object sender, EventArgs e)
-        {
-
-        }
-
-        private void enableWindowsClipboard_CheckedChanged_1(object sender, EventArgs e)
-        {
-
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -364,11 +157,6 @@ namespace ManiacEditor
             }
         }
 
-        private void checkBox20_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button5_Click(object sender, EventArgs e)
         {
             SettingsReader.exportSettings();
@@ -377,11 +165,6 @@ namespace ManiacEditor
         private void importOptionsButton_Click(object sender, EventArgs e)
         {
             SettingsReader.importSettings();
-        }
-
-        private void tabPage5_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -396,11 +179,6 @@ namespace ManiacEditor
             {
                 return;
             }
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

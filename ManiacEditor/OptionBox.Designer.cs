@@ -134,6 +134,7 @@
             this.label24 = new System.Windows.Forms.Label();
             this.button6 = new System.Windows.Forms.Button();
             this.panel14 = new System.Windows.Forms.Panel();
+            this.checkBox26 = new System.Windows.Forms.CheckBox();
             this.checkBox25 = new System.Windows.Forms.CheckBox();
             this.checkBox24 = new System.Windows.Forms.CheckBox();
             this.checkBox21 = new System.Windows.Forms.CheckBox();
@@ -144,7 +145,7 @@
             this.label31 = new System.Windows.Forms.Label();
             this.checkBox34 = new System.Windows.Forms.CheckBox();
             this.checkBox35 = new System.Windows.Forms.CheckBox();
-            this.checkBox26 = new System.Windows.Forms.CheckBox();
+            this.checkBox27 = new System.Windows.Forms.CheckBox();
             this.tabPage4.SuspendLayout();
             this.panel11.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -348,7 +349,6 @@
             this.enableWindowsClipboard.Text = "Enable Windows Clipboard*";
             this.enableWindowsClipboard.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.enableWindowsClipboard.UseVisualStyleBackColor = false;
-            this.enableWindowsClipboard.CheckedChanged += new System.EventHandler(this.enableWindowsClipboard_CheckedChanged_1);
             // 
             // checkBox2
             // 
@@ -364,7 +364,6 @@
             this.checkBox2.Text = "Remove Object Import Lock**";
             this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox2.UseVisualStyleBackColor = false;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged_2);
             // 
             // panel9
             // 
@@ -437,7 +436,6 @@
             this.tabPage2.Size = new System.Drawing.Size(400, 574);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Defaults";
-            this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
             // button10
             // 
@@ -549,9 +547,7 @@
             this.label10.Size = new System.Drawing.Size(157, 13);
             this.label10.TabIndex = 67;
             this.label10.Text = "Entity Visibility Defaults:";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10.Click += new System.EventHandler(this.label10_Click);
-            // 
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
             // animationsDefault
             // 
             this.animationsDefault.BackColor = System.Drawing.Color.Transparent;
@@ -564,7 +560,6 @@
             this.animationsDefault.TabIndex = 52;
             this.animationsDefault.Text = "Animations";
             this.animationsDefault.UseVisualStyleBackColor = false;
-            this.animationsDefault.CheckedChanged += new System.EventHandler(this.animationsDefault_CheckedChanged);
             // 
             // entitiesDefault
             // 
@@ -578,7 +573,6 @@
             this.entitiesDefault.TabIndex = 51;
             this.entitiesDefault.Text = "Entities";
             this.entitiesDefault.UseVisualStyleBackColor = false;
-            this.entitiesDefault.CheckedChanged += new System.EventHandler(this.entitiesDefault_CheckedChanged);
             // 
             // fgLowerDefault
             // 
@@ -592,7 +586,6 @@
             this.fgLowerDefault.TabIndex = 48;
             this.fgLowerDefault.Text = "FG Lower";
             this.fgLowerDefault.UseVisualStyleBackColor = false;
-            this.fgLowerDefault.CheckedChanged += new System.EventHandler(this.fgLowerDefault_CheckedChanged);
             // 
             // label9
             // 
@@ -604,9 +597,7 @@
             this.label9.Size = new System.Drawing.Size(157, 13);
             this.label9.TabIndex = 49;
             this.label9.Text = "Default Visible Layers:";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label9.Click += new System.EventHandler(this.label9_Click);
-            // 
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
             // fgLowDefault
             // 
             this.fgLowDefault.BackColor = System.Drawing.Color.Transparent;
@@ -619,7 +610,6 @@
             this.fgLowDefault.TabIndex = 47;
             this.fgLowDefault.Text = "FG Low";
             this.fgLowDefault.UseVisualStyleBackColor = false;
-            this.fgLowDefault.CheckedChanged += new System.EventHandler(this.fgLowDefault_CheckedChanged);
             // 
             // checkBox6
             // 
@@ -646,7 +636,6 @@
             this.fgHighDefault.TabIndex = 46;
             this.fgHighDefault.Text = "FG High";
             this.fgHighDefault.UseVisualStyleBackColor = false;
-            this.fgHighDefault.CheckedChanged += new System.EventHandler(this.fgHighDefault_CheckedChanged);
             // 
             // checkBox5
             // 
@@ -673,7 +662,6 @@
             this.fgHigherDefault.TabIndex = 45;
             this.fgHigherDefault.Text = "FG Higher";
             this.fgHigherDefault.UseVisualStyleBackColor = false;
-            this.fgHigherDefault.CheckedChanged += new System.EventHandler(this.fgHigherDefault_CheckedChanged);
             // 
             // checkBox4
             // 
@@ -747,7 +735,6 @@
             this.tileToolbarZoomDefault.TabIndex = 53;
             this.tileToolbarZoomDefault.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.tileToolbarZoomDefault.Value = global::ManiacEditor.Properties.Settings.Default.tileToolbarDefaultZoomLevel;
-            this.tileToolbarZoomDefault.Scroll += new System.EventHandler(this.tileToolbarZoomDefault_Scroll);
             // 
             // label2
             // 
@@ -760,7 +747,6 @@
             this.label2.TabIndex = 36;
             this.label2.Text = "Tiles Toolbar Defaults:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // highLayerTextbox
             // 
@@ -829,7 +815,6 @@
             this.solidTopDefault.TabIndex = 35;
             this.solidTopDefault.Text = "Solid (Top)";
             this.solidTopDefault.UseVisualStyleBackColor = false;
-            this.solidTopDefault.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // label20
             // 
@@ -855,7 +840,6 @@
             this.soildAllButTopDefault.TabIndex = 34;
             this.soildAllButTopDefault.Text = "Solid (All excl. top)";
             this.soildAllButTopDefault.UseVisualStyleBackColor = false;
-            this.soildAllButTopDefault.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // label3
             // 
@@ -868,7 +852,6 @@
             this.label3.TabIndex = 38;
             this.label3.Text = "Custom FG Layers:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label3.Click += new System.EventHandler(this.label3_Click_1);
             // 
             // unknown1Default
             // 
@@ -882,7 +865,6 @@
             this.unknown1Default.Text = "Soild (Top) (Plane 2)";
             this.unknown1Default.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.unknown1Default.UseVisualStyleBackColor = false;
-            this.unknown1Default.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
             // 
             // label5
             // 
@@ -894,7 +876,6 @@
             this.label5.TabIndex = 42;
             this.label5.Text = "Lower Layer:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // unkown2Default
             // 
@@ -908,7 +889,6 @@
             this.unkown2Default.Text = "Solid (All excl. top) (Plane 2)";
             this.unkown2Default.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.unkown2Default.UseVisualStyleBackColor = false;
-            this.unkown2Default.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // label6
             // 
@@ -920,7 +900,6 @@
             this.label6.TabIndex = 43;
             this.label6.Text = "Higher Layer:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label7
             // 
@@ -932,7 +911,6 @@
             this.label7.TabIndex = 44;
             this.label7.Text = "NOTE: You should reload the stage/scene to safely see changes";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label1
             // 
@@ -945,7 +923,6 @@
             this.label1.TabIndex = 54;
             this.label1.Text = "Tiles Toolbar Default Zoom Level:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // panel1
             // 
@@ -996,9 +973,7 @@
             this.label8.Size = new System.Drawing.Size(160, 19);
             this.label8.TabIndex = 62;
             this.label8.Text = "Scene Select Default Format:";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label8.Click += new System.EventHandler(this.label8_Click);
-            // 
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1241,7 +1216,6 @@
             this.checkBox10.TabIndex = 82;
             this.checkBox10.Text = "Sonic";
             this.checkBox10.UseVisualStyleBackColor = false;
-            this.checkBox10.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
             // 
             // checkBox11
             // 
@@ -1257,6 +1231,7 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.checkBox27);
             this.panel3.Controls.Add(this.checkBox20);
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.checkBox8);
@@ -1267,7 +1242,7 @@
             this.panel3.Controls.Add(this.layerHide);
             this.panel3.Location = new System.Drawing.Point(8, 8);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(184, 342);
+            this.panel3.Size = new System.Drawing.Size(184, 400);
             this.panel3.TabIndex = 98;
             // 
             // checkBox20
@@ -1284,7 +1259,6 @@
             this.checkBox20.Text = "Use File Explorer instead of Scene Select for Browsing Stages.";
             this.checkBox20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox20.UseVisualStyleBackColor = false;
-            this.checkBox20.CheckedChanged += new System.EventHandler(this.checkBox20_CheckedChanged);
             // 
             // label4
             // 
@@ -1297,7 +1271,6 @@
             this.label4.TabIndex = 55;
             this.label4.Text = "Varrious Settings:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // checkBox8
             // 
@@ -1354,7 +1327,6 @@
             this.copyUnlock.Text = "Enable Copy between Scenes***";
             this.copyUnlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.copyUnlock.UseVisualStyleBackColor = false;
-            this.copyUnlock.CheckedChanged += new System.EventHandler(this.copyUnlock_CheckedChanged);
             // 
             // checkBox15
             // 
@@ -1383,7 +1355,6 @@
             this.layerHide.Text = "Keep Main Layers on when Editing Extra Layers";
             this.layerHide.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.layerHide.UseVisualStyleBackColor = false;
-            this.layerHide.CheckedChanged += new System.EventHandler(this.layerHide_CheckedChanged);
             // 
             // tabControl1
             // 
@@ -1422,7 +1393,6 @@
             this.tabPage5.Size = new System.Drawing.Size(400, 574);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Performance";
-            this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
             // 
             // button8
             // 
@@ -1512,6 +1482,21 @@
             this.panel14.Name = "panel14";
             this.panel14.Size = new System.Drawing.Size(184, 499);
             this.panel14.TabIndex = 102;
+            // 
+            // checkBox26
+            // 
+            this.checkBox26.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox26.Checked = global::ManiacEditor.Properties.Settings.Default.AlternativeRenderingMethod;
+            this.checkBox26.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "AlternativeRenderingMethod", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox26.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox26.Location = new System.Drawing.Point(5, 423);
+            this.checkBox26.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox26.Name = "checkBox26";
+            this.checkBox26.Size = new System.Drawing.Size(171, 35);
+            this.checkBox26.TabIndex = 105;
+            this.checkBox26.Text = "Use Alt. Rendering Method\r\n(Discouraged)\r\n\r\n";
+            this.checkBox26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox26.UseVisualStyleBackColor = false;
             // 
             // checkBox25
             // 
@@ -1660,20 +1645,20 @@
             this.checkBox35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox35.UseVisualStyleBackColor = false;
             // 
-            // checkBox26
+            // checkBox27
             // 
-            this.checkBox26.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox26.Checked = global::ManiacEditor.Properties.Settings.Default.AlternativeRenderingMethod;
-            this.checkBox26.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "AlternativeRenderingMethod", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBox26.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox26.Location = new System.Drawing.Point(5, 423);
-            this.checkBox26.Margin = new System.Windows.Forms.Padding(5);
-            this.checkBox26.Name = "checkBox26";
-            this.checkBox26.Size = new System.Drawing.Size(171, 35);
-            this.checkBox26.TabIndex = 105;
-            this.checkBox26.Text = "Use Alt. Rendering Method\r\n(Discouraged)\r\n\r\n";
-            this.checkBox26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox26.UseVisualStyleBackColor = false;
+            this.checkBox27.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox27.Checked = global::ManiacEditor.Properties.Settings.Default.forceBrowse;
+            this.checkBox27.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::ManiacEditor.Properties.Settings.Default, "forceBrowse", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox27.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox27.Location = new System.Drawing.Point(16, 339);
+            this.checkBox27.Margin = new System.Windows.Forms.Padding(5);
+            this.checkBox27.Name = "checkBox27";
+            this.checkBox27.Size = new System.Drawing.Size(160, 54);
+            this.checkBox27.TabIndex = 98;
+            this.checkBox27.Text = "Use File Explorer instead of Scene Select for Browsing Stages.";
+            this.checkBox27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox27.UseVisualStyleBackColor = false;
             // 
             // OptionBox
             // 
@@ -1689,7 +1674,6 @@
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ShowInTaskbar = false;
             this.Text = "Maniac Editor Options";
-            this.Load += new System.EventHandler(this.OptionBox_Load);
             this.tabPage4.ResumeLayout(false);
             this.panel11.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
@@ -1836,5 +1820,6 @@
         private System.Windows.Forms.CheckBox checkBox25;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.CheckBox checkBox26;
+        private System.Windows.Forms.CheckBox checkBox27;
     }
 }
