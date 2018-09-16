@@ -45,7 +45,6 @@ namespace ManiacEditor
         Bitmap hcursorb;
         Bitmap tcircleb;
         Bitmap tecircleb;
-        int attemptCount = 0;
 
         public bool bRender = true;
 

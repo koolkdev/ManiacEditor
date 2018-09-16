@@ -61,7 +61,6 @@ namespace ManiacEditor
         internal EditorScene EditorScene;
         internal StageConfig StageConfig;
         public ObjectRemover objectRemover;
-        internal SceneObject sceneObject;
 
         string SceneFilename = null;
         string StageConfigFileName = null;
@@ -3541,7 +3540,7 @@ Error: {ex.Message}");
                     GraphicPanel.DisposeDeviceResources();
                     GraphicPanel.Init(this);
                 }
-                catch (SharpDX.SharpDXException ex)
+                catch (SharpDX.SharpDXException)
                 {
                     using (var deviceLostBox = new DeviceLostBox())
                     {
