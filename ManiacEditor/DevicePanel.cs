@@ -183,17 +183,25 @@ namespace ManiacEditor
                     }
                 }
             }
-            RenderLoop.Run(this, () =>
+            try
             {
-                // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
-                if (bRender) Render();
-                if (mouseMoved)
+                RenderLoop.Run(this, () =>
                 {
-                    OnMouseMove(lastEvent);
-                    mouseMoved = false;
-                }
-                /*Application.DoEvents();*/
-            }, false);
+                    // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
+                    if (bRender) Render();
+                    if (mouseMoved)
+                    {
+                        OnMouseMove(lastEvent);
+                        mouseMoved = false;
+                    }
+                    /*Application.DoEvents();*/
+                }, false);
+            }
+            catch
+            {
+                Editor.Instance.DeviceExceptionDialog();
+            }
+
         }
 
         public void InitDeviceResources()
@@ -376,7 +384,15 @@ namespace ManiacEditor
         protected override void OnPaint(PaintEventArgs e)
         {
             // Render on each Paint
-            this.Render();
+            try
+            {
+                this.Render();
+            }
+            catch
+            {
+                Editor.Instance.DeviceExceptionDialog();
+            }
+
         }
 
         protected override void OnKeyPress(System.Windows.Forms.KeyPressEventArgs e)
