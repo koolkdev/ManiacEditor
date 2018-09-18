@@ -3090,7 +3090,8 @@ Error: {ex.Message}");
                     EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
                 }
 
-               //GraphicPanel.Render();
+                GraphicPanel.Render();
+
             }
         }
 
@@ -3107,7 +3108,7 @@ Error: {ex.Message}");
                 EditLayer?.EndDragOver(true);
             }
 
-            //GraphicPanel.Render();
+            GraphicPanel.Render();
         }
 
         private void GraphicPanel_DragDrop(object sender, DragEventArgs e)
@@ -3592,21 +3593,14 @@ Error: {ex.Message}");
         {
             ShiftY = (sender as VScrollBar).Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
-
-            /*if (draggingSelection)
-            {
-                GraphicPanel.OnMouseMoveEventCreate();
-            }*/
+            GraphicPanel.OnMouseMoveEventCreate();
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftX = hScrollBar1.Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
-            if (draggingSelection)
-            {
-                GraphicPanel.OnMouseMoveEventCreate();
-            }
+            GraphicPanel.OnMouseMoveEventCreate();
         }
 
         private void showTileIDButton_Click(object sender, EventArgs e)
