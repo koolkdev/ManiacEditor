@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
@@ -12,9 +13,12 @@ using System.Threading;
 using System.Windows.Forms;
 using ManiacEditor.Actions;
 using ManiacEditor.Enums;
+using ManiacEditor.Properties;
 using RSDKv5;
 using SharpDX.Direct3D9;
 using Color = System.Drawing.Color;
+
+
 
 namespace ManiacEditor
 {
@@ -139,6 +143,25 @@ namespace ManiacEditor
             TryLoadSettings();
             
         }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+
+        [DllImport("USER32.DLL")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        private enum ShowWindowEnum
+        {
+            Hide = 0,
+            ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
+            Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
+            Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
+            Restore = 9, ShowDefault = 10, ForceMinimized = 11
+        };
 
         public void InitDiscord()
         {
@@ -427,7 +450,7 @@ namespace ManiacEditor
             
             
 
-            RunScene.Enabled = enabled && !GameRunning;
+            runSceneButton.Enabled = enabled && !GameRunning;
 
             SetEditButtonsState(enabled);
             UpdateTooltips();
@@ -490,10 +513,21 @@ namespace ManiacEditor
             showCollisionBButton.Enabled = enabled && StageConfig != null;
             showTileIDButton.Enabled = enabled && StageConfig != null;
 
-            if (enabled && IsTilesEdit() && (TilesClipboard != null || Clipboard.ContainsData("ManiacTiles")))
-                pasteToolStripMenuItem.Enabled = true;
-            else
-                pasteToolStripMenuItem.Enabled = false;
+            try
+            {
+                if (enabled && IsTilesEdit() && (TilesClipboard != null || Clipboard.ContainsData("ManiacTiles")))
+                    pasteToolStripMenuItem.Enabled = true;
+                else
+                    pasteToolStripMenuItem.Enabled = false;
+            }
+            catch (System.AccessViolationException)
+            {
+                if (enabled && IsTilesEdit() && (TilesClipboard != null))
+                    pasteToolStripMenuItem.Enabled = true;
+                else
+                    pasteToolStripMenuItem.Enabled = false;
+            }
+
 
             if (IsTilesEdit())
             {
@@ -992,7 +1026,7 @@ namespace ManiacEditor
                     {
                         hScrollBar1.Value = x;
                     }
-                    GraphicPanel.OnMouseMoveEventCreate();
+                   GraphicPanel.OnMouseMoveEventCreate();
                 }
                 GraphicPanel.Render();
             }
@@ -1101,8 +1135,9 @@ namespace ManiacEditor
                         {
                             hScrollBar1.Value = x;
                         }
-                        //GraphicPanel.Render();
+                        GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
+
                     }
 
                 }
@@ -2707,7 +2742,7 @@ Error: {ex.Message}");
 
         private void GraphicPanel_MouseEnter(object sender, EventArgs e)
         {
-            //GraphicPanel.Focus();
+            GraphicPanel.Focus();
         }
 
         private void GraphicPanel_DragEnter(object sender, DragEventArgs e)
@@ -2732,7 +2767,7 @@ Error: {ex.Message}");
             {
                 Point rel = GraphicPanel.PointToScreen(Point.Empty);
                 EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
-                GraphicPanel.Render();
+               GraphicPanel.Render();
             }
         }
 
@@ -2979,6 +3014,28 @@ Error: {ex.Message}");
 
         private void RunScene_Click(object sender, EventArgs e)
         {
+            IntPtr hWnd = FindWindow("SonicMania", null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName("SonicMania").FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                RunSequence(sender, e);
+            }
+        }
+
+        private void RunSequence(object sender, EventArgs e)
+        {
             // Ask where Sonic Mania ia located when not set
             if (string.IsNullOrEmpty(Properties.Settings.Default.RunGamePath))
             {
@@ -3011,8 +3068,9 @@ Error: {ex.Message}");
                 }
                 else
                 {
-                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
+                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath);
                     // TODO: Find workaround to get Mania to boot into a Scene Post Plus
+                    // Moved to main offset section
                 }
 
             }
@@ -3027,14 +3085,8 @@ Error: {ex.Message}");
                 var p = Process.Start(psi);
                 GameRunning = true;
                 UpdateControls();
-                // Patches
-                GameMemory.Attach(p);
-                // Disable Background Pausing
-                GameMemory.WriteByte(0x005FDD00, 0xEB);
-                // Enable Debug
-                GameMemory.WriteByte(0x00E48768, 0x01);
-                // Enable DevMenu
-                GameMemory.WriteByte(0x006F1806, 0x01);
+                UseCheatCodes(p);
+
 
 
 
@@ -3064,37 +3116,50 @@ Error: {ex.Message}");
                     Invoke(new Action(() => UpdateControls()));
                 }).Start();
             }
-
         }
 
-        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        public void UseCheatCodes(System.Diagnostics.Process p)
         {
+            if (Properties.Settings.Default.UsePrePlusOffsets == true)
+            {
+                // Patches
+                GameMemory.Attach(p);
 
-        }
+            }
+            else
+            {
+                GameMemory.Attach(p);
+                //if (CheatCodes.Default.DisableBackgroundPausing)
+                    GameMemory.WriteByte(0x005FDD00, 0xEB); // Background Pausing
+                /*if (CheatCodes.Default.EnableDebugMode)
+                {*/
+                    GameMemory.WriteByte(0x00E48768, 0x01); // Debug Mode
+                    GameMemory.WriteByte(0x006F1806, 0x01); // Dev Menu
+                //}
+                /*if (CheatCodes.Default.DisableSuperMusic)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.DisableSuperPeelOutAnimation)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableInstaSheildandDropDash)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableSuperPeelOut)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableSuperWithNoEmerlads)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableVapeMode)
+                    GameMemory.WriteInt16(0x006F1806, 0x01);
+                if (CheatCodes.Default.FreezeTimer)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.InfiniteLives)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.InfiniteRings)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.HideHUD)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.DisableBackgroundPausing)
+                    GameMemory.WriteByte(0x006F1806, 0x01);*/
 
-        private void toolStripStatusLabel2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStrip3_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void amountInSelectionLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
+            }
         }
 
         private void pixelModeButton_Click(object sender, EventArgs e)
@@ -3175,16 +3240,20 @@ Error: {ex.Message}");
             ShiftY = (sender as VScrollBar).Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
 
-            if (draggingSelection)
+            /*if (draggingSelection)
             {
                 GraphicPanel.OnMouseMoveEventCreate();
-            }
+            }*/
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftX = hScrollBar1.Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            if (draggingSelection)
+            {
+                GraphicPanel.OnMouseMoveEventCreate();
+            }
         }
 
         private void showTileIDButton_Click(object sender, EventArgs e)
@@ -3437,18 +3506,25 @@ Error: {ex.Message}");
 
         private void openSceneFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", "/select, " + ScenePath);
+            string SceneFilename_mod = SceneFilename.Replace('/' , '\\');
+            Process.Start("explorer.exe", "/select, " + SceneFilename_mod);
+            //MessageBox.Show(SceneFilename_mod);
         }
 
         private void openDataDirectoryFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", "/select, " + DataDirectory);
+            string DataDirectory_mod = DataDirectory.Replace('/', '\\');
+            Process.Start("explorer.exe", "/select, " + DataDirectory_mod);
+            //MessageBox.Show(DataDirectory_mod);
         }
 
         private void openSonicManiaFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string GameFolder = GamePath.Replace("//SonicMania.exe", "");
-            Process.Start("explorer.exe", "/select, " + GameFolder);
+
+            string GameFolder = Properties.Settings.Default.RunGamePath;
+            string GameFolder_mod = GameFolder.Replace('/', '\\');
+            Process.Start("explorer.exe", "/select, " + GameFolder_mod);
+            //MessageBox.Show(GameFolder_mod);
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -3458,11 +3534,89 @@ Error: {ex.Message}");
 
         private void rSDKAnnimationEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            String aniProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunAniEdPath);
+            IntPtr hWnd = FindWindow(aniProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(aniProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
 
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+
+                // Ask where RSDK Annimation Editor is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunAniEdPath))
+            {
+                var ofd = new OpenFileDialog();
+                ofd.Title = "Select RSDK Animation Editor.exe";
+                ofd.Filter = "Windows PE Executable|*.exe";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    Properties.Settings.Default.RunAniEdPath = ofd.FileName;
+            }
+            else
+            {
+                if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                {
+                    Properties.Settings.Default.RunAniEdPath = "";
+                    return;
+                }
+            }
+
+            ProcessStartInfo psi;
+            psi = new ProcessStartInfo(Properties.Settings.Default.RunAniEdPath);
+            Process.Start(psi);
+        }
         }
 
         private void cToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            String collisionProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunTileManiacPath);
+            IntPtr hWnd = FindWindow(collisionProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(collisionProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where Tile Maniac is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunTileManiacPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select TileManiac.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunTileManiacPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunTileManiacPath))
+                    {
+                        Properties.Settings.Default.RunTileManiacPath = "";
+                        return;
+                    }
+                }
+
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunTileManiacPath);
+                Process.Start(psi);
+            }
 
         }
 
@@ -3476,22 +3630,141 @@ Error: {ex.Message}");
             toolStripSplitButton1.AutoToolTip = true;
         }
 
-        private void preLoadSceneButton_Click(object sender, EventArgs e)
+        public void preLoadSceneButton_Click(object sender, EventArgs e)
+        {
+            processPreLoad();
+        }
+
+        public void processPreLoad()
         {
             hScrollBar1.Value = 0;
             vScrollBar1.Value = 0;
-            for (int y = 0; y < SceneHeight;) {
-                for (int x = 0; x < SceneWidth;)
+            int ScreenMaxH = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+            int ScreenMaxV = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+            for (int y = 0; y < ScreenMaxV;)
+            {
+                for (int x = 0; x < ScreenMaxH;)
                 {
                     hScrollBar1.Value = x;
-                    x = x + 100;
-                    
+                    int x_test = x + 100;
+                    if (x_test >= ScreenMaxH)
+                    {
+                        x = x + x_test - ScreenMaxH;
+                    }
+                    else
+                    {
+                        x = x + 100;
+                    }
+
                 }
                 vScrollBar1.Value = y;
-                y = y + 600;
+                int y_test = y + 100;
+                if (y_test >= ScreenMaxV)
+                {
+                    y = y + y_test - ScreenMaxV;
+                }
+                else
+                {
+                    y = y + 100;
+                }
             }
             hScrollBar1.Value = 0;
             vScrollBar1.Value = 0;
+        }
+
+        private void gameOptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var runSceneOptions = new RunSceneOptions())
+            {
+                runSceneOptions.ShowDialog();
+            }
+        }
+
+        private void openModManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String modProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunModLoaderPath);
+            IntPtr hWnd = FindWindow(modProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(modProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where the Mania Mod Manager is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunModLoaderPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select Mania Mod Manager.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunModLoaderPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                    {
+                        Properties.Settings.Default.RunModLoaderPath = "";
+                        return;
+                    }
+                }
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunModLoaderPath);
+                Process.Start(psi);
+            }
+
+            
+        }
+
+        private void colorPaletteEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String palleteProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunPalleteEditorPath);
+            IntPtr hWnd = FindWindow(palleteProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(palleteProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where Color Palette Program is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunPalleteEditorPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select Color Palette Program (.exe)";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunPalleteEditorPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunPalleteEditorPath))
+                    {
+                        Properties.Settings.Default.RunPalleteEditorPath = "";
+                        return;
+                    }
+                }
+
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunPalleteEditorPath);
+                Process.Start(psi);
+            }
         }
 
         private void hScrollBar1_Entered(object sender, EventArgs e)

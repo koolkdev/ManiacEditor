@@ -760,5 +760,53 @@ namespace ManiacEditor.Properties {
                 this["DisableEntityReading"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RunModLoaderPath {
+            get {
+                return ((string)(this["RunModLoaderPath"]));
+            }
+            set {
+                this["RunModLoaderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RunTileManiacPath {
+            get {
+                return ((string)(this["RunTileManiacPath"]));
+            }
+            set {
+                this["RunTileManiacPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RunAniEdPath {
+            get {
+                return ((string)(this["RunAniEdPath"]));
+            }
+            set {
+                this["RunAniEdPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RunPalleteEditorPath {
+            get {
+                return ((string)(this["RunPalleteEditorPath"]));
+            }
+            set {
+                this["RunPalleteEditorPath"] = value;
+            }
+        }
     }
 }

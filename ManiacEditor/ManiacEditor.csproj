@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -85,6 +85,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>true</Optimize>
+    <DocumentationFile>
+    </DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -114,6 +117,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -188,6 +192,17 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>CustomMsgBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\CheatCodes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>CheatCodes.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RunSceneOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RunSceneOptions.Designer.cs">
+      <DependentUpon>RunSceneOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectImporter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -238,6 +253,12 @@
     <Compile Include="OptionBox.Designer.cs">
       <DependentUpon>OptionBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="preLoadBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="preLoadBox.Designer.cs">
+      <DependentUpon>preLoadBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProcessMemory.cs" />
     <Compile Include="Reflector.cs" />
     <Compile Include="SceneSelect.cs">
@@ -279,6 +300,10 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\CheatCodes.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>CheatCodes.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\zoomOutButton.Image1.png" />
     <None Include="Resources\zoomInButton.Image1.png" />
     <None Include="Resources\undoButton.Image1.png" />
@@ -354,6 +379,9 @@
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>CustomMsgBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="RunSceneOptions.resx">
+      <DependentUpon>RunSceneOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImageViewer.resx">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </EmbeddedResource>
@@ -374,6 +402,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OptionBox.resx">
       <DependentUpon>OptionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="preLoadBox.resx">
+      <DependentUpon>preLoadBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SceneSelect.resx">
       <DependentUpon>SceneSelect.cs</DependentUpon>

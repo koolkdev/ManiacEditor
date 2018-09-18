@@ -180,5 +180,59 @@ namespace ManiacEditor
                 return;
             }
         }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            using (var runSceneOptions = new RunSceneOptions())
+            {
+                runSceneOptions.ShowDialog();
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Title = "Select SonicMania.exe";
+            ofd.Filter = "Windows PE Executable|*.exe";
+            if (ofd.ShowDialog() == DialogResult.OK)
+                Properties.Settings.Default.RunGamePath = ofd.FileName;
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+                var ofd = new OpenFileDialog();
+                ofd.Title = "Select ManiaModManager.exe";
+                ofd.Filter = "Windows PE Executable|*.exe";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    Properties.Settings.Default.RunModLoaderPath = ofd.FileName;
+            
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Title = "Select RSDK Animation Editor.exe";
+            ofd.Filter = "Windows PE Executable|*.exe";
+            if (ofd.ShowDialog() == DialogResult.OK)
+                Properties.Settings.Default.RunAniEdPath = ofd.FileName;
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Title = "Select TileManiac.exe";
+            ofd.Filter = "Windows PE Executable|*.exe";
+            if (ofd.ShowDialog() == DialogResult.OK)
+                Properties.Settings.Default.RunTileManiacPath = ofd.FileName;
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Title = "Select Color Palette Program (.exe)";
+            ofd.Filter = "Windows PE Executable|*.exe";
+            if (ofd.ShowDialog() == DialogResult.OK)
+                Properties.Settings.Default.RunPalleteEditorPath = ofd.FileName;
+        }
     }
 }
