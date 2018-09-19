@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ManiacEditor
 {
     public partial class ObjectRemover : Form
     {
-        //private IList<SceneObject> _sourceSceneObjects;
+        private IList<SceneObject> _sourceSceneObjects;
         private IList<SceneObject> _targetSceneObjects;
         private StageConfig _stageConfig;
         public List<String> objectCheckMemory = new List<string>();
@@ -23,7 +24,7 @@ namespace ManiacEditor
         public ObjectRemover(IList<SceneObject> targetSceneObjects, StageConfig stageConfig)
         {
             InitializeComponent();
-            //_sourceSceneObjects = targetSceneObjects;
+            _sourceSceneObjects = targetSceneObjects;
             _targetSceneObjects = targetSceneObjects;
             _stageConfig = stageConfig;
 
@@ -34,16 +35,24 @@ namespace ManiacEditor
             updateSelectedText();
             foreach (var io in importableObjects)
             {
+                /*
                 var lvi = io.Name.ToString();
                 lvObjects.Items.Add(lvi, false);
+                */
 
+                var lvi = new ListViewItem(io.Name.ToString())
+                {
+                    Checked = false
+                };
+                lvObjects.Items.Add(lvi);
             }
+
             updateSelectedText();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            DialogResult = DialogResult.OK;
             Close();
         }
 
@@ -70,7 +79,7 @@ namespace ManiacEditor
                 lvi = lvObjects.Items[i].ToString(); //Get the current Object's Name
                 if (objectCheckMemory.Contains(lvi) == false) //See if the memory does not have our current object
                 {
-                    bool checkStatus = lvObjects.GetItemChecked(i); //Grab the Value of the Checkbox for that Object
+                    bool checkStatus = lvObjects.Items[i].Checked; //Grab the Value of the Checkbox for that Object
                     if (checkStatus == true)
                     { //If it returns true, add it to memory
                         objectCheckMemory.Add(lvi);
@@ -95,7 +104,7 @@ namespace ManiacEditor
                 lvi = lvObjects.Items[i].ToString(); //Get the current Object's Name
                 if (objectCheckMemory.Contains(lvi) == true) //See if the memory has our object
                 {
-                    bool checkStatus = lvObjects.GetItemChecked(i); //Grab the Value of the Checkbox for that Object
+                    bool checkStatus = lvObjects.Items[i].Checked; //Grab the Value of the Checkbox for that Object
                     if (checkStatus == false) { //If it returns false, grab it's index and remove the range
                         int index = objectCheckMemory.IndexOf(lvi);
                         objectCheckMemory.RemoveRange(index, 1);
@@ -122,14 +131,20 @@ namespace ManiacEditor
                 {
                     if (objectCheckMemory.Contains(lvi) == true)
                     {
-                        lvObjects.Items.Add(lvi, true);
+                        var lvi2 = new ListViewItem(io.Name.ToString())
+                        {
+                            Checked = true
+                        };
                         alreadyChecked = true;
                         break;
                     }
                 }
                 if (alreadyChecked == false)
                 {
-                    lvObjects.Items.Add(lvi, false);
+                    var lvi2 = new ListViewItem(io.Name.ToString())
+                    {
+                        Checked = false
+                    };
                 }
 
 
@@ -146,8 +161,10 @@ namespace ManiacEditor
             updateSelectedText();
             foreach (var io in importableObjects)
             {
-                var lvi = io.Name.ToString();
-                lvObjects.Items.Add(lvi, false);
+                var lvi = new ListViewItem(io.Name.ToString())
+                {
+                    Checked = false
+                };
 
             }
             updateSelectedText();
@@ -205,17 +222,32 @@ namespace ManiacEditor
 
         private void updateSelectedText()
         {
-            label1.Text = "Amount of Objects Selected : " + lvObjects.CheckedIndices.Count;
+            label1.Text = "Amount of Objects Selected : " + lvObjects.CheckedItems.Count;
         }
 
         private void lvObjects_CheckChanges(object sender, EventArgs e)
         {
-            string s = "";
-            for (int x = 0; x < lvObjects.CheckedItems.Count; x++)
+
+        }
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            
+            foreach (var lvci in lvObjects.CheckedItems)
             {
-                s = s + "Checked Item " + (x + 1).ToString() + " = " + lvObjects.CheckedItems[x].ToString() + "\n";
+                var item = lvci as ListViewItem;
+                Debug.Print(item.Text.ToString());
+                SceneObject objectsToRemove = _targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text));
+                objectsToRemove.Entities.Clear(); // ditch instances of the object from the imported level
+                _targetSceneObjects.Remove(_targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text)));
+
+                /*if (_stageConfig != null
+                    && !_stageConfig.ObjectsNames.Contains(item.Text))
+                {
+                    _stageConfig.ObjectsNames.Add(item.Text);
+                }*/
+
+                CommonReset();
             }
-            MessageBox.Show(s);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -233,14 +265,9 @@ namespace ManiacEditor
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void lvObjects_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            SceneObject obj = _targetSceneObjects.Single(sso => sso.Name.ToString().Equals(lvObjects.SelectedItem.ToString()));
+            SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(lvObjects.FocusedItem.ToString()));
 
             attributesTable.Items.Clear();
 
@@ -253,8 +280,8 @@ namespace ManiacEditor
 
         private void addAttributeBtn_Click(object sender, EventArgs e)
         {
-            string targetName = (string)lvObjects.SelectedItem;
-            SceneObject obj = _targetSceneObjects.Single(sso => sso.Name.ToString().Equals(targetName));
+            string targetName = (string)lvObjects.SelectedItems[0].Name;
+            SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(targetName));
             using (var dialog = new AddAttributeBox(obj, attributesTable.Items))
             {
                 if (dialog.ShowDialog() != DialogResult.OK)
@@ -270,7 +297,7 @@ namespace ManiacEditor
             if (attributesTable.SelectedIndices.Count > 0)
             {
                 string attName = attributesTable.SelectedItems[0].Text;
-                string targetName = (string)lvObjects.SelectedItem;
+                string targetName = (string)lvObjects.SelectedItems[0].Name;
                 SceneObject obj = _targetSceneObjects.Single(sso => sso.Name.ToString().Equals(targetName));
                 var check = MessageBox.Show("Removing an attribute can cause serious problems and cannot be undone.\nI highly recommend making a backup first.\nAre you sure you want to remove the attribute \"" + attName + "\" from the object \"" + obj.Name.Name + "\" and all entities of it?",
                             "Caution! This way lies madness!",

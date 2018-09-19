@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.removeAttributeBtn = new System.Windows.Forms.Button();
             this.addAttributeBtn = new System.Windows.Forms.Button();
             this.attributesTable = new System.Windows.Forms.ListView();
             this.attName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.attType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
-            this.lvObjects = new System.Windows.Forms.CheckedListBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.objectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +47,7 @@
             this.addAttributeToAllObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchLabel = new System.Windows.Forms.Label();
             this.FilterText = new System.Windows.Forms.TextBox();
+            this.lvObjects = new System.Windows.Forms.ListView();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,21 +55,32 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.lvObjects);
+            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.removeAttributeBtn);
             this.panel1.Controls.Add(this.addAttributeBtn);
             this.panel1.Controls.Add(this.attributesTable);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.lvObjects);
             this.panel1.Location = new System.Drawing.Point(12, 53);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(615, 548);
             this.panel1.TabIndex = 3;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(3, 520);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(197, 23);
+            this.button2.TabIndex = 17;
+            this.button2.Text = "Remove Selected Entities";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.btnImport_Click);
+            // 
             // removeAttributeBtn
             // 
-            this.removeAttributeBtn.Location = new System.Drawing.Point(325, 504);
+            this.removeAttributeBtn.Location = new System.Drawing.Point(353, 520);
             this.removeAttributeBtn.Name = "removeAttributeBtn";
-            this.removeAttributeBtn.Size = new System.Drawing.Size(103, 39);
+            this.removeAttributeBtn.Size = new System.Drawing.Size(103, 23);
             this.removeAttributeBtn.TabIndex = 15;
             this.removeAttributeBtn.Text = "Remove";
             this.removeAttributeBtn.UseVisualStyleBackColor = true;
@@ -76,9 +88,9 @@
             // 
             // addAttributeBtn
             // 
-            this.addAttributeBtn.Location = new System.Drawing.Point(206, 504);
+            this.addAttributeBtn.Location = new System.Drawing.Point(206, 520);
             this.addAttributeBtn.Name = "addAttributeBtn";
-            this.addAttributeBtn.Size = new System.Drawing.Size(103, 39);
+            this.addAttributeBtn.Size = new System.Drawing.Size(103, 23);
             this.addAttributeBtn.TabIndex = 14;
             this.addAttributeBtn.Text = "Add";
             this.addAttributeBtn.UseVisualStyleBackColor = true;
@@ -93,7 +105,7 @@
             this.attributesTable.Location = new System.Drawing.Point(206, 3);
             this.attributesTable.MultiSelect = false;
             this.attributesTable.Name = "attributesTable";
-            this.attributesTable.Size = new System.Drawing.Size(250, 495);
+            this.attributesTable.Size = new System.Drawing.Size(250, 513);
             this.attributesTable.TabIndex = 13;
             this.attributesTable.UseCompatibleStateImageBehavior = false;
             this.attributesTable.View = System.Windows.Forms.View.Details;
@@ -110,23 +122,11 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(203, 497);
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.Location = new System.Drawing.Point(462, 3);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.Size = new System.Drawing.Size(148, 21);
             this.label1.TabIndex = 0;
-            // 
-            // lvObjects
-            // 
-            this.lvObjects.CausesValidation = false;
-            this.lvObjects.FormattingEnabled = true;
-            this.lvObjects.Location = new System.Drawing.Point(-1, -1);
-            this.lvObjects.Name = "lvObjects";
-            this.lvObjects.Size = new System.Drawing.Size(201, 544);
-            this.lvObjects.TabIndex = 2;
-            this.lvObjects.SelectedIndexChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
-            this.lvObjects.SelectedValueChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
-            this.lvObjects.TabIndexChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
             // 
             // btnCancel
             // 
@@ -229,6 +229,18 @@
             this.FilterText.TabIndex = 9;
             this.FilterText.TextChanged += new System.EventHandler(this.filter_textchaged);
             // 
+            // lvObjects
+            // 
+            this.lvObjects.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lvObjects.CheckBoxes = true;
+            this.lvObjects.Location = new System.Drawing.Point(3, 3);
+            this.lvObjects.MultiSelect = false;
+            this.lvObjects.Name = "lvObjects";
+            this.lvObjects.Size = new System.Drawing.Size(197, 511);
+            this.lvObjects.TabIndex = 19;
+            this.lvObjects.UseCompatibleStateImageBehavior = false;
+            this.lvObjects.View = System.Windows.Forms.View.List;
+            // 
             // ObjectRemover
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,7 +264,6 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ObjectRemover_FormClosed);
             this.Load += new System.EventHandler(this.ObjectRemover_Load);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -273,7 +284,6 @@
         private System.Windows.Forms.ToolStripMenuItem optimizeObjectIDPlacementToolStripMenuItem;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox FilterText;
-        private System.Windows.Forms.CheckedListBox lvObjects;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListView attributesTable;
         private System.Windows.Forms.ColumnHeader attName;
@@ -281,5 +291,7 @@
         private System.Windows.Forms.ToolStripMenuItem addAttributeToAllObjectsToolStripMenuItem;
         private System.Windows.Forms.Button addAttributeBtn;
         private System.Windows.Forms.Button removeAttributeBtn;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ListView lvObjects;
     }
 }
