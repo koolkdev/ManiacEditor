@@ -3259,7 +3259,7 @@ Error: {ex.Message}");
             }
         }
 
-        private Scene GetSceneSelection()
+        public Scene GetSceneSelection()
         {
             string selectedScene;
             using (SceneSelect select = new SceneSelect(GameConfig))

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lvObjects = new System.Windows.Forms.ListView();
+            this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button2 = new System.Windows.Forms.Button();
             this.removeAttributeBtn = new System.Windows.Forms.Button();
             this.addAttributeBtn = new System.Windows.Forms.Button();
@@ -47,7 +49,6 @@
             this.addAttributeToAllObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchLabel = new System.Windows.Forms.Label();
             this.FilterText = new System.Windows.Forms.TextBox();
-            this.lvObjects = new System.Windows.Forms.ListView();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -60,11 +61,31 @@
             this.panel1.Controls.Add(this.removeAttributeBtn);
             this.panel1.Controls.Add(this.addAttributeBtn);
             this.panel1.Controls.Add(this.attributesTable);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(12, 53);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(615, 548);
             this.panel1.TabIndex = 3;
+            // 
+            // lvObjects
+            // 
+            this.lvObjects.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lvObjects.CheckBoxes = true;
+            this.lvObjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.col1});
+            this.lvObjects.Location = new System.Drawing.Point(3, 3);
+            this.lvObjects.MultiSelect = false;
+            this.lvObjects.Name = "lvObjects";
+            this.lvObjects.Size = new System.Drawing.Size(197, 511);
+            this.lvObjects.TabIndex = 19;
+            this.lvObjects.UseCompatibleStateImageBehavior = false;
+            this.lvObjects.View = System.Windows.Forms.View.Details;
+            this.lvObjects.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvObjects_ItemChecked);
+            this.lvObjects.SelectedIndexChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
+            // 
+            // col1
+            // 
+            this.col1.Text = "";
+            this.col1.Width = 188;
             // 
             // button2
             // 
@@ -123,9 +144,9 @@
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.Location = new System.Drawing.Point(462, 3);
+            this.label1.Location = new System.Drawing.Point(12, 607);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(148, 21);
+            this.label1.Size = new System.Drawing.Size(537, 17);
             this.label1.TabIndex = 0;
             // 
             // btnCancel
@@ -229,18 +250,6 @@
             this.FilterText.TabIndex = 9;
             this.FilterText.TextChanged += new System.EventHandler(this.filter_textchaged);
             // 
-            // lvObjects
-            // 
-            this.lvObjects.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lvObjects.CheckBoxes = true;
-            this.lvObjects.Location = new System.Drawing.Point(3, 3);
-            this.lvObjects.MultiSelect = false;
-            this.lvObjects.Name = "lvObjects";
-            this.lvObjects.Size = new System.Drawing.Size(197, 511);
-            this.lvObjects.TabIndex = 19;
-            this.lvObjects.UseCompatibleStateImageBehavior = false;
-            this.lvObjects.View = System.Windows.Forms.View.List;
-            // 
             // ObjectRemover
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,6 +261,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -293,5 +303,6 @@
         private System.Windows.Forms.Button removeAttributeBtn;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListView lvObjects;
+        private System.Windows.Forms.ColumnHeader col1;
     }
 }
