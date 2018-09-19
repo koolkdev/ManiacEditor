@@ -28,6 +28,7 @@ namespace ManiacEditor
         #region Members
 
         private bool mouseMoved = false;
+        DialogResult deviceExceptionResult;
 
         public int DrawWidth;
         public int DrawHeight;
@@ -134,7 +135,14 @@ namespace ManiacEditor
                 _device.SetRenderState(RenderState.ZEnable, false);
 
                 if (OnCreateDevice != null)
+                {
                     OnCreateDevice(this, new DeviceEventArgs(_device));
+                }
+                else
+                {
+                    Editor.Instance.DeviceExceptionDialog();
+                }
+
 
                 //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
                 //    4, _device, Usage.Dynamic | Usage.WriteOnly,
@@ -195,18 +203,22 @@ namespace ManiacEditor
             }
 
 
-                RenderLoop.Run(this, () =>
+            RenderLoop.Run(this, () =>
+            {
+                // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
+                if (bRender) Render();
+                if (mouseMoved)
                 {
-                    // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
-                    if (bRender) Render();
-                    if (mouseMoved)
-                    {
-                        OnMouseMove(lastEvent);
-                        mouseMoved = false;
-                    }
-                    /*Application.DoEvents();*/
-                }, false);
-            
+                    OnMouseMove(lastEvent);
+                    mouseMoved = false;
+                }
+                Application.DoEvents();
+            }, true);
+
+
+
+        
+
 
         }
 
@@ -256,7 +268,10 @@ namespace ManiacEditor
         /// </summary>
         protected void AttemptRecovery()
         {
-            if (_device == null) return;
+            if (_device == null)
+            {
+                DeviceExceptionDialog();
+            }
 
             Result result = _device.TestCooperativeLevel();
             if (result == ResultCode.DeviceLost)
@@ -273,6 +288,7 @@ namespace ManiacEditor
                     {
                         DisposeDeviceResources();
                         InitDeviceResources();
+                        if (ex.ResultCode == ResultCode.DeviceLost) DeviceExceptionDialog();
                     }
                     //else Editor.Instance.DeviceExceptionDialog();
                 }
@@ -323,16 +339,56 @@ namespace ManiacEditor
 
         #region Rendering
 
+        public void DeviceExceptionDialog()
+        {
+            try
+            {
+                DisposeDeviceResources();
+                Init(Editor.Instance);
+            }
+            catch (SharpDX.SharpDXException)
+            {
+                using (var deviceLostBox = new DeviceLostBox())
+                {
+                    deviceLostBox.ShowDialog();
+                    deviceExceptionResult = deviceLostBox.DialogResult;
+                }
+                if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
+                {
+                    Editor.Instance.backupSceneBeforeCrash();
+                    Environment.Exit(1);
+
+                }
+                else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
+                {
+                    DisposeDeviceResources();
+                    Init(Editor.Instance);
+
+                }
+                else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
+                {
+                    Editor.Instance.backupSceneBeforeCrash();
+                    DisposeDeviceResources();
+                    Init(Editor.Instance);
+                }
+                else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
+                {
+                    Environment.Exit(1);
+                }
+            }
+        }
+
         /// <summary>
         /// Rendering-method
         /// </summary>
         public void Render()
         {
             if (deviceLost) AttemptRecovery();
-            if (deviceLost) return;
 
             if (_device == null)
-                return;
+            {
+                Editor.Instance.DeviceExceptionDialog();
+            }
 
             try
             {
@@ -390,14 +446,8 @@ namespace ManiacEditor
         protected override void OnPaint(PaintEventArgs e)
         {
             // Render on each Paint
-            try
-            {
-                this.Render();
-            }
-            catch
-            {
-                Editor.Instance.DeviceExceptionDialog();
-            }
+            this.Render();
+            
 
         }
 
