@@ -13,6 +13,7 @@ using Font = SharpDX.Direct3D9.Font;
 using Rectangle = System.Drawing.Rectangle;
 using Color = System.Drawing.Color;
 using Point = System.Drawing.Point;
+using System.Timers;
 
 /*
  * This file is a ported old rendering code
@@ -66,6 +67,8 @@ namespace ManiacEditor
 
         private MouseEventArgs lastEvent;
 
+        
+
         #endregion
 
         #region ctor
@@ -98,6 +101,11 @@ namespace ManiacEditor
                 presentParams.Windowed = true;
                 presentParams.SwapEffect = SwapEffect.Discard;
 
+                System.Timers.Timer timer = new System.Timers.Timer();
+                timer.Interval = 1;
+                timer.Enabled = true;
+
+
                 Capabilities caps = direct3d.Adapters.First().GetCaps(DeviceType.Hardware);
 
                 CreateFlags createFlags;
@@ -119,9 +127,11 @@ namespace ManiacEditor
 
      
                 _device = new Device(direct3d, 0, DeviceType.Hardware, this.Handle, createFlags, presentParams);
-                _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Point);
-                _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Point);
-                _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.Point);
+                _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.None);
+                _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.None);
+                _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.None);
+                _device.SetRenderState(RenderState.ZWriteEnable, false);
+                _device.SetRenderState(RenderState.ZEnable, false);
 
                 if (OnCreateDevice != null)
                     OnCreateDevice(this, new DeviceEventArgs(_device));
@@ -183,17 +193,21 @@ namespace ManiacEditor
                     }
                 }
             }
-            RenderLoop.Run(this, () =>
-            {
-                // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
-                if (bRender) Render();
-                if (mouseMoved)
+
+
+                RenderLoop.Run(this, () =>
                 {
-                    OnMouseMove(lastEvent);
-                    mouseMoved = false;
-                }
-                /*Application.DoEvents();*/
-            }, false);
+                    // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
+                    if (bRender) Render();
+                    if (mouseMoved)
+                    {
+                        OnMouseMove(lastEvent);
+                        mouseMoved = false;
+                    }
+                    /*Application.DoEvents();*/
+                }, false);
+            
+
         }
 
         public void InitDeviceResources()
@@ -376,7 +390,15 @@ namespace ManiacEditor
         protected override void OnPaint(PaintEventArgs e)
         {
             // Render on each Paint
-            this.Render();
+            try
+            {
+                this.Render();
+            }
+            catch
+            {
+                Editor.Instance.DeviceExceptionDialog();
+            }
+
         }
 
         protected override void OnKeyPress(System.Windows.Forms.KeyPressEventArgs e)
