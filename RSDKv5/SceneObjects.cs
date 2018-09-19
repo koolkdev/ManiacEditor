@@ -56,12 +56,38 @@ namespace RSDKv5
                 entity.Write(writer);
         }
 
-        public void AddAttribute(AttributeInfo att)
+        public void AddAttribute(string attName, AttributeTypes attType)
         {
-            Console.WriteLine("Attempted to add attribute of name \"" + att.Name + "\" to object \"" + Name + "\"");
+            AttributeInfo att = new AttributeInfo(attName, attType);
+            Console.WriteLine("Attempting to add attribute of name \"" + attName + "\" to object \"" + Name + "\"");
             Attributes.Add(att);
             foreach (SceneEntity entity in Entities)
-                entity.AddAttributeToEntity(att);
+            {
+                Console.WriteLine(Name + " at slot " + entity.SlotID + " recieved attribute \"" + att.Name + "\"");
+                entity.Attributes.Add(new AttributeValue(att.Type));
+                entity.attributesMap[att.Name.ToString()] = entity.Attributes.Last();
+            }
+        }
+
+        public void RemoveAttribute(string attName)
+        {
+            Console.WriteLine("Attempting to remove attribute of name \"" + attName + "\" from object \"" + Name + "\"");
+            for (int i = 0; i < Attributes.Count; i++)
+            {
+                if (Attributes[i].Name.Name == attName)
+                {
+                    Console.WriteLine("Attribute \"" + attName + "\" found, attempting removal...");
+                    Attributes.RemoveAt(i);
+                    foreach (SceneEntity entity in Entities)
+                    {
+                        Console.WriteLine(Name + " at slot " + entity.SlotID + " lost attribute \"" + attName + "\"");
+                        entity.Attributes.RemoveAt(i);
+                        entity.attributesMap.Remove(attName);
+                    }
+                    return;
+                }
+            }
+            Console.WriteLine("Removal failed because attribute \"" + attName + "\" wasn't found!!");
         }
     }
 }

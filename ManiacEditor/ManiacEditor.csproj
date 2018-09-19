@@ -145,6 +145,12 @@
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="ColorsCaching.cs" />
     <Compile Include="DeviceEventArgs.cs" />
+    <Compile Include="AddAttributeBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddAttributeBox.Designer.cs">
+      <DependentUpon>AddAttributeBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="DeviceLostBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -357,6 +363,9 @@
     <None Include="Resources\WarningMonitor.gif" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddAttributeBox.resx">
+      <DependentUpon>AddAttributeBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DeviceLostBox.resx">
       <DependentUpon>DeviceLostBox.cs</DependentUpon>

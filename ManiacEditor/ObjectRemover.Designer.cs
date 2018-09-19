@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.removeAttributeBtn = new System.Windows.Forms.Button();
+            this.addAttributeBtn = new System.Windows.Forms.Button();
+            this.attributesTable = new System.Windows.Forms.ListView();
+            this.attName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.attType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label1 = new System.Windows.Forms.Label();
             this.lvObjects = new System.Windows.Forms.CheckedListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.btnImport = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.objectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,26 +44,77 @@
             this.restoreStageConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optimizeObjectIDPlacementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAttributeToAllObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchLabel = new System.Windows.Forms.Label();
             this.FilterText = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.removeAttributeBtn);
+            this.panel1.Controls.Add(this.addAttributeBtn);
+            this.panel1.Controls.Add(this.attributesTable);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.lvObjects);
-            this.panel1.Controls.Add(this.groupBox2);
-            this.panel1.Controls.Add(this.btnCancel);
-            this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 53);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(392, 548);
+            this.panel1.Size = new System.Drawing.Size(615, 548);
             this.panel1.TabIndex = 3;
+            // 
+            // removeAttributeBtn
+            // 
+            this.removeAttributeBtn.Location = new System.Drawing.Point(325, 504);
+            this.removeAttributeBtn.Name = "removeAttributeBtn";
+            this.removeAttributeBtn.Size = new System.Drawing.Size(103, 39);
+            this.removeAttributeBtn.TabIndex = 15;
+            this.removeAttributeBtn.Text = "Remove";
+            this.removeAttributeBtn.UseVisualStyleBackColor = true;
+            this.removeAttributeBtn.Click += new System.EventHandler(this.removeAttributeBtn_Click);
+            // 
+            // addAttributeBtn
+            // 
+            this.addAttributeBtn.Location = new System.Drawing.Point(206, 504);
+            this.addAttributeBtn.Name = "addAttributeBtn";
+            this.addAttributeBtn.Size = new System.Drawing.Size(103, 39);
+            this.addAttributeBtn.TabIndex = 14;
+            this.addAttributeBtn.Text = "Add";
+            this.addAttributeBtn.UseVisualStyleBackColor = true;
+            this.addAttributeBtn.Click += new System.EventHandler(this.addAttributeBtn_Click);
+            // 
+            // attributesTable
+            // 
+            this.attributesTable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.attName,
+            this.attType});
+            this.attributesTable.FullRowSelect = true;
+            this.attributesTable.Location = new System.Drawing.Point(206, 3);
+            this.attributesTable.MultiSelect = false;
+            this.attributesTable.Name = "attributesTable";
+            this.attributesTable.Size = new System.Drawing.Size(250, 495);
+            this.attributesTable.TabIndex = 13;
+            this.attributesTable.UseCompatibleStateImageBehavior = false;
+            this.attributesTable.View = System.Windows.Forms.View.Details;
+            // 
+            // attName
+            // 
+            this.attName.Text = "Name";
+            this.attName.Width = 175;
+            // 
+            // attType
+            // 
+            this.attType.Text = "Type";
+            this.attType.Width = 75;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(203, 497);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.TabIndex = 0;
             // 
             // lvObjects
             // 
@@ -77,83 +128,17 @@
             this.lvObjects.SelectedValueChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
             this.lvObjects.TabIndexChanged += new System.EventHandler(this.lvObjects_SelectedIndexChanged_1);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Location = new System.Drawing.Point(206, 124);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(181, 370);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Object Details";
-            // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(312, 521);
+            this.btnCancel.Location = new System.Drawing.Point(552, 607);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 22);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Exit";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Controls.Add(this.btnImport);
-            this.groupBox1.Location = new System.Drawing.Point(206, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(181, 115);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Options";
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button3.Location = new System.Drawing.Point(6, 87);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(169, 22);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Count Checked Objects";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(87, 19);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 22);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Upgrade";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(6, 47);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 22);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Replace";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // btnImport
-            // 
-            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnImport.Location = new System.Drawing.Point(6, 19);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(75, 22);
-            this.btnImport.TabIndex = 0;
-            this.btnImport.Text = "Remove";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // menuStrip1
             // 
@@ -162,7 +147,7 @@
             this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(414, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(637, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -191,6 +176,7 @@
             this.backupStageConfigToolStripMenuItem.Name = "backupStageConfigToolStripMenuItem";
             this.backupStageConfigToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.backupStageConfigToolStripMenuItem.Text = "Backup StageConfig";
+            this.backupStageConfigToolStripMenuItem.Click += new System.EventHandler(this.backupStageConfigToolStripMenuItem_Click);
             // 
             // restoreStageConfigToolStripMenuItem
             // 
@@ -198,11 +184,13 @@
             this.restoreStageConfigToolStripMenuItem.Name = "restoreStageConfigToolStripMenuItem";
             this.restoreStageConfigToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.restoreStageConfigToolStripMenuItem.Text = "Restore StageConfig";
+            this.restoreStageConfigToolStripMenuItem.Click += new System.EventHandler(this.restoreStageConfigToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.optimizeObjectIDPlacementToolStripMenuItem});
+            this.optimizeObjectIDPlacementToolStripMenuItem,
+            this.addAttributeToAllObjectsToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -213,6 +201,14 @@
             this.optimizeObjectIDPlacementToolStripMenuItem.Name = "optimizeObjectIDPlacementToolStripMenuItem";
             this.optimizeObjectIDPlacementToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.optimizeObjectIDPlacementToolStripMenuItem.Text = "Optimize Object ID Placement";
+            this.optimizeObjectIDPlacementToolStripMenuItem.Click += new System.EventHandler(this.optimizeObjectIDPlacementToolStripMenuItem_Click);
+            // 
+            // addAttributeToAllObjectsToolStripMenuItem
+            // 
+            this.addAttributeToAllObjectsToolStripMenuItem.Name = "addAttributeToAllObjectsToolStripMenuItem";
+            this.addAttributeToAllObjectsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.addAttributeToAllObjectsToolStripMenuItem.Text = "Add Attribute to All Objects";
+            this.addAttributeToAllObjectsToolStripMenuItem.Click += new System.EventHandler(this.addAttributeToAllObjectsToolStripMenuItem_Click);
             // 
             // searchLabel
             // 
@@ -229,29 +225,21 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FilterText.Location = new System.Drawing.Point(47, 27);
             this.FilterText.Name = "FilterText";
-            this.FilterText.Size = new System.Drawing.Size(357, 20);
+            this.FilterText.Size = new System.Drawing.Size(580, 20);
             this.FilterText.TabIndex = 9;
             this.FilterText.TextChanged += new System.EventHandler(this.filter_textchaged);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(203, 497);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 0;
-            // 
             // ObjectRemover
             // 
-            this.AcceptButton = this.btnImport;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(414, 613);
+            this.ClientSize = new System.Drawing.Size(637, 634);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.FilterText);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.btnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -265,7 +253,6 @@
             this.Load += new System.EventHandler(this.ObjectRemover_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -276,23 +263,23 @@
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem objectsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importObjectsToolStripMenuItem;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolStripMenuItem backupStageConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restoreStageConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optimizeObjectIDPlacementToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox FilterText;
         private System.Windows.Forms.CheckedListBox lvObjects;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListView attributesTable;
+        private System.Windows.Forms.ColumnHeader attName;
+        private System.Windows.Forms.ColumnHeader attType;
+        private System.Windows.Forms.ToolStripMenuItem addAttributeToAllObjectsToolStripMenuItem;
+        private System.Windows.Forms.Button addAttributeBtn;
+        private System.Windows.Forms.Button removeAttributeBtn;
     }
 }
