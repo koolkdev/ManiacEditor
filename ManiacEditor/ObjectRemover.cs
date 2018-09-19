@@ -234,24 +234,45 @@ namespace ManiacEditor
         {
 
         }
+
         private void btnImport_Click(object sender, EventArgs e)
         {
-            
-            foreach (var lvci in lvObjects.CheckedItems)
+            if (lvObjects.CheckedIndices.Count > 0)
             {
-                var item = lvci as ListViewItem;
-                Debug.Print(item.Text.ToString());
-                SceneObject objectsToRemove = _targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text));
-                objectsToRemove.Entities.Clear(); // ditch instances of the object from the imported level
-                _targetSceneObjects.Remove(_targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text)));
+                const int MAX = 10;
+                string itemNames = "";
+                bool overMax = lvObjects.CheckedItems.Count > MAX;
+                int max = (overMax ? MAX-1 : lvObjects.CheckedItems.Count);
+                for (int i = 0; i < max; i++)
+                    itemNames += "\t" + lvObjects.CheckedItems[i].Text + "\n";
+                if (overMax)
+                    itemNames += "\t(+" + (lvObjects.CheckedItems.Count - (MAX-1)) + " more)\n";
 
-                /*if (_stageConfig != null
-                    && !_stageConfig.ObjectsNames.Contains(item.Text))
+                var check = MessageBox.Show("Are you sure you want to remove the following objects from this Scene?\n" + itemNames + "This will also remove all entities of them!",
+                    "Remove Objects and Entities?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+                if (check == DialogResult.Yes)
                 {
-                    _stageConfig.ObjectsNames.Add(item.Text);
-                }*/
+                    foreach (var lvci in lvObjects.CheckedItems)
+                    {
+                        var item = lvci as ListViewItem;
+                        //Debug.Print(item.Text.ToString());
+                        SceneObject objectsToRemove = _targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text));
+                        objectsToRemove.Entities.Clear(); // ditch instances of the object from the imported level
+                        _targetSceneObjects.Remove(_targetSceneObjects.FirstOrDefault(sso => sso.Name.ToString().Equals(item.Text)));
 
-                ReloadList();
+                        /*if (_stageConfig != null
+                            && !_stageConfig.ObjectsNames.Contains(item.Text))
+                        {
+                            _stageConfig.ObjectsNames.Add(item.Text);
+                        }*/
+
+                        ReloadList();
+                    }
+                }
             }
         }
 
@@ -309,15 +330,18 @@ namespace ManiacEditor
 
         private void addAttributeBtn_Click(object sender, EventArgs e)
         {
-            string targetName = (string)lvObjects.FocusedItem.Name;
-            SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(targetName));
-            using (var dialog = new AddAttributeBox(obj, attributesTable.Items))
+            if (lvObjects.SelectedIndices.Count > 0)
             {
-                if (dialog.ShowDialog() != DialogResult.OK)
-                    return; // nothing to do
+                string targetName = lvObjects.FocusedItem.Text;
+                SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(targetName));
+                using (var dialog = new AddAttributeBox(obj, attributesTable.Items))
+                {
+                    if (dialog.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
 
-                // added, now refresh
-                lvObjects_SelectedIndexChanged_1(null, null);
+                    // added, now refresh
+                    lvObjects_SelectedIndexChanged_1(null, null);
+                }
             }
         }
 
@@ -326,7 +350,7 @@ namespace ManiacEditor
             if (attributesTable.SelectedIndices.Count > 0)
             {
                 string attName = attributesTable.FocusedItem.Text;
-                string targetName = (string)lvObjects.FocusedItem.Name;
+                string targetName = lvObjects.FocusedItem.Text;
                 SceneObject obj = _targetSceneObjects.Single(sso => sso.Name.ToString().Equals(targetName));
                 var check = MessageBox.Show("Removing an attribute can cause serious problems and cannot be undone.\nI highly recommend making a backup first.\nAre you sure you want to remove the attribute \"" + attName + "\" from the object \"" + obj.Name.Name + "\" and all entities of it?",
                             "Caution! This way lies madness!",
@@ -365,6 +389,11 @@ namespace ManiacEditor
         private void lvObjects_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             updateSelectedText();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

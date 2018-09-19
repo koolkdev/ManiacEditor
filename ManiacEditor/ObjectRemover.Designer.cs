@@ -72,6 +72,7 @@
             this.lvObjects.CheckBoxes = true;
             this.lvObjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.col1});
+            this.lvObjects.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lvObjects.Location = new System.Drawing.Point(3, 3);
             this.lvObjects.MultiSelect = false;
             this.lvObjects.Name = "lvObjects";
@@ -93,7 +94,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(197, 23);
             this.button2.TabIndex = 17;
-            this.button2.Text = "Remove Selected Entities";
+            this.button2.Text = "Remove Checked Entities";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.btnImport_Click);
             // 
@@ -148,6 +149,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(537, 17);
             this.label1.TabIndex = 0;
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // btnCancel
             // 
