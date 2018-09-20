@@ -463,15 +463,15 @@ namespace ManiacEditor
             return base.IsInputKey(keyData);
         }
 
-        /*protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
+        protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
         {
-            MapEditor.Instance.GraphicPanel_OnKeyDown(null, e);
+            Editor.Instance.GraphicPanel_OnKeyDown(null, e);
         }
 
         protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
         {
-            MapEditor.Instance.GraphicPanel_OnKeyUp(null, e);
-        }*/
+            Editor.Instance.GraphicPanel_OnKeyUp(null, e);
+        }
 
         protected override Point ScrollToControl(Control activeControl)
         {
