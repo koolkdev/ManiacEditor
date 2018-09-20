@@ -332,6 +332,12 @@ namespace ManiacEditor
         {
             if (lvObjects.SelectedIndices.Count > 0)
             {
+                MessageBox.Show("Adding attributes is still experimental and could be dangerous.\nI highly recommend making a backup first.",
+                    "Danger! Experimental territory!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1);
+
                 string targetName = lvObjects.FocusedItem.Text;
                 SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(targetName));
                 using (var dialog = new AddAttributeBox(obj, attributesTable.Items))
