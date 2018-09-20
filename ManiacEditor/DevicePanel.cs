@@ -452,8 +452,6 @@ namespace ManiacEditor
         {
             // Render on each Paint
             this.Render();
-            
-
         }
 
         protected override void OnKeyPress(System.Windows.Forms.KeyPressEventArgs e)

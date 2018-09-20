@@ -92,8 +92,8 @@ namespace ManiacEditor
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            if (g == null) Editor.Instance.DeviceExceptionDialog();
-            if (m_Image == null) Editor.Instance.DeviceExceptionDialog();
+            if (g == null) return;
+            if (m_Image == null) return;
 
             float mp = 1;
             float dx = 0, dy = 0;
