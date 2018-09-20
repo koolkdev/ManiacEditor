@@ -202,8 +202,6 @@ namespace ManiacEditor
                     }
                 }
             }
-
-
             RenderLoop.Run(this, () =>
             {
                 // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
@@ -215,12 +213,6 @@ namespace ManiacEditor
                 }
                 //Application.DoEvents();
             }, false);
-
-
-
-        
-
-
         }
 
         public void InitDeviceResources()

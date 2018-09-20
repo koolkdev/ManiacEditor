@@ -522,20 +522,10 @@ namespace ManiacEditor
             showCollisionBButton.Enabled = enabled && StageConfig != null;
             showTileIDButton.Enabled = enabled && StageConfig != null;
 
-            try
-            {
                 if (enabled && IsTilesEdit() && (TilesClipboard != null || Clipboard.ContainsData("ManiacTiles")))
                     pasteToolStripMenuItem.Enabled = true;
                 else
                     pasteToolStripMenuItem.Enabled = false;
-            }
-            catch (System.AccessViolationException)
-            {
-                if (enabled && IsTilesEdit() && (TilesClipboard != null))
-                    pasteToolStripMenuItem.Enabled = true;
-                else
-                    pasteToolStripMenuItem.Enabled = false;
-            }
 
 
             if (IsTilesEdit())
@@ -642,13 +632,13 @@ namespace ManiacEditor
                 List<ushort> valuesBlank = new List<ushort>();
                 if (multiLayerSelect == true)
                 {
-                    if (FGHigh.GetSelectedValues() == null) values1 = valuesBlank;
+                    if (FGHigh?.GetSelectedValues() == null) values1 = valuesBlank;
                     else values1 = FGHigh.GetSelectedValues();
-                    if (FGLow.GetSelectedValues() == null) values2 = valuesBlank;
+                    if (FGLow?.GetSelectedValues() == null) values2 = valuesBlank;
                     else values2 = FGLow.GetSelectedValues();
-                    if (FGLower.GetSelectedValues() == null) values3 = valuesBlank;
+                    if (FGLower?.GetSelectedValues() == null) values3 = valuesBlank;
                     else values3 = FGLower.GetSelectedValues();
-                    if (FGHigher.GetSelectedValues() == null) values4 = valuesBlank;
+                    if (FGHigher?.GetSelectedValues() == null) values4 = valuesBlank;
                     else values4 = FGHigher.GetSelectedValues();
                     
                     values = values1;
@@ -1134,10 +1124,10 @@ namespace ManiacEditor
                         // Start dragging the tiles
                         dragged = true;
                         startDragged = true;
-                        FGHigh.StartDrag();
-                        FGLow.StartDrag();
-                        FGLower.StartDrag();
-                        FGHigher.StartDrag();
+                        FGHigh?.StartDrag();
+                        FGLow?.StartDrag();
+                        FGLower?.StartDrag();
+                        FGHigher?.StartDrag();
                     }
 
                     else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && EditLayer.HasTileAt(clicked_point) && !multiLayerSelect)
@@ -1151,16 +1141,16 @@ namespace ManiacEditor
                     else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && (hasTileAt1_c || hasTileAt2_c || hasTileAt3_c || hasTileAt4_c) && multiLayerSelect)
                     {
                         // Start dragging the single selected tile
-                        FGLow.Select(clicked_point);
-                        FGLower.Select(clicked_point);
-                        FGHigh.Select(clicked_point);
-                        FGHigher.Select(clicked_point);
+                        FGLow?.Select(clicked_point);
+                        FGLower?.Select(clicked_point);
+                        FGHigh?.Select(clicked_point);
+                        FGHigher?.Select(clicked_point);
                         dragged = true;
                         startDragged = true;
-                        FGHigh.StartDrag();
-                        FGLow.StartDrag();
-                        FGLower.StartDrag();
-                        FGHigher.StartDrag();
+                        FGHigh?.StartDrag();
+                        FGLow?.StartDrag();
+                        FGLower?.StartDrag();
+                        FGHigher?.StartDrag();
                     }
                     else
                     {
@@ -1391,7 +1381,7 @@ namespace ManiacEditor
                         }
                         if (!multiLayerSelect)
                         {
-                            EditLayer.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                            EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
                         }
                         else
                         {
@@ -1559,7 +1549,7 @@ namespace ManiacEditor
             {
                 if (IsEditing())
                 {
-                    MagnetDisable();
+                    //MagnetDisable();
                     if (draggingSelection)
                     {
                         if (selectingX != e.X && selectingY != e.Y)
@@ -1579,7 +1569,7 @@ namespace ManiacEditor
                             }
                             if (!multiLayerSelect)
                             {
-                                EditLayer.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                EditLayer?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
                             }
                             else
                             {
@@ -3596,13 +3586,13 @@ Error: {ex.Message}");
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftY = e.NewValue;
-            //GraphicPanel.Render();
+            GraphicPanel.Render();
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftX = e.NewValue;
-            //GraphicPanel.Render();
+            GraphicPanel.Render();
         }
 
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
