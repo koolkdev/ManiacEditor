@@ -217,6 +217,20 @@ namespace ManiacEditor
             }
         }
 
+        public void RecreatedPasteFromClipboard(Point newPos, List<EditorEntity> entities)
+        {
+            DuplicateEntities(entities);
+            foreach (var entity in selectedEntities)
+            {
+                // Move them
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(newPos);
+                else
+                    entity.Move(newPos);
+                //entity.SnapToGrid(newPos);
+            }
+        }
+
         public EditorEntity GetEntityAt(Point point)
         {
             foreach (EditorEntity entity in entities.Reverse<EditorEntity>())

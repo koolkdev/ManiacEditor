@@ -484,6 +484,7 @@ namespace ManiacEditor
 
         private void SetEditButtonsState(bool enabled)
         {
+            bool windowsClipboardState;
             EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
             EditFGLower.Enabled = enabled && FGLower != null;
@@ -521,8 +522,16 @@ namespace ManiacEditor
             showCollisionAButton.Enabled = enabled && StageConfig != null;
             showCollisionBButton.Enabled = enabled && StageConfig != null;
             showTileIDButton.Enabled = enabled && StageConfig != null;
+            /*try
+            {
+                windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
+            }
+            catch (System.AccessViolationException ex)
+            {*/
+                windowsClipboardState = false;
+            //}
 
-                if (enabled && IsTilesEdit() && (TilesClipboard != null || Clipboard.ContainsData("ManiacTiles")))
+                if (enabled && IsTilesEdit() && (TilesClipboard != null || windowsClipboardState))
                     pasteToolStripMenuItem.Enabled = true;
                 else
                     pasteToolStripMenuItem.Enabled = false;
@@ -545,10 +554,10 @@ namespace ManiacEditor
                        }
                        else
                        {
-                           FGHigh.SetPropertySelected(option + 12, state);
-                           FGHigher.SetPropertySelected(option + 12, state);
-                           FGLow.SetPropertySelected(option + 12, state);
-                           FGLower.SetPropertySelected(option + 12, state);
+                           FGHigh?.SetPropertySelected(option + 12, state);
+                           FGHigher?.SetPropertySelected(option + 12, state);
+                           FGLow?.SetPropertySelected(option + 12, state);
+                           FGLower?.SetPropertySelected(option + 12, state);
                        }
 
                    });
@@ -1075,7 +1084,7 @@ namespace ManiacEditor
         {
             if (Properties.Settings.Default.AllowMoreRenderUpdates)
             {
-                UpdateRender();
+                //UpdateRender();
             }
             if (ClickedX != -1)
             {
@@ -1359,6 +1368,7 @@ namespace ManiacEditor
                         GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
 
+
                     }
 
                 }
@@ -1381,7 +1391,7 @@ namespace ManiacEditor
                         }
                         if (!multiLayerSelect)
                         {
-                            EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                            EditLayer.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
                         }
                         else
                         {
@@ -1507,8 +1517,6 @@ namespace ManiacEditor
                     {
                             EditLayer.Select(p);
                     }
-
-
                     if ((!FGHigh.IsPointSelected(p) || !FGHigher.IsPointSelected(p) || !FGLow.IsPointSelected(p) || !FGLower.IsPointSelected(p)))
                     {
                             FGLow?.Select(p);
@@ -1549,7 +1557,7 @@ namespace ManiacEditor
             {
                 if (IsEditing())
                 {
-                    //MagnetDisable();
+                    MagnetDisable();
                     if (draggingSelection)
                     {
                         if (selectingX != e.X && selectingY != e.Y)
@@ -2465,7 +2473,6 @@ a valid Data Directory.",
                     {
                         Background.DrawEdit(GraphicPanel);
                     }
-
                 }
                 if (EditorScene.OtherLayers.Contains(EditLayer))
                     EditLayer.Draw(GraphicPanel);
@@ -3061,10 +3068,10 @@ Error: {ex.Message}");
                 //(ushort)((Int32)e.Data.GetData(e.Data.GetFormats()[0])
                 if (multiLayerSelect == true)
                 {
-                    FGLower?.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
-                    FGLow?.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
-                    FGHigh?.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
-                    FGHigher?.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGLower.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGLow.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigh.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigher.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
                 }
                 else
                 {
@@ -3437,9 +3444,6 @@ Error: {ex.Message}");
                 UpdateControls();
                 UseCheatCodes(p);
 
-
-
-
                 new Thread(() =>
                 {
                     /* Level != Main Menu*/
@@ -3599,14 +3603,20 @@ Error: {ex.Message}");
         {
             ShiftY = (sender as VScrollBar).Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
-            GraphicPanel.OnMouseMoveEventCreate();
+            if (draggingSelection)
+            {
+                GraphicPanel.OnMouseMoveEventCreate();
+            }
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftX = hScrollBar1.Value;
             if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
-            GraphicPanel.OnMouseMoveEventCreate();
+            if (draggingSelection)
+            {
+                GraphicPanel.OnMouseMoveEventCreate();
+            }
         }
 
         private void showTileIDButton_Click(object sender, EventArgs e)

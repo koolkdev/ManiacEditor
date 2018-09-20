@@ -32,7 +32,6 @@ namespace ManiacEditor
 
         public int DrawWidth;
         public int DrawHeight;
-        public int renderCall = 0;
 
         Sprite sprite;
         Sprite sprite2;
@@ -211,8 +210,8 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                //Application.DoEvents();
-            }, false);
+                Application.DoEvents();
+            }, true);
         }
 
         public void InitDeviceResources()
@@ -378,7 +377,12 @@ namespace ManiacEditor
         public void Render()
         {
             if (deviceLost) AttemptRecovery();
-            if (_device == null) return;
+            if (deviceLost)
+            {
+                DisposeDeviceResources();
+                Init(Editor.Instance);
+            }
+
             try
             {
                 Rectangle screen = _parent.GetScreen();
@@ -406,6 +410,7 @@ namespace ManiacEditor
                 if (OnRender != null)
                     OnRender(this, new DeviceEventArgs(_device));
 
+
                 sprite.Transform = Matrix.Scaling(1f, 1f, 1f);
 
                 Rectangle rect1 = new Rectangle(DrawWidth - screen.X, 0, Width - DrawWidth, Height);
@@ -417,17 +422,17 @@ namespace ManiacEditor
 
                 sprite.End();
                 sprite2.End();
+
                 //End the scene
                 _device.EndScene();
                 _device.Present();
-                renderCall--;
             }
-            catch (SharpDXException ex)
+            catch
             {
-                renderCall--;
-                if (ex.ResultCode == ResultCode.DeviceLost)
-                    Editor.Instance.DeviceExceptionDialog();
+                Editor.Instance.DeviceExceptionDialog();
             }
+
+               
 
 
         }
@@ -552,13 +557,7 @@ namespace ManiacEditor
 
         public void DrawBitmap(Texture image, int x, int y, int width, int height, bool selected, int transparency)
         {
-            if (Properties.Settings.Default.AlwaysRenderTextures == false)
-            {
-                if (!IsObjectOnScreen(x, y, width, height)) return;
-            }
-
-
-
+            if (!IsObjectOnScreen(x, y, width, height)) return;
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();
             DrawTexture(image, new Rectangle(0, 0, width, height), new Vector3(), new Vector3(x - (int)(screen.X / zoom), y - (int)(screen.Y / zoom), 0), (selected) ? Color.BlueViolet : Color.FromArgb(transparency, Color.White));
@@ -697,7 +696,7 @@ namespace ManiacEditor
 
         public void DrawRectangle(int x1, int y1, int x2, int y2, Color color)
         {
-            if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
+            //if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
 
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();

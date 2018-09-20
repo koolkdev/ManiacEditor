@@ -186,7 +186,7 @@ namespace ManiacEditor
             {
                 SelectedTile = -1;
             }
-            graphicPanel.Render();
+           graphicPanel.Render();
             TilesToolbar.RefreshTileSelected();
         }
 
