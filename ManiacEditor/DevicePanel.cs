@@ -32,6 +32,7 @@ namespace ManiacEditor
 
         public int DrawWidth;
         public int DrawHeight;
+        public int renderCall = 0;
 
         Sprite sprite;
         Sprite sprite2;
@@ -212,8 +213,8 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                Application.DoEvents();
-            }, true);
+                //Application.DoEvents();
+            }, false);
 
 
 
@@ -268,10 +269,7 @@ namespace ManiacEditor
         /// </summary>
         protected void AttemptRecovery()
         {
-            if (_device == null)
-            {
-                DeviceExceptionDialog();
-            }
+            if (_device == null) return;
 
             Result result = _device.TestCooperativeLevel();
             if (result == ResultCode.DeviceLost)
@@ -288,14 +286,14 @@ namespace ManiacEditor
                     {
                         DisposeDeviceResources();
                         InitDeviceResources();
-                        if (ex.ResultCode == ResultCode.DeviceLost) DeviceExceptionDialog();
+                        if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
                     }
                     //else Editor.Instance.DeviceExceptionDialog();
                 }
             }
             else
             {
-                DeviceExceptionDialog();
+                Editor.Instance.DeviceExceptionDialog();
             }
         }
 
@@ -388,11 +386,7 @@ namespace ManiacEditor
         public void Render()
         {
             if (deviceLost) AttemptRecovery();
-
-            if (_device == null)
-            {
-                Editor.Instance.DeviceExceptionDialog();
-            }
+            if (_device == null) return;
             try
             {
                 Rectangle screen = _parent.GetScreen();
@@ -434,9 +428,11 @@ namespace ManiacEditor
                 //End the scene
                 _device.EndScene();
                 _device.Present();
+                renderCall--;
             }
             catch (SharpDXException ex)
             {
+                renderCall--;
                 if (ex.ResultCode == ResultCode.DeviceLost)
                     Editor.Instance.DeviceExceptionDialog();
             }
@@ -564,7 +560,7 @@ namespace ManiacEditor
 
         public void DrawBitmap(Texture image, int x, int y, int width, int height, bool selected, int transparency)
         {
-            if (Properties.Settings.Default.AlwaysRenderTextures == true)
+            if (Properties.Settings.Default.AlwaysRenderTextures == false)
             {
                 if (!IsObjectOnScreen(x, y, width, height)) return;
             }
