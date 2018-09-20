@@ -89,5 +89,13 @@ namespace RSDKv5
             }
             Console.WriteLine("Removal failed because attribute \"" + attName + "\" wasn't found!!");
         }
+
+        public bool HasAttributeOfName(string name)
+        {
+            foreach (AttributeInfo att in Attributes)
+                if (att.Name.Name == name)
+                    return true;
+            return false;
+        }
     }
 }

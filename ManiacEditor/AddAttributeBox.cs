@@ -13,15 +13,13 @@ namespace ManiacEditor
 {
     public partial class AddAttributeBox : Form
     {
-        private SceneObject obj;
-        private ListView.ListViewItemCollection names;
+        private SceneObject[] objs;
 
-        public AddAttributeBox(SceneObject obj, ListView.ListViewItemCollection names)
+        public AddAttributeBox(SceneObject[] objs)
         {
             InitializeComponent();
 
-            this.obj = obj;
-            this.names = names;
+            this.objs = objs;
 
             foreach (AttributeTypes attType in Enum.GetValues(typeof(AttributeTypes)))
                 typeBox.Items.Add(attType);
@@ -42,79 +40,87 @@ namespace ManiacEditor
                 return;
             }
 
-            foreach (ListViewItem name in names)
+            if (objs.Length == 1 && objs[0].HasAttributeOfName(nameBox.Text))
             {
-                if (name.Text == nameBox.Text)
-                {
-                    MessageBox.Show("There is already an attribute with the name \"" + name.Text + "\"!\nChoose a different name and try again.",
-                        "Name Conflict!",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning,
-                        MessageBoxDefaultButton.Button1);
+                MessageBox.Show("There is already an attribute with the name \"" + nameBox.Text + "\"!\nChoose a different name and try again.",
+                    "Name Conflict!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1);
 
-                    return;
-                }
+                return;
             }
 
-            obj.AddAttribute(nameBox.Text, (AttributeTypes)typeBox.SelectedItem);
-
-            try
+            bool defaultFailed = false;
+            foreach (SceneObject obj in objs)
             {
-                foreach (SceneEntity entity in obj.Entities)
+                if (!obj.HasAttributeOfName(nameBox.Text))
                 {
-                    AttributeValue attVal = entity.attributesMap[nameBox.Text];
+                    obj.AddAttribute(nameBox.Text, (AttributeTypes)typeBox.SelectedItem);
 
-                    switch ((AttributeTypes)typeBox.SelectedItem)
+                    if (!defaultFailed && defaultBox.Text.Length > 0)
                     {
-                        case AttributeTypes.INT8:
-                            attVal.ValueInt8 = sbyte.Parse(defaultBox.Text);
-                            break;
+                        try
+                        {
+                            foreach (SceneEntity entity in obj.Entities)
+                            {
+                                AttributeValue attVal = entity.attributesMap[nameBox.Text];
 
-                        case AttributeTypes.INT16:
-                            attVal.ValueInt16 = short.Parse(defaultBox.Text);
-                            break;
+                                switch ((AttributeTypes)typeBox.SelectedItem)
+                                {
+                                    case AttributeTypes.INT8:
+                                        attVal.ValueInt8 = sbyte.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.INT32:
-                            attVal.ValueInt32 = int.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.INT16:
+                                        attVal.ValueInt16 = short.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.UINT8:
-                            attVal.ValueUInt8 = byte.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.INT32:
+                                        attVal.ValueInt32 = int.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.UINT16:
-                            attVal.ValueUInt16 = ushort.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.UINT8:
+                                        attVal.ValueUInt8 = byte.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.UINT32:
-                            attVal.ValueUInt32 = uint.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.UINT16:
+                                        attVal.ValueUInt16 = ushort.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.VAR:
-                            attVal.ValueVar = uint.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.UINT32:
+                                        attVal.ValueUInt32 = uint.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.BOOL:
-                            attVal.ValueBool = bool.Parse(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.VAR:
+                                        attVal.ValueVar = uint.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.COLOR:
-                            attVal.ValueColor = getColor(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.BOOL:
+                                        attVal.ValueBool = bool.Parse(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.POSITION:
-                            attVal.ValuePosition = getPosition(defaultBox.Text);
-                            break;
+                                    case AttributeTypes.COLOR:
+                                        attVal.ValueColor = getColor(defaultBox.Text);
+                                        break;
 
-                        case AttributeTypes.STRING:
-                            attVal.ValueString = defaultBox.Text;
-                            break;
+                                    case AttributeTypes.POSITION:
+                                        attVal.ValuePosition = getPosition(defaultBox.Text);
+                                        break;
+
+                                    case AttributeTypes.STRING:
+                                        attVal.ValueString = defaultBox.Text;
+                                        break;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            defaultFailed = true;
+                            MessageBox.Show("Setting default value for existing entities failed for the following reason:\n\n" + ex.Message + "\n\nA blank value be used instead.");
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Setting default value for existing entities failed for the following reason:\n\n" + ex.Message + "\n\nA blank value be used instead.");
             }
 
             DialogResult = DialogResult.OK;
