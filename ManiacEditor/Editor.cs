@@ -635,12 +635,26 @@ namespace ManiacEditor
             if (IsTilesEdit())
             {
                 List<ushort> values;
+                List<ushort> values1;
+                List<ushort> values2;
+                List<ushort> values3;
+                List<ushort> values4;
+                List<ushort> valuesBlank = new List<ushort>();
                 if (multiLayerSelect == true)
                 {
-                    values = FGHigh?.GetSelectedValues();
-                    values.AddRange(FGLow?.GetSelectedValues());
-                    values.AddRange(FGHigher?.GetSelectedValues());
-                    values.AddRange(FGLower?.GetSelectedValues());
+                    if (FGHigh?.GetSelectedValues() == null) values1 = valuesBlank;
+                    else values1 = FGHigh?.GetSelectedValues();
+                    if (FGLow?.GetSelectedValues() == null) values2 = valuesBlank;
+                    else values2 = FGLow?.GetSelectedValues();
+                    if (FGLower?.GetSelectedValues() == null) values3 = valuesBlank;
+                    else values3 = FGLower?.GetSelectedValues();
+                    if (FGHigher?.GetSelectedValues() == null) values4 = valuesBlank;
+                    else values4 = FGHigher?.GetSelectedValues();
+                    
+                    values = values1;
+                    values.AddRange(values2);
+                    values.AddRange(values3);
+                    values.AddRange(values4);
                 }
                 else
                 {
@@ -706,7 +720,6 @@ namespace ManiacEditor
                 List<IAction> fglowerActions;
                 if (multiLayerSelect)
                 {
-                    int i = 0;
                     if (FGLower != null)
                     {
                         fglowerActions = FGLower?.Actions;
@@ -755,7 +768,7 @@ namespace ManiacEditor
                             fglowActions.RemoveAt(0);
                         }
                     }
-                    if (FGLower != null)
+                    if (FGHigh != null)
                     {
                         fgHighActions = FGHigh?.Actions;
 

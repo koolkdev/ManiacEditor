@@ -212,8 +212,8 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                Application.DoEvents();
-            }, true);
+                //Application.DoEvents();
+            });
 
 
 
