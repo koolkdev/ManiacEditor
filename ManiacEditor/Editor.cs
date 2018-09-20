@@ -1084,7 +1084,7 @@ namespace ManiacEditor
         {
             if (Properties.Settings.Default.AllowMoreRenderUpdates)
             {
-                //UpdateRender();
+                UpdateRender();
             }
             if (ClickedX != -1)
             {
@@ -1258,7 +1258,7 @@ namespace ManiacEditor
                     }
                    GraphicPanel.OnMouseMoveEventCreate();
                 }
-                GraphicPanel.Render();
+                UpdateRender();
             }
 
             //
@@ -1365,8 +1365,8 @@ namespace ManiacEditor
                         {
                             hScrollBar1.Value = x;
                         }
-                        GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
+                        UpdateRender();
 
 
                     }
@@ -2518,10 +2518,10 @@ a valid Data Directory.",
                 }
             }
             if (scrolling)
-            {
+            {      
                 if (vScrollBar1.Visible && hScrollBar1.Visible) GraphicPanel.Draw2DCursor(scrollPosition.X, scrollPosition.Y);
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
-                else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
+                else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);  
             }
             if (showGrid)
                 Background.DrawGrid(GraphicPanel);
@@ -3103,7 +3103,7 @@ Error: {ex.Message}");
                     EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
                 }
 
-                GraphicPanel.Render();
+                UpdateRender();
 
             }
         }
@@ -3121,7 +3121,7 @@ Error: {ex.Message}");
                 EditLayer?.EndDragOver(true);
             }
 
-            GraphicPanel.Render();
+            UpdateRender();
         }
 
         private void GraphicPanel_DragDrop(object sender, DragEventArgs e)
@@ -3590,19 +3590,19 @@ Error: {ex.Message}");
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftY = e.NewValue;
-            GraphicPanel.Render();
+            UpdateRender();
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftX = e.NewValue;
-            GraphicPanel.Render();
+            UpdateRender();
         }
 
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftY = (sender as VScrollBar).Value;
-            if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            if (!(zooming || draggingSelection || dragged || scrolling)) UpdateRender();
             if (draggingSelection)
             {
                 GraphicPanel.OnMouseMoveEventCreate();
@@ -3612,7 +3612,7 @@ Error: {ex.Message}");
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftX = hScrollBar1.Value;
-            if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            if (!(zooming || draggingSelection || dragged || scrolling)) UpdateRender();
             if (draggingSelection)
             {
                 GraphicPanel.OnMouseMoveEventCreate();
@@ -4144,6 +4144,15 @@ Error: {ex.Message}");
             }
         }
 
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (!EditFGHigh.Checked && !EditFGLow.Checked && !EditFGLower.Checked && !EditFGHigher.Checked)
+            {
+                //Work around to prevent a bad crash
+                DisposeTextures();
+            }
+        }
+
         private void hScrollBar1_Entered(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.scrollLock == false)
@@ -4285,7 +4294,7 @@ Error: {ex.Message}");
 
         public void UpdateRender()
         {
-            GraphicPanel.Render();
+                GraphicPanel.Render();
         }
     }
 }

@@ -27,7 +27,8 @@ namespace ManiacEditor
     {
         #region Members
 
-        private bool mouseMoved = false;
+        public bool mouseMoved = false;
+        public bool renderInProgress = false;
         DialogResult deviceExceptionResult;
 
         public int DrawWidth;
@@ -101,10 +102,6 @@ namespace ManiacEditor
                 presentParams = new PresentParameters();
                 presentParams.Windowed = true;
                 presentParams.SwapEffect = SwapEffect.Discard;
-
-                System.Timers.Timer timer = new System.Timers.Timer();
-                timer.Interval = 1;
-                timer.Enabled = true;
 
 
                 Capabilities caps = direct3d.Adapters.First().GetCaps(DeviceType.Hardware);
@@ -210,8 +207,8 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                Application.DoEvents();
-            }, true);
+                //Application.DoEvents();
+            });
         }
 
         public void InitDeviceResources()
@@ -263,32 +260,23 @@ namespace ManiacEditor
             if (_device == null) return;
 
             Result result = _device.TestCooperativeLevel();
-            if (result == ResultCode.DeviceLost)
+            if (result == ResultCode.DeviceLost) return;
+            if (result == ResultCode.DeviceNotReset)
             {
                 try
                 {
-                    DisposeDeviceResources();
-                    InitDeviceResources();
+                    ResetDevice();
                 }
                 catch (SharpDXException ex)
                 {
                     // If it's still lost or lost again, just do nothing
-                    if (ex.ResultCode == ResultCode.DeviceLost)
-                    {
-                        DisposeDeviceResources();
-                        InitDeviceResources();
-                        if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
-                    }
-                    //else Editor.Instance.DeviceExceptionDialog();
+                    if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
+                    else throw ex;
                 }
-            }
-            else
-            {
-                Editor.Instance.DeviceExceptionDialog();
             }
         }
 
-        public void ResetDevice()
+            public void ResetDevice()
         {
                 DisposeDeviceResources();
                 _parent.DisposeTextures();
@@ -381,6 +369,12 @@ namespace ManiacEditor
             {
                 DisposeDeviceResources();
                 Init(Editor.Instance);
+                return;
+            }
+            if (_device == null)
+            {
+                AttemptRecovery();
+                return;
             }
 
             try
@@ -397,18 +391,21 @@ namespace ManiacEditor
                 sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f);
 
                 sprite2.Begin(SpriteFlags.AlphaBlend);
+
+
                 if (zoom > 1)
                 {
                     // If zoomin, just do near-neighbor scaling
-                    _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Point);
-                    _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Point);
-                    _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.Point);
+                    _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.None);
+                    _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.None);
+                    _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.None);
                 }
                 sprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.DoNotModifyRenderState);
 
-                // Render of scene here
-                if (OnRender != null)
-                    OnRender(this, new DeviceEventArgs(_device));
+
+            // Render of scene here
+            if (OnRender != null)
+            OnRender(this, new DeviceEventArgs(_device));
 
 
                 sprite.Transform = Matrix.Scaling(1f, 1f, 1f);
@@ -419,23 +416,25 @@ namespace ManiacEditor
                 rect2.Intersect(new Rectangle(0, 0, screen.Width, screen.Height));
                 DrawTexture(tx, new Rectangle(0, 0, rect1.Width, rect1.Height), new Vector3(0, 0, 0), new Vector3(rect1.X, rect1.Y, 0), SystemColors.Control);
                 DrawTexture(tx, new Rectangle(0, 0, rect2.Width, rect2.Height), new Vector3(0, 0, 0), new Vector3(rect2.X, rect2.Y, 0), SystemColors.Control);
+                
 
                 sprite.End();
                 sprite2.End();
-
                 //End the scene
                 _device.EndScene();
                 _device.Present();
-            }
-            catch
-            {
-                Editor.Instance.DeviceExceptionDialog();
-            }
-
-               
-
-
         }
+            catch (SharpDXException ex)
+            {
+                if (ex.ResultCode == ResultCode.DeviceLost)
+                    deviceLost = true;
+                else
+                    throw ex;
+}
+
+
+
+}
 
         #endregion
 
@@ -811,6 +810,18 @@ namespace ManiacEditor
                 sprite2.Dispose();
                 sprite2 = null;
             }
+        }
+        public void ForceDisposeSprites()
+        {
+            if (sprite != null)
+            {
+                sprite.End();
+            }
+            if (sprite2 != null)
+            {
+                sprite2.End();
+            }
+
         }
 
         public new void Dispose()
