@@ -293,6 +293,10 @@ namespace ManiacEditor
                     //else Editor.Instance.DeviceExceptionDialog();
                 }
             }
+            else
+            {
+                DeviceExceptionDialog();
+            }
         }
 
         public void ResetDevice()
@@ -387,8 +391,10 @@ namespace ManiacEditor
 
             if (_device == null)
             {
-                DeviceExceptionDialog();
+                Editor.Instance.DeviceExceptionDialog();
             }
+            try
+            {
                 Rectangle screen = _parent.GetScreen();
                 double zoom = _parent.GetZoom();
 
@@ -428,6 +434,12 @@ namespace ManiacEditor
                 //End the scene
                 _device.EndScene();
                 _device.Present();
+            }
+            catch 
+            {
+                DeviceExceptionDialog();
+            }
+            
         }
 
         #endregion
@@ -463,15 +475,15 @@ namespace ManiacEditor
             return base.IsInputKey(keyData);
         }
 
-        protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
+        /*protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
         {
-            Editor.Instance.GraphicPanel_OnKeyDown(null, e);
+            MapEditor.Instance.GraphicPanel_OnKeyDown(null, e);
         }
 
         protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
         {
-            Editor.Instance.GraphicPanel_OnKeyUp(null, e);
-        }
+            MapEditor.Instance.GraphicPanel_OnKeyUp(null, e);
+        }*/
 
         protected override Point ScrollToControl(Control activeControl)
         {
