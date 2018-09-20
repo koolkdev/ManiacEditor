@@ -140,17 +140,17 @@ namespace ManiacEditor
                 }
                 else
                 {
-                    Editor.Instance.DeviceExceptionDialog();
+                Editor.Instance.DeviceExceptionDialog();
                 }
 
 
-                //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
-                //    4, _device, Usage.Dynamic | Usage.WriteOnly,
-                //    CustomVertex.PositionTextured.Format, Pool.Default);
+            //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+            //    4, _device, Usage.Dynamic | Usage.WriteOnly,
+            //    CustomVertex.PositionTextured.Format, Pool.Default);
 
-                //_device.SetStreamSource(0, vb, 0);
+            //_device.SetStreamSource(0, vb, 0);
 
-                txb = new Bitmap(1, 1);
+            txb = new Bitmap(1, 1);
                 using (Graphics g = Graphics.FromImage(txb))
                     g.Clear(Color.White);
 
@@ -213,7 +213,7 @@ namespace ManiacEditor
                     mouseMoved = false;
                 }
                 Application.DoEvents();
-            });
+            }, true);
 
 
 
@@ -292,6 +292,10 @@ namespace ManiacEditor
                     }
                     //else Editor.Instance.DeviceExceptionDialog();
                 }
+            }
+            else
+            {
+                DeviceExceptionDialog();
             }
         }
 
@@ -387,8 +391,10 @@ namespace ManiacEditor
 
             if (_device == null)
             {
-                DeviceExceptionDialog();
+                Editor.Instance.DeviceExceptionDialog();
             }
+            try
+            {
                 Rectangle screen = _parent.GetScreen();
                 double zoom = _parent.GetZoom();
 
@@ -428,6 +434,14 @@ namespace ManiacEditor
                 //End the scene
                 _device.EndScene();
                 _device.Present();
+            }
+            catch (SharpDXException ex)
+            {
+                if (ex.ResultCode == ResultCode.DeviceLost)
+                    Editor.Instance.DeviceExceptionDialog();
+            }
+
+
         }
 
         #endregion
@@ -463,15 +477,15 @@ namespace ManiacEditor
             return base.IsInputKey(keyData);
         }
 
-        protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
+        /*protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
         {
-            Editor.Instance.GraphicPanel_OnKeyDown(null, e);
+            MapEditor.Instance.GraphicPanel_OnKeyDown(null, e);
         }
 
         protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
         {
-            Editor.Instance.GraphicPanel_OnKeyUp(null, e);
-        }
+            MapEditor.Instance.GraphicPanel_OnKeyUp(null, e);
+        }*/
 
         protected override Point ScrollToControl(Control activeControl)
         {
