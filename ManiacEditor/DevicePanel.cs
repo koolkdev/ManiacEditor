@@ -212,7 +212,7 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                //Application.DoEvents();
+                Application.DoEvents();
             });
 
 
@@ -387,11 +387,8 @@ namespace ManiacEditor
 
             if (_device == null)
             {
-                Editor.Instance.DeviceExceptionDialog();
+                DeviceExceptionDialog();
             }
-
-            try
-            {
                 Rectangle screen = _parent.GetScreen();
                 double zoom = _parent.GetZoom();
 
@@ -431,12 +428,6 @@ namespace ManiacEditor
                 //End the scene
                 _device.EndScene();
                 _device.Present();
-            }
-            catch (SharpDXException ex)
-            {
-                if (ex.ResultCode == ResultCode.DeviceLost)
-                    Editor.Instance.DeviceExceptionDialog();
-            }
         }
 
         #endregion
@@ -706,7 +697,7 @@ namespace ManiacEditor
 
         public void DrawRectangle(int x1, int y1, int x2, int y2, Color color)
         {
-            //if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
+            if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
 
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();
