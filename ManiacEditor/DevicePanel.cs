@@ -255,28 +255,37 @@ namespace ManiacEditor
         /// <summary>
         /// Attempt to recover the device if it is lost.
         /// </summary>
-        protected void AttemptRecovery()
+        public void AttemptRecovery()
         {
             if (_device == null) return;
 
             Result result = _device.TestCooperativeLevel();
-            if (result == ResultCode.DeviceLost) return;
-            if (result == ResultCode.DeviceNotReset)
+            if (result == ResultCode.DeviceLost)
             {
                 try
                 {
-                    ResetDevice();
+                    DisposeDeviceResources();
+                    InitDeviceResources();
                 }
                 catch (SharpDXException ex)
                 {
                     // If it's still lost or lost again, just do nothing
-                    if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
-                    else throw ex;
+                    if (ex.ResultCode == ResultCode.DeviceLost)
+                    {
+                        DisposeDeviceResources();
+                        InitDeviceResources();
+                        if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
+                    }
+                    //else Editor.Instance.DeviceExceptionDialog();
                 }
+            }
+            else
+            {
+                Editor.Instance.DeviceExceptionDialog();
             }
         }
 
-            public void ResetDevice()
+        public void ResetDevice()
         {
                 DisposeDeviceResources();
                 _parent.DisposeTextures();

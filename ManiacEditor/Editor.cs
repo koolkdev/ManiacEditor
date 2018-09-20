@@ -85,6 +85,13 @@ namespace ManiacEditor
         private EntitiesToolbar entitiesToolbar = null;
 
         internal Dictionary<Point, ushort> TilesClipboard;
+
+        //For Multi Layer Copying and Pasting
+        internal Dictionary<Point, ushort> TilesClipboardLower;
+        internal Dictionary<Point, ushort> TilesClipboardLow;
+        internal Dictionary<Point, ushort> TilesClipboardHigh;
+        internal Dictionary<Point, ushort> TilesClipboardHigher;
+
         private List<EditorEntity> entitiesClipboard;
         public int SelectedTilesCount;
         public int DeselectTilesCount;
@@ -522,14 +529,12 @@ namespace ManiacEditor
             showCollisionAButton.Enabled = enabled && StageConfig != null;
             showCollisionBButton.Enabled = enabled && StageConfig != null;
             showTileIDButton.Enabled = enabled && StageConfig != null;
-            /*try
-            {
-                windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
-            }
-            catch (System.AccessViolationException ex)
-            {*/
+
+
+                //Doing this too often seems to cause a lot of grief for the app, should be relocated and stored as a bool
+                //windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
                 windowsClipboardState = false;
-            //}
+
 
                 if (enabled && IsTilesEdit() && (TilesClipboard != null || windowsClipboardState))
                     pasteToolStripMenuItem.Enabled = true;
@@ -2976,14 +2981,41 @@ Error: {ex.Message}");
 
         private void CopyTilesToClipboard()
         {
-            Dictionary<Point, ushort> copyData = EditLayer.CopyToClipboard();
+            if (multiLayerSelect == true)
+            {
+                Dictionary<Point, ushort> copyDataLower = FGLower?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataLow = FGLow?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataHigh = FGHigh?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataHigher = FGHigher?.CopyToClipboard();
 
-            // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
-            if (Properties.Settings.Default.EnableWindowsClipboard)
-                Clipboard.SetDataObject(new DataObject("ManiacTiles", copyData), true);
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                {
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesLower", copyDataLower), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesLow", copyDataLow), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesHigh", copyDataHigh), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesHigher", copyDataHigher), true);
+                }
 
-            // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
-            TilesClipboard = copyData;
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                TilesClipboardLower = copyDataLower;
+                TilesClipboardLow = copyDataLow;
+                TilesClipboardHigh = copyDataHigh;
+                TilesClipboardHigher = copyDataHigher;
+            }
+            else
+            {
+                Dictionary<Point, ushort> copyData = EditLayer.CopyToClipboard();
+
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                    Clipboard.SetDataObject(new DataObject("ManiacTiles", copyData), true);
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                TilesClipboard = copyData;
+            }
+
         }
 
         private void CopyEntitiesToClipboard()
@@ -3009,19 +3041,45 @@ Error: {ex.Message}");
         {
             if (IsTilesEdit())
             {
-                // check if there are tiles on the Windows clipboard; if so, use those
-                if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
+                if (multiLayerSelect == false)
                 {
-                    EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTiles"));
-                    UpdateEditLayerActions();
+                    // check if there are tiles on the Windows clipboard; if so, use those
+                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
+                    {
+                        EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTiles"));
+                        UpdateEditLayerActions();
+                    }
+
+                    // if there's none, use the internal clipboard
+                    else if (TilesClipboard != null)
+                    {
+                        EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
+                        UpdateEditLayerActions();
+                    }
+                }
+                else
+                {
+                    // check if there are tiles on the Windows clipboard; if so, use those
+                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
+                    {
+                        FGLower?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesLower"));
+                        FGLow?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesLow"));
+                        FGHigh?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesHigh"));
+                        FGHigher?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesHigher"));
+                        UpdateEditLayerActions();
+                    }
+
+                    // if there's none, use the internal clipboard
+                    else if (TilesClipboard != null)
+                    {
+                        FGLower?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardLower);
+                        FGLow?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardLow);
+                        FGHigh?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardHigh);
+                        FGHigher?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardHigher);
+                        UpdateEditLayerActions();
+                    }
                 }
 
-                // if there's none, use the internal clipboard
-                else if (TilesClipboard != null)
-                {
-                    EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
-                    UpdateEditLayerActions();
-                }
             }
             else if (IsEntitiesEdit())
             {
@@ -3584,7 +3642,7 @@ Error: {ex.Message}");
 
         private void resetDeviceButton_Click(object sender, EventArgs e)
         {
-            GraphicPanel.ResetDevice();
+            GraphicPanel.AttemptRecovery();
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
