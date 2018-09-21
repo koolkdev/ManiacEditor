@@ -11,14 +11,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using System.ComponentModel;
 using ManiacEditor.Actions;
 using ManiacEditor.Enums;
 using ManiacEditor.Properties;
 using RSDKv5;
 using SharpDX.Direct3D9;
 using Color = System.Drawing.Color;
-
-
+using System.Runtime.CompilerServices;
 
 namespace ManiacEditor
 {
@@ -34,6 +34,11 @@ namespace ManiacEditor
         public bool showCollisionB;
         public bool multiLayerSelect = false;
         public int backupType = 0;
+
+        //For Preload Loading Box
+        public static int progressValueX;
+        public static int progressValueY;
+        public static bool isPreRending = false;
 
         public List<Bitmap> CollisionLayerA = new List<Bitmap>();
         public List<Bitmap> CollisionLayerB = new List<Bitmap>();
@@ -149,7 +154,7 @@ namespace ManiacEditor
             UpdateControls();
 
             TryLoadSettings();
-            
+
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -258,7 +263,7 @@ namespace ManiacEditor
                     mySettings.UpgradeRequired = false;
                     mySettings.Save();
                 }
-                
+
                 WindowState = mySettings.IsMaximized ? FormWindowState.Maximized : WindowState;
                 GamePath = mySettings.GamePath;
 
@@ -452,7 +457,7 @@ namespace ManiacEditor
             preLoadSceneButton.Enabled = enabled;
 
             Save.Enabled = enabled;
-            
+
             if (Properties.Settings.Default.ReduceZoom)
             {
                 zoomInButton.Enabled = enabled && ZoomLevel < 5;
@@ -463,8 +468,8 @@ namespace ManiacEditor
                 zoomInButton.Enabled = enabled && ZoomLevel < 5;
                 zoomOutButton.Enabled = enabled && ZoomLevel > -5;
             }
-            
-            
+
+
 
             runSceneButton.Enabled = enabled && !GameRunning;
 
@@ -531,15 +536,15 @@ namespace ManiacEditor
             showTileIDButton.Enabled = enabled && StageConfig != null;
 
 
-                //Doing this too often seems to cause a lot of grief for the app, should be relocated and stored as a bool
-                //windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
-                windowsClipboardState = false;
+            //Doing this too often seems to cause a lot of grief for the app, should be relocated and stored as a bool
+            //windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
+            windowsClipboardState = false;
 
 
-                if (enabled && IsTilesEdit() && (TilesClipboard != null || windowsClipboardState))
-                    pasteToolStripMenuItem.Enabled = true;
-                else
-                    pasteToolStripMenuItem.Enabled = false;
+            if (enabled && IsTilesEdit() && (TilesClipboard != null || windowsClipboardState))
+                pasteToolStripMenuItem.Enabled = true;
+            else
+                pasteToolStripMenuItem.Enabled = false;
 
 
             if (IsTilesEdit())
@@ -654,7 +659,7 @@ namespace ManiacEditor
                     else values3 = FGLower.GetSelectedValues();
                     if (FGHigher?.GetSelectedValues() == null) values4 = valuesBlank;
                     else values4 = FGHigher.GetSelectedValues();
-                    
+
                     values = values1;
                     values.AddRange(values2);
                     values.AddRange(values3);
@@ -864,7 +869,7 @@ namespace ManiacEditor
                 FGHigher?.DeleteSelected();
             }
 
-            
+
             UpdateEditLayerActions();
 
             if (IsEntitiesEdit())
@@ -911,8 +916,8 @@ namespace ManiacEditor
                     openDataDirectoryToolStripMenuItem_Click(null, null);
                 }
                 else
-	            {
-                    Open_Click(null, null); 
+                {
+                    Open_Click(null, null);
                 }
             }
             else if (e.Control && e.KeyCode == Keys.N)
@@ -1056,7 +1061,7 @@ namespace ManiacEditor
                     TilesToolbar.SetSelectTileOption(0, false);
             }
             else if (e.KeyCode == Keys.Alt)
-            {   
+            {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, false);
             }
@@ -1084,7 +1089,7 @@ namespace ManiacEditor
         private void GraphicPanel_OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
         }
-        
+
         private void GraphicPanel_OnMouseMove(object sender, MouseEventArgs e)
         {
             if (Properties.Settings.Default.AllowMoreRenderUpdates)
@@ -1261,7 +1266,7 @@ namespace ManiacEditor
                     {
                         hScrollBar1.Value = x;
                     }
-                   GraphicPanel.OnMouseMoveEventCreate();
+                    GraphicPanel.OnMouseMoveEventCreate();
                 }
                 UpdateRender();
             }
@@ -1283,7 +1288,7 @@ namespace ManiacEditor
                 selectedPositionLabel.ToolTipText = "The Pixel Position of the Selected Tile";
             }
             if (Properties.Settings.Default.pixelCountMode == false)
-            { 
+            {
                 selectionSizeLabel.Text = "Amount of Tiles in Selection: " + (SelectedTilesCount - DeselectTilesCount);
                 selectionSizeLabel.ToolTipText = "The Size of the Selection";
             }
@@ -1520,16 +1525,16 @@ namespace ManiacEditor
                     Point p = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
                     if (!EditLayer.IsPointSelected(p))
                     {
-                            EditLayer.Select(p);
+                        EditLayer.Select(p);
                     }
                     if ((!FGHigh.IsPointSelected(p) || !FGHigher.IsPointSelected(p) || !FGLow.IsPointSelected(p) || !FGLower.IsPointSelected(p)))
                     {
-                            FGLow?.Select(p);
-                            FGLower?.Select(p);
-                            FGHigher?.Select(p);
-                            FGHigh?.Select(p);
+                        FGLow?.Select(p);
+                        FGLower?.Select(p);
+                        FGHigher?.Select(p);
+                        FGHigh?.Select(p);
                     }
-                DeleteSelected();
+                    DeleteSelected();
                 }
             }
             else if (e.Button == MouseButtons.Middle)
@@ -1927,7 +1932,7 @@ namespace ManiacEditor
 
                 RefreshDataDirectories(dataDirectories);
 
-                _baseDataDirectoryLabel.Text = string.Format(_baseDataDirectoryLabel.Tag.ToString(), 
+                _baseDataDirectoryLabel.Text = string.Format(_baseDataDirectoryLabel.Tag.ToString(),
                                                              dataDirectory);
             }
             catch (Exception ex)
@@ -2068,37 +2073,37 @@ namespace ManiacEditor
         private void OpenScene()
         {
 
-                SceneSelect select = new SceneSelect(GameConfig);
-                select.ShowDialog();
+            SceneSelect select = new SceneSelect(GameConfig);
+            select.ShowDialog();
 
-                if (select.Result == null)
-                    return;
+            if (select.Result == null)
+                return;
 
-                UnloadScene();
-                UseVisibilityPrefrences();
+            UnloadScene();
+            UseVisibilityPrefrences();
 
-                try
+            try
+            {
+                if (File.Exists(select.Result))
                 {
-                    if (File.Exists(select.Result))
-                    {
-                        // Selected file
-                        // Don't forget to populate these Members
-                        string directoryPath = Path.GetDirectoryName(select.Result);
-                        SelectedZone = new DirectoryInfo(directoryPath).Name;
-                        SelectedScene = Path.GetFileName(select.Result);
+                    // Selected file
+                    // Don't forget to populate these Members
+                    string directoryPath = Path.GetDirectoryName(select.Result);
+                    SelectedZone = new DirectoryInfo(directoryPath).Name;
+                    SelectedScene = Path.GetFileName(select.Result);
 
-                        StageTiles = new StageTiles(directoryPath);
+                    StageTiles = new StageTiles(directoryPath);
 
-                        SceneFilename = select.Result;
-                    }
-                    else
-                    {                    
-                        SelectedZone = select.Result.Replace(Path.GetFileName(select.Result),"");
-                        SelectedScene = Path.GetFileName(select.Result);
+                    SceneFilename = select.Result;
+                }
+                else
+                {
+                    SelectedZone = select.Result.Replace(Path.GetFileName(select.Result), "");
+                    SelectedScene = Path.GetFileName(select.Result);
 
-                        StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
-                        SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
-                    }
+                    StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
+                    SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
+                }
 
                 //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
                 CollisionLayerA.Clear();
@@ -2115,11 +2120,11 @@ namespace ManiacEditor
                 }
                 EditorScene = new EditorScene(SceneFilename);
 
-                    StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
-                    if (File.Exists(StageConfigFileName))
-                    {
-                        StageConfig = new StageConfig(StageConfigFileName);
-                    }
+                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
+                if (File.Exists(StageConfigFileName))
+                {
+                    StageConfig = new StageConfig(StageConfigFileName);
+                }
 
                 ObjectList.Clear();
                 for (int i = 0; i < GameConfig.ObjectsNames.Count; i++)
@@ -2135,12 +2140,12 @@ namespace ManiacEditor
                 SceneLoaded = true;
 
             }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Load failed. Error: " + ex.ToString());
-                    return;
-                }
-            
+            catch (Exception ex)
+            {
+                MessageBox.Show("Load failed. Error: " + ex.ToString());
+                return;
+            }
+
 
             SetupLayerButtons();
 
@@ -2153,6 +2158,11 @@ namespace ManiacEditor
             UpdateControls();
 
             SceneLoaded = true;
+
+            if (Properties.Settings.Default.AutoPreloadScene == true)
+            {
+                preLoadSceneButton_Click(null, null);
+            }
         }
 
         private void OpenSceneManual()
@@ -2174,7 +2184,7 @@ namespace ManiacEditor
             try
             {
                 if (File.Exists(Result))
-                {   
+                {
                     // Selected file
                     // Don't forget to populate these Members
                     string directoryPath = Path.GetDirectoryName(Result);
@@ -2455,7 +2465,7 @@ a valid Data Directory.",
             {
                 return;
             }
-            
+
         }
 
         public void OnResetDevice(object sender, DeviceEventArgs e)
@@ -2522,10 +2532,10 @@ a valid Data Directory.",
                 }
             }
             if (scrolling)
-            {      
+            {
                 if (vScrollBar1.Visible && hScrollBar1.Visible) GraphicPanel.Draw2DCursor(scrollPosition.X, scrollPosition.Y);
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
-                else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);  
+                else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
             }
             if (showGrid)
                 Background.DrawGrid(GraphicPanel);
@@ -2687,7 +2697,7 @@ Error: {ex.Message}");
             }
 
             try
-            { 
+            {
                 StageConfig?.Write(StageConfigFileName);
             }
             catch (Exception ex)
@@ -2845,12 +2855,12 @@ Error: {ex.Message}");
         {
             if (IsTilesEdit())
                 CopyTilesToClipboard();
-															 
-			 
+
+
             else if (IsEntitiesEdit())
                 CopyEntitiesToClipboard();
 
-			 
+
             UpdateControls();
         }
 
@@ -3088,29 +3098,29 @@ Error: {ex.Message}");
             {
                 if (entitiesToolbar.ContainsFocus.Equals(false))
                 {
-                try
-                {
-                    // check if there are entities on the Windows clipboard; if so, use those
-                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacEntities"))
+                    try
                     {
-                        entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), (List<EditorEntity>)Clipboard.GetDataObject().GetData("ManiacEntities"));
-                        UpdateLastEntityAction();
-                    }
+                        // check if there are entities on the Windows clipboard; if so, use those
+                        if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacEntities"))
+                        {
+                            entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), (List<EditorEntity>)Clipboard.GetDataObject().GetData("ManiacEntities"));
+                            UpdateLastEntityAction();
+                        }
 
-                    // if there's none, use the internal clipboard
-                    else if (entitiesClipboard != null)
-                    {
-                        entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), entitiesClipboard);
-                        UpdateLastEntityAction();
+                        // if there's none, use the internal clipboard
+                        else if (entitiesClipboard != null)
+                        {
+                            entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), entitiesClipboard);
+                            UpdateLastEntityAction();
+                        }
                     }
-                }
-                catch (EditorEntities.TooManyEntitiesException)
-                {
-                    MessageBox.Show("Too many entities! (limit: 2048)");
-                    return;
-                }
-                UpdateEntitiesToolbarList();
-                SetSelectOnlyButtonsState();
+                    catch (EditorEntities.TooManyEntitiesException)
+                    {
+                        MessageBox.Show("Too many entities! (limit: 2048)");
+                        return;
+                    }
+                    UpdateEntitiesToolbarList();
+                    SetSelectOnlyButtonsState();
                 }
             }
         }
@@ -3288,7 +3298,7 @@ Error: {ex.Message}");
                 {
                     if (objectImporter.ShowDialog() != DialogResult.OK)
                         return; // nothing to do
-                    
+
                     // user clicked Import, get to it!
                     objectRemover.RefreshList();
                     UpdateControls();
@@ -3386,7 +3396,7 @@ Error: {ex.Message}");
             using (var optionBox = new OptionBox())
             {
                 optionBox.ShowDialog();
-            }   
+            }
         }
 
         private void controlsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3545,11 +3555,11 @@ Error: {ex.Message}");
             {
                 GameMemory.Attach(p);
                 //if (CheatCodes.Default.DisableBackgroundPausing)
-                    GameMemory.WriteByte(0x005FDD00, 0xEB); // Background Pausing
-                /*if (CheatCodes.Default.EnableDebugMode)
-                {*/
-                    GameMemory.WriteByte(0x00E48768, 0x01); // Debug Mode
-                    GameMemory.WriteByte(0x006F1806, 0x01); // Dev Menu
+                GameMemory.WriteByte(0x005FDD00, 0xEB); // Background Pausing
+                                                        /*if (CheatCodes.Default.EnableDebugMode)
+                                                        {*/
+                GameMemory.WriteByte(0x00E48768, 0x01); // Debug Mode
+                GameMemory.WriteByte(0x006F1806, 0x01); // Dev Menu
                 //}
                 /*if (CheatCodes.Default.DisableSuperMusic)
                     GameMemory.WriteByte(0x006F1806, 0x01);
@@ -3792,26 +3802,26 @@ Error: {ex.Message}");
 
         public void backupScene()
         {
-        backupType = 1;
-        backupToolStripMenuItem_Click(null, null);
-        backupType = 0;
+            backupType = 1;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
         }
         public void backupSceneBeforeCrash()
         {
-        backupType = 2;
-        backupToolStripMenuItem_Click(null, null);
-        backupType = 0;
+            backupType = 2;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
         }
         public void autoBackupScene()
         {
-        backupType = 3;
-        backupToolStripMenuItem_Click(null, null);
-        backupType = 0;
+            backupType = 3;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
         }
 
         private void backupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                backupTool(null, null);
+            backupTool(null, null);
         }
 
         private void backupTool(object sender, EventArgs e)
@@ -3916,7 +3926,7 @@ Error: {ex.Message}");
             {
                 scrollDirection = "Locked";
             }
-            
+
         }
 
         private void openDataDirectoryMenuButton(object sender, EventArgs e)
@@ -3930,7 +3940,7 @@ Error: {ex.Message}");
 
         private void openSceneFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string SceneFilename_mod = SceneFilename.Replace('/' , '\\');
+            string SceneFilename_mod = SceneFilename.Replace('/', '\\');
             Process.Start("explorer.exe", "/select, " + SceneFilename_mod);
             //MessageBox.Show(SceneFilename_mod);
         }
@@ -3978,26 +3988,26 @@ Error: {ex.Message}");
 
                 // Ask where RSDK Annimation Editor is located when not set
                 if (string.IsNullOrEmpty(Properties.Settings.Default.RunAniEdPath))
-            {
-                var ofd = new OpenFileDialog();
-                ofd.Title = "Select RSDK Animation Editor.exe";
-                ofd.Filter = "Windows PE Executable|*.exe";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                    Properties.Settings.Default.RunAniEdPath = ofd.FileName;
-            }
-            else
-            {
-                if (!File.Exists(Properties.Settings.Default.RunGamePath))
                 {
-                    Properties.Settings.Default.RunAniEdPath = "";
-                    return;
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select RSDK Animation Editor.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunAniEdPath = ofd.FileName;
                 }
-            }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                    {
+                        Properties.Settings.Default.RunAniEdPath = "";
+                        return;
+                    }
+                }
 
-            ProcessStartInfo psi;
-            psi = new ProcessStartInfo(Properties.Settings.Default.RunAniEdPath);
-            Process.Start(psi);
-        }
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunAniEdPath);
+                Process.Start(psi);
+            }
         }
 
         private void cToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4056,15 +4066,33 @@ Error: {ex.Message}");
 
         public void preLoadSceneButton_Click(object sender, EventArgs e)
         {
-            processPreLoad();
-        }
+            isPreRending = true;
+            var thread = new Thread(
+            () =>
+            {
+                preLoadBox p = new preLoadBox();
+                p.ShowDialog();
+            });
+            thread.Start();
 
-        public void processPreLoad()
-        {
+            var preLoadForm = (preLoadBox)Application.OpenForms["preLoadBox"] as preLoadBox;
+            //TODO: This is supposed to grab the open box so we can make calls to it, but it does not
+            for (bool s = false; s == true;)
+            {
+                preLoadForm = (preLoadBox)Application.OpenForms["preLoadBox"] as preLoadBox;
+                if(preLoadForm != null)
+                {
+                    s = true;
+                }
+            }
+            
+
+
             hScrollBar1.Value = 0;
             vScrollBar1.Value = 0;
             int ScreenMaxH = hScrollBar1.Maximum - hScrollBar1.LargeChange;
             int ScreenMaxV = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+
             for (int y = 0; y < ScreenMaxV;)
             {
                 for (int x = 0; x < ScreenMaxH;)
@@ -4079,6 +4107,9 @@ Error: {ex.Message}");
                     {
                         x = x + 100;
                     }
+                    hScrollBar1.Value = x;
+                    //progressValueX = (hScrollBar1.Value / hScrollBar1.Maximum);
+                    // Enable when the previous TODO above is Fixed
 
                 }
                 vScrollBar1.Value = y;
@@ -4091,9 +4122,18 @@ Error: {ex.Message}");
                 {
                     y = y + 100;
                 }
+                vScrollBar1.Value = y;
+                //progressValueY = (vScrollBar1.Value / vScrollBar1.Maximum);
+                // Enable when the previous TODO above is Fixed
+
+
             }
             hScrollBar1.Value = 0;
             vScrollBar1.Value = 0;
+
+            // get the form reference back and close it
+            isPreRending = false;
+            thread.Abort();
         }
 
         private void gameOptionsToolStripMenuItem_Click(object sender, EventArgs e)

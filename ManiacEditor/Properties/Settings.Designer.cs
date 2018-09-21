@@ -808,5 +808,17 @@ namespace ManiacEditor.Properties {
                 this["RunPalleteEditorPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoPreloadScene {
+            get {
+                return ((bool)(this["AutoPreloadScene"]));
+            }
+            set {
+                this["AutoPreloadScene"] = value;
+            }
+        }
     }
 }

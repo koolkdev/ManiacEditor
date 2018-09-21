@@ -7,36 +7,62 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
+using System.Diagnostics;
 
 namespace ManiacEditor
 {
     public partial class preLoadBox : Form
     {
+        public bool isVisible = false;
         public preLoadBox()
         {
             InitializeComponent();
+            backgroundWorker1.RunWorkerAsync();
         }
 
-        private void StartBackgroundWork()
+        public void SetProgressBarStatus(int x, int y)
         {
-            if (Application.RenderWithVisualStyles)
-                progressBar1.Style = ProgressBarStyle.Marquee;
-            else
-            {
-                progressBar1.Style = ProgressBarStyle.Continuous;
-                progressBar1.Maximum = 100;
-                progressBar1.Value = 0;
-                //timer.Enabled = true;
-            }
-            //backgroundWorker.RunWorkerAsync();
+            progressBar1.Value = x;
+            progressBar2.Value = y;
+            label2.Text = "Too fast if this is seen";
         }
 
-        /*private void timer_Tick(object sender, EventArgs e)
+        private void form_shown(object sender, EventArgs e)
         {
-            if (progressBar1.Value < progressBar1.Maximum)
-                progressBar1.Increment(5);
-            else
-                progressBar1.Value = progressBar.Minimum;
-        }*/
+            isVisible = true;
+            //progressBar1.Value = 100;
+            //label2.Text = "Too fast if this is seen";
+
+        }
+        public void StartLoop()
+        {
+
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            for (bool w = false; w != true;)
+                {
+                    if (Properties.CheatCodes.Default.isPreRendering == true)
+                    {
+                    //Properties.CheatCodes.Default.Reload();
+                    //backgroundWorker1.ReportProgress((Properties.CheatCodes.Default.ProgressX + Properties.CheatCodes.Default.ProgressY)/2);
+                }
+                    else
+                    {
+                        w = true;
+
+                    }       
+
+                }
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //this.progressBar1.Value = Properties.CheatCodes.Default.ProgressX;
+            //Debug.Print(Properties.CheatCodes.Default.ProgressX.ToString());
+            //this.progressBar2.Value = Properties.CheatCodes.Default.ProgressY;
+        }
     }
 }

@@ -190,5 +190,41 @@ namespace ManiacEditor.Properties {
                 this["Setting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ProgressX {
+            get {
+                return ((int)(this["ProgressX"]));
+            }
+            set {
+                this["ProgressX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ProgressY {
+            get {
+                return ((int)(this["ProgressY"]));
+            }
+            set {
+                this["ProgressY"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool isPreRendering {
+            get {
+                return ((bool)(this["isPreRendering"]));
+            }
+            set {
+                this["isPreRendering"] = value;
+            }
+        }
     }
 }
