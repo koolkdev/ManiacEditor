@@ -373,9 +373,6 @@
     <EmbeddedResource Include="AddAttributeBox.resx">
       <DependentUpon>AddAttributeBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CustomMsgBox.resx">
-      <DependentUpon>CustomMsgBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DeviceLostBox.resx">
       <DependentUpon>DeviceLostBox.cs</DependentUpon>
     </EmbeddedResource>
