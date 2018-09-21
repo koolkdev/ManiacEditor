@@ -81,6 +81,16 @@ namespace ManiacEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ErrorStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("ErrorStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon file {
@@ -97,6 +107,16 @@ namespace ManiacEditor.Properties {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap InfoStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("InfoStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -184,6 +204,16 @@ namespace ManiacEditor.Properties {
         internal static System.Drawing.Bitmap redoButton {
             get {
                 object obj = ResourceManager.GetObject("redoButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RefreshStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("RefreshStatic2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -317,6 +347,16 @@ namespace ManiacEditor.Properties {
         internal static System.Drawing.Bitmap WarningMonitor {
             get {
                 object obj = ResourceManager.GetObject("WarningMonitor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("WarningStatic2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

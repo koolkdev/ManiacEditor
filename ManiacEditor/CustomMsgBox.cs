@@ -50,14 +50,20 @@ namespace ManiacEditor
             }
             switch (icon)
             {
+                case 0:
+                    pictureBox1.Image = Properties.Resources.InfoStatic2;
+                    break;
                 case 1:
-                    pictureBox1.Image = Properties.Resources.ErrorMonitor;
+                    pictureBox1.Image = Properties.Resources.ErrorStatic2;
                     break;
                 case 2:
-                    pictureBox1.Image = Properties.Resources.WarningMonitor;
+                    pictureBox1.Image = Properties.Resources.WarningStatic2;
+                    break;
+                case 3:
+                    pictureBox1.Image = Properties.Resources.RefreshStatic2;
                     break;
                 default:
-                    pictureBox1.Image = Properties.Resources.WarningMonitor;
+                    pictureBox1.Image = Properties.Resources.WarningStatic2;
                     break;
 
             }

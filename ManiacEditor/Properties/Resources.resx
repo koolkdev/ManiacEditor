@@ -199,4 +199,16 @@
   <data name="ApplicationServiceOK_16x" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ApplicationServiceOK_16x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ErrorStatic2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ErrorStatic2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoStatic2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InfoStatic2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RefreshStatic2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RefreshStatic2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WarningStatic2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WarningStatic2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

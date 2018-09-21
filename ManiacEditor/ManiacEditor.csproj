@@ -307,6 +307,11 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Resources\WarningStatic2.gif" />
+    <None Include="Resources\RefreshStatic2.gif" />
+    <None Include="Resources\WarningNoStatic2.gif" />
+    <None Include="Resources\WarningStatic.gif" />
+    <None Include="Resources\RefreshStatic.gif" />
     <None Include="Properties\CheatCodes.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>CheatCodes.Designer.cs</LastGenOutput>
@@ -367,6 +372,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AddAttributeBox.resx">
       <DependentUpon>AddAttributeBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomMsgBox.resx">
+      <DependentUpon>CustomMsgBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DeviceLostBox.resx">
       <DependentUpon>DeviceLostBox.cs</DependentUpon>
@@ -472,6 +480,10 @@
     <None Include="Resources\New.Image1.png" />
     <None Include="Resources\nudgeFasterButton.Image1.png" />
     <None Include="Resources\ApplicationServiceOK_16x.png" />
+    <None Include="Resources\ErrorStatic.gif" />
+    <None Include="Resources\InfoStatic.gif" />
+    <None Include="Resources\InfoStatic2.gif" />
+    <None Include="Resources\ErrorStatic2.gif" />
     <Content Include="Resources\objects_attributes.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

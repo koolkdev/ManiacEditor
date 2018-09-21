@@ -2701,6 +2701,10 @@ Error: {ex.Message}");
         private void ShowError(string message, string title = "Error!")
         {
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            /*using (var customMsgBox = new CustomMsgBox(message, title, 1, 1))
+            {
+                customMsgBox.ShowDialog();
+            }*/
         }
 
         private void MagnetMode_Click(object sender, EventArgs e)
