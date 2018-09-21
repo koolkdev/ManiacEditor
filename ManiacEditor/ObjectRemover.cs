@@ -332,22 +332,34 @@ namespace ManiacEditor
         {
             if (lvObjects.SelectedIndices.Count > 0)
             {
-                MessageBox.Show("Adding attributes is still experimental and could be dangerous.\nI highly recommend making a backup first.",
-                    "Danger! Experimental territory!",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1);
-
                 string targetName = lvObjects.FocusedItem.Text;
                 SceneObject obj = _targetSceneObjects.First(sso => sso.Name.ToString().Equals(targetName));
-                using (var dialog = new AddAttributeBox(obj, attributesTable.Items))
-                {
-                    if (dialog.ShowDialog() != DialogResult.OK)
-                        return; // nothing to do
+                SceneObject[] objs = { obj };
+                addAttributeToObjects(objs);
+            }
+        }
 
-                    // added, now refresh
-                    lvObjects_SelectedIndexChanged_1(null, null);
-                }
+        private void addAttributeToAllObjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SceneObject[] objs = _targetSceneObjects.ToArray();
+            addAttributeToObjects(objs);
+        }
+
+        private void addAttributeToObjects(SceneObject[] objs)
+        {
+            MessageBox.Show("Adding attributes is still experimental and could be dangerous.\nI highly recommend making a backup first.",
+                "Danger! Experimental territory!",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button1);
+
+            using (var dialog = new AddAttributeBox(objs))
+            {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                    return; // nothing to do
+
+                // added, now refresh
+                lvObjects_SelectedIndexChanged_1(null, null);
             }
         }
 
@@ -383,11 +395,6 @@ namespace ManiacEditor
         }
 
         private void optimizeObjectIDPlacementToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void addAttributeToAllObjectsToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }

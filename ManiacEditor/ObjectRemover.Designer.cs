@@ -135,7 +135,7 @@
             // attName
             // 
             this.attName.Text = "Name";
-            this.attName.Width = 175;
+            this.attName.Width = 170;
             // 
             // attType
             // 
