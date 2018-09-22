@@ -4107,7 +4107,6 @@ Error: {ex.Message}");
                     {
                         x = x + 100;
                     }
-                    hScrollBar1.Value = x;
                     //progressValueX = (hScrollBar1.Value / hScrollBar1.Maximum);
                     // Enable when the previous TODO above is Fixed
 
@@ -4122,7 +4121,6 @@ Error: {ex.Message}");
                 {
                     y = y + 100;
                 }
-                vScrollBar1.Value = y;
                 //progressValueY = (vScrollBar1.Value / vScrollBar1.Maximum);
                 // Enable when the previous TODO above is Fixed
 
@@ -4251,6 +4249,7 @@ Error: {ex.Message}");
             {
                 //Work around to prevent a bad crash
                 DisposeTextures();
+                //GraphicPanel.AttemptRecovery();
             }
         }
 

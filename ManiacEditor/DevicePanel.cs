@@ -135,10 +135,6 @@ namespace ManiacEditor
                 {
                     OnCreateDevice(this, new DeviceEventArgs(_device));
                 }
-                else
-                {
-                Editor.Instance.DeviceExceptionDialog();
-                }
 
 
             //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
@@ -274,9 +270,9 @@ namespace ManiacEditor
                     {
                         DisposeDeviceResources();
                         InitDeviceResources();
-                        if (ex.ResultCode == ResultCode.DeviceLost) Editor.Instance.DeviceExceptionDialog();
+                        if (ex.ResultCode == ResultCode.DeviceLost) return;
                     }
-                    //else Editor.Instance.DeviceExceptionDialog();
+                    else return;
                 }
             }
             else
@@ -820,7 +816,7 @@ namespace ManiacEditor
                 sprite2 = null;
             }
         }
-        public void ForceDisposeSprites()
+        public void ForceDisposeDeviceSpriteResources()
         {
             if (sprite != null)
             {

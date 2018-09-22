@@ -460,7 +460,16 @@ namespace ManiacEditor
                 name == "UFO_Springboard" || name == "Decoration"         || name == "WaterGush"   ||
                 name == "BreakBar"        || name == "InvisibleBlock"     || name == "ForceUnstick"||
                 name == "BreakableWall"   || name == "CollapsingPlatform" || name == "PlaneSwitch" ||
-                name == "ChemicalPool" )
+                name == "ChemicalPool" || name == "Newtron" || name == "Chopper" || name == "TippingPlatform" || name == "Spiny" || name == "OneWayDoor" 
+                || name == "Syringe" || name == "StickyPlatform" || name == "TwistedTubes" || name == "ShopWindow")
+            {
+                if (!Properties.Settings.Default.NeverLoadEntityTextures)
+                {
+                    DrawOthers(d);
+                }
+
+            }
+            else if (name == "DirectorChair")
             {
                 if (!Properties.Settings.Default.NeverLoadEntityTextures)
                 {
@@ -697,7 +706,360 @@ namespace ManiacEditor
                     }
                 }
             }
+            else if (entity.Object.Name.Name == "Newtron")
+            {
+                int type = (int)entity.attributesMap["type"].ValueUInt8;
+                int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool fliph = false;
+                bool flipv = false;
+                int animID;
+                if (type == 1)
+                {
+                    animID = 2;
+                }
+                else
+                {
+                    animID = 0;
+                }
+                if (direction == 1)
+                {
+                    fliph = true;
+                }
+                if (direction == 1)
+                {
+                    fliph = true;
+                }
+                var editorAnim = LoadAnimation2("Newtron", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "Chopper")
+            {
+                int type = (int)entity.attributesMap["type"].ValueUInt8;
+                int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool charge = entity.attributesMap["charge"].ValueBool;
+                bool fliph = false;
+                bool flipv = false;
+                int animID;
+                if (type == 1)
+                {
+                    if (charge == true) {
+                        animID = 3;
+                    }
+                    else {
+                        animID = 1;
+                    }
+
+                }
+                else
+                {
+                    animID = 0;
+                }
+                if (direction == 1)
+                {
+                    fliph = true;
+                }
+                if (direction == 1)
+                {
+                    fliph = true;
+                }
+                var editorAnim = LoadAnimation2("Chopper", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "TippingPlatform")
+            {
+                bool fliph = false;
+                bool flipv = false;
+                int animID = 0;
+                var editorAnim = LoadAnimation2("Platform", d, 1, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "Spiny")
+            {
+                int type = (int)entity.attributesMap["type"].ValueUInt8;
+                int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool fliph = false;
+                bool flipv = false;
+                int animID = 0;
+                if (type == 1)
+                {
+                    animID = 2;
+                    if (direction == 3)
+                    {
+                        fliph = true;
+                    }
+                }
+                else
+                {
+                    animID = 0;
+                    if (direction == 3)
+                    {
+                        flipv = true;
+                    }
+
+                }
+                var editorAnim = LoadAnimation2("Spiny", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "OneWayDoor")
+            {
+                //int type = (int)entity.attributesMap["type"].ValueUInt8;
+                int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool fliph = false;
+                bool flipv = false;
+                int animID = 0;
+                var editorAnim = LoadAnimation2("OneWayDoor", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0) ,
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + 32 + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "Syringe")
+            {
+                //int type = (int)entity.attributesMap["type"].ValueUInt8;
+                //int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool fliph = false;
+                bool flipv = false;
+                int animID = 0;
+                var editorAnim = LoadAnimation2("Syringe", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[0];
+                    var frame2 = editorAnim.Frames[1];
+
+                    //ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frame2.Texture,
+                        x + frame2.Frame.CenterX - (fliph ? (frame2.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame2.Frame.CenterY + (flipv ? (frame2.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame2.Frame.Width, frame2.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "StickyPlatform")
+            {
+                int type = (int)entity.attributesMap["type"].ValueVar;
+                //int direction = (int)entity.attributesMap["direction"].ValueUInt8;
+                bool fliph = false;
+                bool flipv = false;
+                int animID = 0;
+                switch (type) {
+                    case 0:
+                        break;
+                    case 1:
+                        flipv = true;
+                        break;
+                    case 2:
+                        animID = 3;
+                        break;
+                    case 3:
+                        animID = 3;
+                        fliph = true;
+                        break;
+                    default:
+                        break;
+                }
+                var editorAnim = LoadAnimation2("StickyPlatform", d, animID, -1, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && animID >= 0)
+                {
+                    var frame = editorAnim.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                }
+            }
+            else if (entity.Object.Name.Name == "TwistedTubes")
+            {
+                bool fliph = false;
+                bool flipv = false;
+                int height = (int)entity.attributesMap["height"].ValueUInt8;
+                var editorAnim = LoadAnimation2("TwistedTubes", d, 0, 1, fliph, flipv, false);
+                var editorAnim2 = LoadAnimation2("TwistedTubes", d, 0, 0, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && editorAnim2 != null && editorAnim2.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    var frame2 = editorAnim2.Frames[index];
+
+
+                    //ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame2.Texture,
+                        x + frame2.Frame.CenterX - (fliph ? (frame2.Frame.Width - editorAnim2.Frames[0].Frame.Width) : 0),
+                        y + frame2.Frame.CenterY + (flipv ? (frame2.Frame.Height - editorAnim2.Frames[0].Frame.Height) : 0),
+                        frame2.Frame.Width, frame.Frame.Height, false, Transparency);
+                    for (int i = 0; i < height*2; i++)
+                    {
+                        d.DrawBitmap(frame.Texture,
+                            x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[1].Frame.Width) : 0),
+                            y + (i * 32) + frame.Frame.CenterY + 64 + (flipv ? (frame.Frame.Height - editorAnim.Frames[1].Frame.Height) : 0),
+                            frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    }
+
+                }
+            }
+            else if (entity.Object.Name.Name == "ShopWindow")
+            {
+                var widthPixels = (int)(entity.attributesMap["size"].ValuePosition.X.High) * 2;
+                var heightPixels = (int)(entity.attributesMap["size"].ValuePosition.Y.High) * 2;
+                var width = (int)widthPixels / 16;
+                var height = (int)heightPixels / 16;
+
+                EditorAnimation editorAnim;
+
+                if (width != 0 && height != 0)
+                {
+                    // draw corners
+                    for (int i = 0; i < 4; i++)
+                    {
+                        bool right = (i & 1) > 0;
+                        bool bottom = (i & 2) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 0, right, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            d.DrawBitmap(frame.Texture,
+                                (x + widthPixels / (right ? 2 : -2)) - (right ? frame.Frame.Width : 0),
+                                (y + heightPixels / (bottom ? 2 : -2) - (bottom ? frame.Frame.Height : 0)),
+                                frame.Frame.Width, frame.Frame.Height, false, Transparency);
+
+                        }
+                    }
+
+                    // draw top and bottom
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool bottom = (i & 1) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 1, false, bottom, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool wEven = width % 2 == 0;
+                            for (int j = 1; j < width; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + (wEven ? frame.Frame.CenterX : -frame.Frame.Width) + (-width / 2 + j) * frame.Frame.Width),
+                                    (y + heightPixels / (bottom ? 2 : -2) - (bottom ? frame.Frame.Height : 0)),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+
+                    // draw sides
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool right = (i & 1) > 0;
+
+                        editorAnim = LoadAnimation2("EditorAssets", d, 0, 2, right, false, false);
+                        if (editorAnim != null && editorAnim.Frames.Count != 0)
+                        {
+                            var frame = editorAnim.Frames[index];
+                            ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+                            bool hEven = height % 2 == 0;
+                            for (int j = 1; j < height; j++)
+                                d.DrawBitmap(frame.Texture,
+                                    (x + widthPixels / (right ? 2 : -2)) - (right ? frame.Frame.Width : 0),
+                                    (y + (hEven ? frame.Frame.CenterY : -frame.Frame.Height) + (-height / 2 + j) * frame.Frame.Height),
+                                    frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                        }
+                    }
+                }
+            }
+            else if (entity.Object.Name.Name == "DirectorChair")
+            {
+                //int type = (int)entity.attributesMap["type"].ValueUInt8;
+                int size = (int)entity.attributesMap["size"].ValueVar;
+                bool fliph = false;
+                bool flipv = false;
+                var editorAnim = LoadAnimation2("DirectorChair", d, 1, 0, fliph, flipv, false);
+                var editorAnim2 = LoadAnimation2("DirectorChair", d, 1, 1, fliph, flipv, false);
+                var editorAnim3 = LoadAnimation2("DirectorChair", d, 1, 2, fliph, flipv, false);
+                if (editorAnim != null && editorAnim.Frames.Count != 0 && editorAnim2 != null && editorAnim2.Frames.Count != 0 && editorAnim3 != null && editorAnim3.Frames.Count != 0)
+                {
+                    var frame = editorAnim.Frames[index];
+                    var frame2 = editorAnim2.Frames[index];
+                    var frame3 = editorAnim3.Frames[index];
+
+                    ProcessAnimation(frame.Entry.FrameSpeed, frame.Entry.Frames.Count, frame.Frame.Duration);
+
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frame.Texture,
+                        x + frame.Frame.CenterX - (fliph ? (frame.Frame.Width - editorAnim.Frames[0].Frame.Width) : 0),
+                        y - (size * 5 + 8) + frame.Frame.CenterY + (flipv ? (frame.Frame.Height - editorAnim.Frames[0].Frame.Height) : 0),
+                        frame.Frame.Width, frame.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frame2.Texture,
+                        x + frame2.Frame.CenterX - (fliph ? (frame2.Frame.Width - editorAnim2.Frames[0].Frame.Width) : 0),
+                        y - (size * 5 + 8)  + frame2.Frame.CenterY + (flipv ? (frame2.Frame.Height - editorAnim2.Frames[0].Frame.Height) : 0),
+                        frame2.Frame.Width, frame2.Frame.Height, false, Transparency);
+                    d.DrawBitmap(frame3.Texture,
+                        x + frame3.Frame.CenterX - (fliph ? (frame3.Frame.Width - editorAnim3.Frames[0].Frame.Width) : 0),
+                        y - (size * 5 + 8) + frame3.Frame.CenterY + (flipv ? (frame3.Frame.Height - editorAnim3.Frames[0].Frame.Height) : 0),
+                        frame3.Frame.Width, frame3.Frame.Height, false, Transparency);
+                }
+            }
             else if (entity.Object.Name.Name == "TeeterTotter")
+
             {
                 var value = entity.attributesMap["length"].ValueUInt32 / 2;
                 var editorAnim = LoadAnimation2("TeeterTotter", d, 0, 0, false, false, false);
