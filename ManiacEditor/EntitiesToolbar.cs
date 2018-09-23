@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 
 namespace ManiacEditor
 {
@@ -14,16 +15,19 @@ namespace ManiacEditor
     {
         public Action<int> SelectedEntity;
         public Action<Actions.IAction> AddAction;
+        public Action<RSDKv5.SceneObject> Spawn;
 
-        private List<RSDKv5.SceneEntity> entities;
+        private List<RSDKv5.SceneEntity> _entities;
+        private BindingSource _bindingSceneObjectsSource = new BindingSource();
 
         private RSDKv5.SceneEntity currentEntity;
 
-        public List<RSDKv5.SceneEntity> Entities {
+        public List<RSDKv5.SceneEntity> Entities
+        {
             set
             {
-                entities = value.ToList();
-                entities.Sort((x, y) => x.SlotID.CompareTo(y.SlotID));
+                _entities = value.ToList();
+                _entities.Sort((x, y) => x.SlotID.CompareTo(y.SlotID));
                 UpdateEntitiesList();
             }
         }
@@ -42,24 +46,71 @@ namespace ManiacEditor
 
         /*private RSDKv5.SceneObject currentObject;*/
 
-        public EntitiesToolbar()
+        public EntitiesToolbar(List<RSDKv5.SceneObject> sceneObjects)
         {
             InitializeComponent();
+
+            RefreshObjects(sceneObjects);
+
+            defaultFilter.Items.Add("Mania (2)");
+            defaultFilter.Items.Add("Encore (4)");
+            defaultFilter.Items.Add("Both (1)");
+            defaultFilter.Items.Add("Pinball (255)");
+            defaultFilter.Items.Add("Other (0)");
         }
+
+        /*public EntitiesToolbar(List<string> ConfigObjects) //An Attempt to load Object Lists from Gameconfig + Stageconfig, seems to work well!
+        {
+            InitializeComponent();
+
+            List<RSDKv5.SceneObject> sceneObjects = new List<RSDKv5.SceneObject>();
+
+            for (int i = 0; i < ConfigObjects.Count; i++)
+            {
+                RSDKv5.NameIdentifier Ni = new RSDKv5.NameIdentifier(ConfigObjects[i]);
+                RSDKv5.AttributeTypes AT = new RSDKv5.AttributeTypes();
+                List<RSDKv5.AttributeInfo> AttributeInfos = new List<RSDKv5.AttributeInfo>();
+                AttributeInfos.Add(new RSDKv5.AttributeInfo(Ni, AT));
+
+                RSDKv5.SceneObject so = new RSDKv5.SceneObject(Ni,AttributeInfos);
+                sceneObjects.Add(so);
+            }
+
+            RefreshObjects(sceneObjects);
+
+            defaultFilter.Items.Add("Mania (2)");
+            defaultFilter.Items.Add("Encore (4)");
+            defaultFilter.Items.Add("Both (1)");
+            defaultFilter.Items.Add("Pinball (255)");
+            defaultFilter.Items.Add("Other (0)");
+        }*/
 
         private void UpdateEntitiesList()
         {
             entitiesList.Items.Clear();
             entitiesList.ResetText();
-            if (currentEntity != null && entities.Contains(currentEntity))
+            if (currentEntity != null && _entities.Contains(currentEntity))
             {
                 entitiesList.SelectedText = String.Format("{0} - {1}", currentEntity.SlotID, currentEntity.Object.Name);
             }
         }
 
+        public void RefreshObjects(List<RSDKv5.SceneObject> sceneObjects)
+        {
+            sceneObjects.Sort((x, y) => x.Name.ToString().CompareTo(y.Name.ToString()));
+            var bindingSceneObjectsList = new BindingList<RSDKv5.SceneObject>(sceneObjects);
+            _bindingSceneObjectsSource.DataSource = bindingSceneObjectsList;
+
+            if (_bindingSceneObjectsSource != null && _bindingSceneObjectsSource.Count > 0)
+            {
+                cbSpawn.DataSource = _bindingSceneObjectsSource;
+                cbSpawn.SelectedIndex = 0;
+            }
+        }
+
         private void entitiesList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (updateSelected) SelectedEntity?.Invoke(entities[entitiesList.SelectedIndex].SlotID);
+            if (updateSelected) SelectedEntity?.Invoke(_entities[entitiesList.SelectedIndex].SlotID);
         }
 
         private void addProperty(LocalProperties properties, int category_index, string category, string name, string value_type, object value, bool read_only=false) {
@@ -101,7 +152,7 @@ namespace ManiacEditor
             if (entity == currentEntity) return;
             currentEntity = entity;
 
-            if (entitiesList.SelectedIndex >= 0 && entitiesList.SelectedIndex < entities.Count && entities[entitiesList.SelectedIndex] == currentEntity)
+            if (entitiesList.SelectedIndex >= 0 && entitiesList.SelectedIndex < _entities.Count && _entities[entitiesList.SelectedIndex] == currentEntity)
             {
                 // Than it is called from selected item in the menu, so changeing the text will remove it, we don't want that
             }
@@ -114,8 +165,8 @@ namespace ManiacEditor
 
             LocalProperties objProperties = new LocalProperties();
             int category_index = 2 + entity.Attributes.Count;
-            addProperty(objProperties, category_index, "object", "name", "string", entity.Object.Name.ToString(), true);
-            addProperty(objProperties, category_index, "object", "entitySlot", "ushort", entity.SlotID, true);
+            addProperty(objProperties, category_index, "object", "name", "string", entity.Object.Name.ToString(), false);
+            addProperty(objProperties, category_index, "object", "entitySlot", "ushort", entity.SlotID, false);
             --category_index;
             addProperty(objProperties, category_index, "position", "x", "float", entity.Position.X.High + ((float)entity.Position.X.Low / 0x10000));
             addProperty(objProperties, category_index, "position", "y", "float", entity.Position.Y.High + ((float)entity.Position.Y.Low / 0x10000));
@@ -259,6 +310,72 @@ namespace ManiacEditor
                 if (entity == currentEntity)
                     UpdateCurrentEntityProperites();
             }
+            else if (category == "object")
+            {
+                if (name == "name" && oldValue != value)
+                {
+                    var info = RSDKv5.Objects.GetObjectInfo(new RSDKv5.NameIdentifier(value as string));
+                    if (info == null)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Unknown Object", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    var objects = ((BindingList<RSDKv5.SceneObject>)_bindingSceneObjectsSource.DataSource).ToList();
+                    var obj = objects.FirstOrDefault(t => t.Name.Name == value as string);
+                    if (obj != null)
+                    {
+                        entity.Attributes.Clear();
+                        entity.attributesMap.Clear();
+                        foreach (var attb in info.Attributes)
+                        {
+                            var attributeValue = new RSDKv5.AttributeValue(attb.Type);
+                            entity.Attributes.Add(attributeValue);
+                            entity.attributesMap.Add(attb.Name.Name, attributeValue);
+                        }
+                        entity.Object.Entities.Remove(entity);
+                        entity.Object = obj;
+                        obj.Entities.Add(entity);
+                    }
+                    else
+                    {
+                        // The new object
+                        var sobj = new RSDKv5.SceneObject(info.Name, info.Attributes);
+
+                        entity.Attributes.Clear();
+                        entity.attributesMap.Clear();
+                        foreach (var attb in info.Attributes)
+                        {
+                            var attributeValue = new RSDKv5.AttributeValue(attb.Type);
+                            entity.Attributes.Add(attributeValue);
+                            entity.attributesMap.Add(attb.Name.Name, attributeValue);
+                        }
+                        entity.Object.Entities.Remove(entity);
+                        entity.Object = sobj;
+                        sobj.Entities.Add(entity);
+                        _bindingSceneObjectsSource.Add(sobj);
+                    }
+                }
+                if (name == "entitySlot" && oldValue != value)
+                {
+                    ushort newSlot = (ushort)value;
+                    // Check if slot has been used
+                    var objects = ((BindingList<RSDKv5.SceneObject>)_bindingSceneObjectsSource.DataSource).ToList();
+                    foreach (var obj in objects)
+                    {
+                        if (obj.Entities.Any(t => t.SlotID == newSlot))
+                        {
+                            System.Windows.Forms.MessageBox.Show($"Slot {newSlot} is currently being used by a {obj.Name.ToString()}",
+                                "Slot in use!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    // Passed
+                    entity.SlotID = newSlot;
+                }
+                // Update Properties
+                currentEntity = null;
+                UpdateEntitiesProperties(new List<RSDKv5.SceneEntity>() { entity });
+            }
             else
             {
                 var attribute = entity.GetAttribute(category);
@@ -335,7 +452,73 @@ namespace ManiacEditor
         {
             // It is slow to update the list, so lets generate it when the menu opens
             entitiesList.Items.Clear();
-            entitiesList.Items.AddRange(entities.Select(x => String.Format("{0} - {1}", x.SlotID, x.Object.Name)).ToArray());
+            entitiesList.Items.AddRange(_entities.Select(x => String.Format("{0} - {1}", x.SlotID, x.Object.Name)).ToArray());
+        }
+
+        private void btnSpawn_Click(object sender, EventArgs e)
+        {
+            if (cbSpawn?.SelectedItem != null
+                && cbSpawn.SelectedItem is RSDKv5.SceneObject)
+            {
+                switch (Properties.Settings.Default.DefaultFilter[0])
+                {
+                    case 'M':
+                        EditorEntities.DefaultFilter = 2;
+                        break;
+                    case 'E':
+                        EditorEntities.DefaultFilter = 4;
+                        break;
+                    case 'B':
+                        EditorEntities.DefaultFilter = 1;
+                        break;
+                    case 'P':
+                        EditorEntities.DefaultFilter = 255;
+                        break;
+                    default:
+                        EditorEntities.DefaultFilter = 0;
+                        break;
+                }
+                Spawn?.Invoke(cbSpawn.SelectedItem as RSDKv5.SceneObject);
+            }
+        }
+
+        private void maniaFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void encoreFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void bothFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        private void otherFilterCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            EditorEntities.FilterRefreshNeeded = true;
+        }
+
+        // Temporary solution to "filter" attribute being missing in old Scenes
+        // TODO: Replace with proper Object/Entity Manager
+        private void addFilterButton_Click(object sender, EventArgs e)
+        {
+            if (currentEntity != null && !currentEntity.attributesMap.ContainsKey("filter"))
+            {
+                currentEntity.AddAttributeToObject("filter", RSDKv5.AttributeTypes.UINT8);
+                PropertiesRefresh();
+            }
+        }
+
+        private void addAllFiltersButton_Click(object sender, EventArgs e)
+        {
+            foreach (RSDKv5.SceneEntity entity in _entities)
+                if (entity != null && !entity.attributesMap.ContainsKey("filter"))
+                    entity.AddAttributeToObject("filter", RSDKv5.AttributeTypes.UINT8);
+            PropertiesRefresh();
         }
     }
 }

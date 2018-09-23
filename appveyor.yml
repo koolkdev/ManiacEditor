@@ -1,16 +1,19 @@
-os:
-  - Visual Studio 2017
-
-shallow_clone: true
-
-configuration:
-  - Release
-
+version: 0.2.25.{build}
+skip_tags: true
+image: Visual Studio 2017
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
 before_build:
-  - nuget restore
-
+- cmd: nuget restore
+build:
+  verbosity: minimal
 after_build:
-  - 7z a ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll
-
+- cmd: 7z a ManiacEditor-Beta-Positivity-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\%PLATFORM_DIR%\ManiacEditor\bin\Release\Resources %APPVEYOR_BUILD_FOLDER%\LICENSE
 artifacts:
-  - path: ManiacEditor-%APPVEYOR_BUILD_VERSION%.zip
+- path: ManiacEditor-Beta-Positivity-v%APPVEYOR_BUILD_VERSION%.zip
+  name: ManiacEditor-Positivity

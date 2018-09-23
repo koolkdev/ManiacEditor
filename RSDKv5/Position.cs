@@ -7,9 +7,10 @@ using System.IO;
 
 namespace RSDKv5
 {
+    [Serializable]
     public struct Position
     {
-
+        [Serializable]
         public struct Value 
         {
             public Value(short high = 0, ushort low = 0)
@@ -52,6 +53,17 @@ namespace RSDKv5
 
             writer.Write(Y.Low);
             writer.Write(Y.High);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("X: ");
+            sb.Append(X.High);
+            if (0 != X.Low) sb.Append($"[{X.Low}]");
+            sb.Append(", Y: ");
+            sb.Append(Y.High);
+            if (0 != Y.Low) sb.Append($"[{Y.Low}]");
+            return sb.ToString();
         }
     }
 }

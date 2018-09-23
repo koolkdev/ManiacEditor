@@ -13,9 +13,11 @@ namespace ManiacEditor
 {
     public partial class TilesList : UserControl, IDrawArea
     {
-        public GIF TilesImage;
+        public GIF TilesImage = null;
 
         const int TILE_SIZE = 16;
+
+        public String SelectedTileNumber;
 
         int _tileScale = 2;
         public int TileScale { get { return _tileScale; } set { _tileScale = value; AdjustControls(); } }
@@ -45,6 +47,12 @@ namespace ManiacEditor
         {
             graphicPanel.Width = width;
             graphicPanel.Height = height;
+        }
+
+        public void Reload()
+        {
+            TilesImage.Reload();
+            graphicPanel.Refresh();
         }
         
         public void DisposeTextures()
@@ -172,13 +180,16 @@ namespace ManiacEditor
             if (x / tile_size / TileScale < tiles_per_line && tile_number >= 0 && tile_number < 0x400)
             {
                 SelectedTile = tile_number;
+                Editor.Instance.ToolbarSelectedTile = tile_number.ToString();
             }
             else
             {
                 SelectedTile = -1;
             }
-            graphicPanel.Render();
+           graphicPanel.Render();
+            TilesToolbar.RefreshTileSelected();
         }
+
 
         private void graphicPanel_MouseDown(object sender, MouseEventArgs e)
         {
@@ -229,6 +240,7 @@ namespace ManiacEditor
 
         public new void Dispose()
         {
+            TilesImage?.Dispose();
             graphicPanel.Dispose();
             base.Dispose();
         }

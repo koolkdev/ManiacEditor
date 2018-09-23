@@ -7,20 +7,25 @@ using System.IO;
 
 namespace RSDKv5
 {
+    [Serializable]
     public class SceneObject
     {
-        public readonly NameIdentifier Name;
+        public NameIdentifier Name
+        {
+            get;
+            private set;
+        }
         public readonly List<AttributeInfo> Attributes = new List<AttributeInfo>();
         public List<SceneEntity> Entities = new List<SceneEntity>();
 
 
-        /*public SceneObjects(NameIdentifier name, List<AttributeInfo> attributes)
+        public SceneObject(NameIdentifier name, List<AttributeInfo> attributes)
         {
-            this.Name = name;
-            this.Attributes = attributes;
+            Name = name;
+            Attributes = attributes;
         }
 
-        public SceneObjects(string name, List<AttributeInfo> attributes) : this(new NameIdentifier(name), attributes) { }*/
+        /*public SceneObjects(string name, List<AttributeInfo> attributes) : this(new NameIdentifier(name), attributes) { }*/
 
         internal SceneObject(Reader reader)
         {
@@ -35,6 +40,7 @@ namespace RSDKv5
             ushort entities_count = reader.ReadUInt16();
             for (int i = 0; i < entities_count; ++i)
                 Entities.Add(new SceneEntity(reader, this));
+                
         }
 
         internal void Write(Writer writer)
@@ -48,6 +54,48 @@ namespace RSDKv5
             writer.Write((ushort)Entities.Count);
             foreach (SceneEntity entity in Entities)
                 entity.Write(writer);
+        }
+
+        public void AddAttribute(string attName, AttributeTypes attType)
+        {
+            AttributeInfo att = new AttributeInfo(attName, attType);
+            Console.WriteLine("Attempting to add attribute of name \"" + attName + "\" to object \"" + Name + "\"");
+            Attributes.Add(att);
+            foreach (SceneEntity entity in Entities)
+            {
+                Console.WriteLine(Name + " at slot " + entity.SlotID + " recieved attribute \"" + att.Name + "\"");
+                entity.Attributes.Add(new AttributeValue(att.Type));
+                entity.attributesMap[att.Name.ToString()] = entity.Attributes.Last();
+            }
+        }
+
+        public void RemoveAttribute(string attName)
+        {
+            Console.WriteLine("Attempting to remove attribute of name \"" + attName + "\" from object \"" + Name + "\"");
+            for (int i = 0; i < Attributes.Count; i++)
+            {
+                if (Attributes[i].Name.Name == attName)
+                {
+                    Console.WriteLine("Attribute \"" + attName + "\" found, attempting removal...");
+                    Attributes.RemoveAt(i);
+                    foreach (SceneEntity entity in Entities)
+                    {
+                        Console.WriteLine(Name + " at slot " + entity.SlotID + " lost attribute \"" + attName + "\"");
+                        entity.Attributes.RemoveAt(i);
+                        entity.attributesMap.Remove(attName);
+                    }
+                    return;
+                }
+            }
+            Console.WriteLine("Removal failed because attribute \"" + attName + "\" wasn't found!!");
+        }
+
+        public bool HasAttributeOfName(string name)
+        {
+            foreach (AttributeInfo att in Attributes)
+                if (att.Name.Name == name)
+                    return true;
+            return false;
         }
     }
 }

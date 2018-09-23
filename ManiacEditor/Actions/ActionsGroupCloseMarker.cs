@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManiacEditor.Actions
+﻿namespace ManiacEditor.Actions
 {
     class ActionsGroupCloseMarker : IAction
     {
+        public string Description => null;
+
         public void Undo()
         {
 

@@ -13,18 +13,23 @@ using Font = SharpDX.Direct3D9.Font;
 using Rectangle = System.Drawing.Rectangle;
 using Color = System.Drawing.Color;
 using Point = System.Drawing.Point;
+using System.Timers;
 
 /*
  * This file is a ported old rendering code
  * It will be replaced with OpenGL soon
  */
+
+
 namespace ManiacEditor
 {
     public partial class DevicePanel : UserControl
     {
         #region Members
 
-        private bool mouseMoved = false;
+        public bool mouseMoved = false;
+        public bool renderInProgress = false;
+        DialogResult deviceExceptionResult;
 
         public int DrawWidth;
         public int DrawHeight;
@@ -64,6 +69,8 @@ namespace ManiacEditor
 
         private MouseEventArgs lastEvent;
 
+        
+
         #endregion
 
         #region ctor
@@ -81,6 +88,10 @@ namespace ManiacEditor
         /// Init the DirectX-Stuff here
         /// </summary>
         /// <param name="parent">parent of the DevicePanel</param>
+        /// 
+        // This will enable a dev warning box on start up if 'true' and if 'false' disable it.
+        bool enableDevWarning = true;
+
         public void Init(IDrawArea parent)
         {
             try
@@ -91,6 +102,7 @@ namespace ManiacEditor
                 presentParams = new PresentParameters();
                 presentParams.Windowed = true;
                 presentParams.SwapEffect = SwapEffect.Discard;
+
 
                 Capabilities caps = direct3d.Adapters.First().GetCaps(DeviceType.Hardware);
 
@@ -116,17 +128,22 @@ namespace ManiacEditor
                 _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.None);
                 _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.None);
                 _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.None);
+                _device.SetRenderState(RenderState.ZWriteEnable, false);
+                _device.SetRenderState(RenderState.ZEnable, false);
 
                 if (OnCreateDevice != null)
+                {
                     OnCreateDevice(this, new DeviceEventArgs(_device));
+                }
 
-                //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
-                //    4, _device, Usage.Dynamic | Usage.WriteOnly,
-                //    CustomVertex.PositionTextured.Format, Pool.Default);
 
-                //_device.SetStreamSource(0, vb, 0);
+            //vb = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+            //    4, _device, Usage.Dynamic | Usage.WriteOnly,
+            //    CustomVertex.PositionTextured.Format, Pool.Default);
 
-                txb = new Bitmap(1, 1);
+            //_device.SetStreamSource(0, vb, 0);
+
+            txb = new Bitmap(1, 1);
                 using (Graphics g = Graphics.FromImage(txb))
                     g.Clear(Color.White);
 
@@ -167,6 +184,16 @@ namespace ManiacEditor
 
         public void Run()
         {
+            if (enableDevWarning == true)
+            {
+                if (Properties.Settings.Default.NeverShowThisAgain == false)
+                {
+                    using (var devWarnBox = new DevWarningBox())
+                    {
+                        devWarnBox.ShowDialog();
+                    }
+                }
+            }
             RenderLoop.Run(this, () =>
             {
                 // Another option is not use RenderLoop at all and call Render when needed, and call here every tick for animations
@@ -176,7 +203,7 @@ namespace ManiacEditor
                     OnMouseMove(lastEvent);
                     mouseMoved = false;
                 }
-                // Application.DoEvents();
+                //Application.DoEvents();
             });
         }
 
@@ -224,33 +251,44 @@ namespace ManiacEditor
         /// <summary>
         /// Attempt to recover the device if it is lost.
         /// </summary>
-        protected void AttemptRecovery()
+        public void AttemptRecovery()
         {
             if (_device == null) return;
 
-            Result result =_device.TestCooperativeLevel();
-            if (result == ResultCode.DeviceLost) return;
-            if (result == ResultCode.DeviceNotReset) { 
+            Result result = _device.TestCooperativeLevel();
+            if (result == ResultCode.DeviceLost)
+            {
                 try
                 {
-                    ResetDevice();
+                    DisposeDeviceResources();
+                    InitDeviceResources();
                 }
                 catch (SharpDXException ex)
                 {
                     // If it's still lost or lost again, just do nothing
-                    if (ex.ResultCode == ResultCode.DeviceLost) return;
-                    else throw ex;
+                    if (ex.ResultCode == ResultCode.DeviceLost)
+                    {
+                        DisposeDeviceResources();
+                        InitDeviceResources();
+                        if (ex.ResultCode == ResultCode.DeviceLost) return;
+                    }
+                    else return;
                 }
+            }
+            else
+            {
+                Editor.Instance.DeviceExceptionDialog();
             }
         }
 
         public void ResetDevice()
         {
-            DisposeDeviceResources();
-            _parent.DisposeTextures();
-            _device.Reset(presentParams);
-            deviceLost = false;
-            InitDeviceResources();
+                DisposeDeviceResources();
+                _parent.DisposeTextures();
+                _device.Reset(presentParams);
+                deviceLost = false;
+                InitDeviceResources();
+
         }
 
         private void MakeGray(Bitmap image)
@@ -287,16 +325,62 @@ namespace ManiacEditor
 
         #region Rendering
 
+        public void DeviceExceptionDialog()
+        {
+            try
+            {
+                DisposeDeviceResources();
+                Init(Editor.Instance);
+            }
+            catch (SharpDX.SharpDXException)
+            {
+                using (var deviceLostBox = new DeviceLostBox())
+                {
+                    deviceLostBox.ShowDialog();
+                    deviceExceptionResult = deviceLostBox.DialogResult;
+                }
+                if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
+                {
+                    Editor.Instance.backupSceneBeforeCrash();
+                    Environment.Exit(1);
+
+                }
+                else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
+                {
+                    DisposeDeviceResources();
+                    Init(Editor.Instance);
+
+                }
+                else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
+                {
+                    Editor.Instance.backupSceneBeforeCrash();
+                    DisposeDeviceResources();
+                    Init(Editor.Instance);
+                }
+                else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
+                {
+                    Environment.Exit(1);
+                }
+            }
+        }
+
         /// <summary>
         /// Rendering-method
         /// </summary>
         public void Render()
         {
             if (deviceLost) AttemptRecovery();
-            if (deviceLost) return;
-
-            if (_device == null)
+            if (deviceLost)
+            {
+                DisposeDeviceResources();
+                Init(Editor.Instance);
                 return;
+            }
+            if (_device == null)
+            {
+                AttemptRecovery();
+                return;
+            }
 
             try
             {
@@ -312,6 +396,8 @@ namespace ManiacEditor
                 sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f);
 
                 sprite2.Begin(SpriteFlags.AlphaBlend);
+
+
                 if (zoom > 1)
                 {
                     // If zoomin, just do near-neighbor scaling
@@ -321,9 +407,11 @@ namespace ManiacEditor
                 }
                 sprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.DoNotModifyRenderState);
 
-                // Render of scene here
-                if (OnRender != null)
-                    OnRender(this, new DeviceEventArgs(_device));
+
+            // Render of scene here
+            if (OnRender != null)
+            OnRender(this, new DeviceEventArgs(_device));
+
 
                 sprite.Transform = Matrix.Scaling(1f, 1f, 1f);
 
@@ -333,21 +421,25 @@ namespace ManiacEditor
                 rect2.Intersect(new Rectangle(0, 0, screen.Width, screen.Height));
                 DrawTexture(tx, new Rectangle(0, 0, rect1.Width, rect1.Height), new Vector3(0, 0, 0), new Vector3(rect1.X, rect1.Y, 0), SystemColors.Control);
                 DrawTexture(tx, new Rectangle(0, 0, rect2.Width, rect2.Height), new Vector3(0, 0, 0), new Vector3(rect2.X, rect2.Y, 0), SystemColors.Control);
+                
 
                 sprite.End();
                 sprite2.End();
                 //End the scene
                 _device.EndScene();
                 _device.Present();
-            }
+        }
             catch (SharpDXException ex)
             {
                 if (ex.ResultCode == ResultCode.DeviceLost)
                     deviceLost = true;
                 else
                     throw ex;
-            }
-        }
+}
+
+
+
+}
 
         #endregion
 
@@ -470,7 +562,6 @@ namespace ManiacEditor
         public void DrawBitmap(Texture image, int x, int y, int width, int height, bool selected, int transparency)
         {
             if (!IsObjectOnScreen(x, y, width, height)) return;
-
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();
             DrawTexture(image, new Rectangle(0, 0, width, height), new Vector3(), new Vector3(x - (int)(screen.X / zoom), y - (int)(screen.Y / zoom), 0), (selected) ? Color.BlueViolet : Color.FromArgb(transparency, Color.White));
@@ -518,8 +609,13 @@ namespace ManiacEditor
             int y = Math.Min(Y1, Y2);
             int pixel_width = Math.Max((int)zoom, 1);
 
-            if (!IsObjectOnScreen(x, y, width, height)) return;
+            if (Properties.Settings.Default.AlwaysRenderLines != true)
+            {
+                if (!IsObjectOnScreen(x, y, width, height)) return;
+            }
+
             //tx = new Texture(_device, txb, Usage.Dynamic, Pool.Default);
+
 
             sprite.Transform = Matrix.Scaling(1f, 1f, 1f); 
             if (width == 0 || height == 0)
@@ -534,7 +630,7 @@ namespace ManiacEditor
             {
                 DrawLinePBP(X1, Y1, X2, Y2, color);
             }
-            sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f); 
+            sprite.Transform = Matrix.Scaling((float)zoom, (float)zoom, 1f);
         }
 
         public void DrawArrow(int x0, int y0, int x1, int y1, Color color)
@@ -604,7 +700,7 @@ namespace ManiacEditor
 
         public void DrawRectangle(int x1, int y1, int x2, int y2, Color color)
         {
-            if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
+            //if (!IsObjectOnScreen(x1, y1, x2 - x1, y2 - y1)) return;
 
             Rectangle screen = _parent.GetScreen();
             double zoom = _parent.GetZoom();
@@ -719,6 +815,18 @@ namespace ManiacEditor
                 sprite2.Dispose();
                 sprite2 = null;
             }
+        }
+        public void ForceDisposeDeviceSpriteResources()
+        {
+            if (sprite != null)
+            {
+                sprite.End();
+            }
+            if (sprite2 != null)
+            {
+                sprite2.End();
+            }
+
         }
 
         public new void Dispose()

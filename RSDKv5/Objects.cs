@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,46 +26,12 @@ namespace RSDKv5
                 foreach (var key in section.Keys)
                 {
                     AttributeTypes type;
-                    switch (key.Value)
+                    if(!Enum.TryParse(key.Value, out type))
                     {
-                        case "UINT8":
-                            type = AttributeTypes.UINT8;
-                            break;
-                        case "UINT16":
-                            type = AttributeTypes.UINT16;
-                            break;
-                        case "UINT32":
-                            type = AttributeTypes.UINT32;
-                            break;
-                        case "INT8":
-                            type = AttributeTypes.INT8;
-                            break;
-                        case "INT16":
-                            type = AttributeTypes.INT16;
-                            break;
-                        case "INT32":
-                            type = AttributeTypes.INT32;
-                            break;
-                        case "VAR":
-                            type = AttributeTypes.VAR;
-                            break;
-                        case "BOOL":
-                            type = AttributeTypes.BOOL;
-                            break;
-                        case "STRING":
-                            type = AttributeTypes.STRING;
-                            break;
-                        case "POSITION":
-                            type = AttributeTypes.POSITION;
-                            break;
-                        case "COLOR":
-                            type = AttributeTypes.COLOR;
-                            break;
-                        default:
-                            // Unknown attribute
-                            continue;
+                        // unknown attribute, what to do?
+                        Debug.WriteLine($"Unknown type! [{key.Value}]");
                     }
-
+                    
                     attributes.Add(new AttributeInfo(new NameIdentifier(key.KeyName), type));
                 }
                 objects.Add(new ObjectInfo(new NameIdentifier(section.SectionName), attributes));

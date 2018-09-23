@@ -1,0 +1,60 @@
+```Maniac Editor - Generations Edition (0.2.26.0 BETA)
+
+Continuing from the version numbers OtherworldBob's fork left us with, we will continue development in hopes to see Maniac Editor reach something beyond an Ongoing Beta.
+
+New Features:
+- New Details in the Bottom Pane Relating to where you click and your selection (Selection Size, etc.)
+- Added another Bottom Pane to seperate the new details from the Data Folder Location
+- Pixel Mode for those details when dealling with objects that reliey on pixel for their position and size rather than tile size
+- Revamped App Icon and About Screen Image (Made by me, CarJem Generations)
+- Revamped UI Icons (Uses Visual Studio Image Libary, along with Material.io Icons when needed)
+- Added an Options Menu
+- Renamed Help to Other
+- Added a Menu explaining some of the main controls
+- Run Game now works again for Mania Plus (but only to an extent, still missing some critical features)
+- Run Game for now does not work Pre-Plus, even when toggled in options(awaiting new offsets from @SuperSonic16)
+- Added a Grid Mode
+- Added the ability to see Collision In-Editor, similar to how you would see it in game (Not perfect yet, also it's a bit demanding right now, but it's something other than nothing at all)
+- Added a ID Mode, which prints numbers, corresponding to their position in the 16x16Tiles.gif/TileConfig.bin, over all the tiles
+- Clicking a Tile from the Selection Panel in Edit Mode will now give you it's tile number.
+- Renamed Tile Unkown's because now we know that they are simply two sides of a tiles collision. They are now named Plane 1 and Plane 2.
+- Added PlaneSwitch Rendering that resembles it's in game counter part
+- Added ForceUnstick Rendering that resembles it's in game counter part
+- Added CollapsingPlatform Rendering that resembles it's in game counter part```
+
+```- Added BreakableWall Rendering that resembles it's in game counter part (with the exception that it will display an icon for mighty or knuckles depending on the wall's value)
+- Added ForceSpin Rendering that resembles it's in game counter part
+- Improved the Rendering of Spikes to Allow you to see them increase in length depending on the "count" variable
+- Improved Bridge Rendering?
+- Added New Entity Filters for Mania Plus, they allow you to toggle the visibility of entities based on their filter value. The filter value will determine what modes that will/won't appear.
+- You can now spawn entities with a specific filter value
+- Implemented the ability to Scroll with Any Scroll Wheel using a mouse. Simply hover over the scrollbar to take control of it with your mouse wheel. (Shortcut Key: N)
+- Added a Scroll Lock which will force you to stick to one axis with the mouse (Configurable; Shortcut Key: B)
+- Updated the About Screen with the new contributers to this project
+- Implemented FG Lower and FG Higher as main new layers. They default to layers named FG Supa Low, FG Supa High and such. But they also can be named whatever you like so they can act as extra FG Low and FG High Layers for you.
+- Added Faster Nudge which allows you to increase the amount of pixels/tile spaces your tiles move at a time, the amount is configurable.
+- Added Warnings when leaving a scene from Exit, Open, Open Data Directory, and simply trying to close the program. (This can be turned off)
+- Added a Developer Warning on Startup (Currently can't be disabled due to the way the an option such as "Never show again" would prevent the warning from being displayed between updates. Looking into a solution)
+- Special Assets for the Warning Boxes (Created by Discord User Turtleman#4711)```
+
+```- Added a whole ton of new customizable options:
+	> Copy Between Scenes Toggle (Does not work for Entities, works fine with tiles)
+	> Keep Extra Layers on when Editing Extra Layers Toggle
+	> Never Load Entity Textures/Annimations
+	> Reduce Maximum Zoom Level Toggle (Help prevent slowdowns and ideally crashes)
+	> Disable Save Warnings Toggle
+	> Game Path Text Box for manually setting the location of SonicMania.exe
+	> Just Run the Game Toggle (HIGHLY Recomeneded Post-Plus)
+	> Configurable Defaults for the Tiles Toolbar
+	> Configurable Custom FG Layers
+	> Configurable Defaults for the Tiles Toolbar Default Zoom Level
+	> Change Scroll Lock Type (X/Y)
+	> Scene Select Default View (Sorted View/Files View)
+	> Defaults for Layer Visibility (Includes: FG Lower, FG Low, FG High, FG Higher, Entities, Annimations)
+	> Configurable Fast Nudge Amount (Min 1, Max 100)
+	> Experimental Windows Clipboard Mode Toggle. Allows you to copy between two maniac editors (Does not work for Entities, works fine with tiles)
+	> Experimental Remove Object Lock. Allows you to import objects that already have the same name as one you have in you scene. (Only Partialy Tested, use with Extreme Risk!)
+	> Option to Reset all Options to Default
+- Other minor changes/fixes```
+
+	

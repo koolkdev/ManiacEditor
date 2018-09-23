@@ -28,13 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.scenesTree = new System.Windows.Forms.TreeView();
             this.selectButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.isFilesView = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.FilterText = new System.Windows.Forms.TextBox();
             this.browse = new System.Windows.Forms.Button();
+            this.isFilesView = new System.Windows.Forms.CheckBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteSceneInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // scenesTree
@@ -47,6 +55,7 @@
             this.scenesTree.Size = new System.Drawing.Size(460, 278);
             this.scenesTree.TabIndex = 0;
             this.scenesTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.scenesTree_AfterSelect);
+            this.scenesTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.scenesTree_NodeMouseClick);
             this.scenesTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.scenesTree_NodeMouseDoubleClick);
             this.scenesTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.scenesTree_MouseUp);
             // 
@@ -74,24 +83,12 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // isFilesView
-            // 
-            this.isFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.isFilesView.AutoSize = true;
-            this.isFilesView.Location = new System.Drawing.Point(12, 328);
-            this.isFilesView.Name = "isFilesView";
-            this.isFilesView.Size = new System.Drawing.Size(81, 19);
-            this.isFilesView.TabIndex = 6;
-            this.isFilesView.Text = "Files View";
-            this.isFilesView.UseVisualStyleBackColor = true;
-            this.isFilesView.CheckedChanged += new System.EventHandler(this.isFilesView_CheckedChanged);
-            // 
             // searchLabel
             // 
             this.searchLabel.AutoSize = true;
             this.searchLabel.Location = new System.Drawing.Point(9, 9);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Size = new System.Drawing.Size(37, 15);
+            this.searchLabel.Size = new System.Drawing.Size(32, 13);
             this.searchLabel.TabIndex = 8;
             this.searchLabel.Text = "Filter:";
             // 
@@ -116,6 +113,55 @@
             this.browse.UseVisualStyleBackColor = true;
             this.browse.Click += new System.EventHandler(this.browse_Click);
             // 
+            // isFilesView
+            // 
+            this.isFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.isFilesView.AutoSize = true;
+            this.isFilesView.Location = new System.Drawing.Point(12, 330);
+            this.isFilesView.Name = "isFilesView";
+            this.isFilesView.Size = new System.Drawing.Size(73, 17);
+            this.isFilesView.TabIndex = 6;
+            this.isFilesView.Text = "Files View";
+            this.isFilesView.UseVisualStyleBackColor = true;
+            this.isFilesView.CheckedChanged += new System.EventHandler(this.isFilesView_CheckedChanged);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 26);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.addToolStripMenuItem.Text = "Add Scene to Category";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.deleteSceneInfoToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "Edit Scene Info";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // deleteSceneInfoToolStripMenuItem
+            // 
+            this.deleteSceneInfoToolStripMenuItem.Name = "deleteSceneInfoToolStripMenuItem";
+            this.deleteSceneInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteSceneInfoToolStripMenuItem.Text = "Delete Scene Info";
+            this.deleteSceneInfoToolStripMenuItem.Click += new System.EventHandler(this.deleteSceneInfoToolStripMenuItem_Click);
+            // 
             // SceneSelect
             // 
             this.AcceptButton = this.selectButton;
@@ -136,6 +182,9 @@
             this.Name = "SceneSelect";
             this.ShowIcon = false;
             this.Text = "Select Scene...";
+            this.Load += new System.EventHandler(this.SceneSelect_Load);
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -150,5 +199,10 @@
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox FilterText;
         private System.Windows.Forms.Button browse;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem deleteSceneInfoToolStripMenuItem;
     }
 }

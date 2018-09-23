@@ -12,21 +12,37 @@ namespace RSDKv5
 {
     public class GIF : IDisposable
     {
-        Bitmap bitmap;
-        
-        Dictionary<Tuple<Rectangle, bool, bool>, Bitmap> bitmapCache = new Dictionary<Tuple<Rectangle, bool, bool>, Bitmap>();
-        Dictionary<Tuple<Rectangle, bool, bool>, Texture> texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
+        Bitmap _bitmap;
+        string _bitmapFilename;
+
+        Dictionary<Tuple<Rectangle, bool, bool>, Bitmap> _bitmapCache = new Dictionary<Tuple<Rectangle, bool, bool>, Bitmap>();
+        Dictionary<Tuple<Rectangle, bool, bool>, Texture> _texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
 
         public GIF(string filename)
         {
-            bitmap = new Bitmap(filename);
+            if (!File.Exists(filename))
+            {
+                throw new FileNotFoundException("The GIF file was not found.", filename);
+            }
+            _bitmap = new Bitmap(filename);
+
+            if (_bitmap.Palette != null && _bitmap.Palette.Entries.Length > 0)
+            {
+                _bitmap.MakeTransparent(_bitmap.Palette.Entries[0]);
+            }
+            else
+            {
+                _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+            }
+            // stash the filename too, so we can reload later
+            _bitmapFilename = filename;
             // TODO: Proper transparent (palette index 0)
-            bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
         }
 
-        public GIF(Bitmap bitmap)
+        private GIF(Bitmap bitmap)
         {
-            this.bitmap = new Bitmap(bitmap);
+            this._bitmap = new Bitmap(bitmap);
         }
 
         private Bitmap CropImage(Bitmap source, Rectangle section)
@@ -34,11 +50,12 @@ namespace RSDKv5
             // An empty bitmap which will hold the cropped image
             Bitmap bmp = new Bitmap(section.Width, section.Height);
 
-            Graphics g = Graphics.FromImage(bmp);
-            
-            // Draw the given area (section) of the source image
-            // at location 0,0 on the empty bitmap (bmp)
-            g.DrawImage(source, 0, 0, section, GraphicsUnit.Pixel);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                // Draw the given area (section) of the source image
+                // at location 0,0 on the empty bitmap (bmp)
+                g.DrawImage(source, 0, 0, section, GraphicsUnit.Pixel);
+            }
 
             return bmp;
         }
@@ -46,9 +63,9 @@ namespace RSDKv5
         public Bitmap GetBitmap(Rectangle section, bool flipX = false, bool flipY = false)
         {
             Bitmap bmp;
-            if (bitmapCache.TryGetValue(new Tuple<Rectangle, bool, bool>(section, flipX, flipY), out bmp)) return bmp;
+            if (_bitmapCache.TryGetValue(new Tuple<Rectangle, bool, bool>(section, flipX, flipY), out bmp)) return bmp;
 
-            bmp = CropImage(bitmap, section);
+            bmp = CropImage(_bitmap, section);
             if (flipX)
             {
                 bmp.RotateFlip(RotateFlipType.RotateNoneFlipX);
@@ -58,7 +75,7 @@ namespace RSDKv5
                 bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
 
-            bitmapCache[new Tuple<Rectangle, bool, bool>(section, flipX, flipY)] = bmp;
+            _bitmapCache[new Tuple<Rectangle, bool, bool>(section, flipX, flipY)] = bmp;
             return bmp;
         }
 
@@ -66,7 +83,7 @@ namespace RSDKv5
         public Texture GetTexture(Device device, Rectangle section, bool flipX = false, bool flipY = false)
         {
             Texture texture;
-            if (texturesCache.TryGetValue(new Tuple<Rectangle, bool, bool>(section, flipX, flipY), out texture)) return texture;
+            if (_texturesCache.TryGetValue(new Tuple<Rectangle, bool, bool>(section, flipX, flipY), out texture)) return texture;
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -75,26 +92,47 @@ namespace RSDKv5
                 texture = Texture.FromStream(device, memoryStream);
             }
 
-            texturesCache[new Tuple<Rectangle, bool, bool>(section, flipX, flipY)] = texture;
+            _texturesCache[new Tuple<Rectangle, bool, bool>(section, flipX, flipY)] = texture;
             return texture;
         }
 
         public void Dispose()
         {
-            bitmap.Dispose();
-            texturesCache = null;
+            ReleaseResources();
         }
 
         public void DisposeTextures()
         {
-            foreach (Texture texture in texturesCache.Values)
-                texture.Dispose();
-            texturesCache = new Dictionary<Tuple<Rectangle, bool, bool>, Texture>();
+            if (null == _texturesCache) return;
+            foreach (Texture texture in _texturesCache.Values)
+                texture?.Dispose();
+            _texturesCache.Clear();
+        }
+
+        public void Reload()
+        {
+            if (!File.Exists(_bitmapFilename))
+            {
+                throw new FileNotFoundException(string.Format("Could not find the file {0}", _bitmapFilename),
+                                                _bitmapFilename);
+            }
+            ReleaseResources();
+            _bitmap = new Bitmap(_bitmapFilename);
+            _bitmap.MakeTransparent(SystemColor.FromArgb(0xff00ff));
+        }
+
+        private void ReleaseResources()
+        {
+            _bitmap.Dispose();
+            DisposeTextures();
+            foreach (Bitmap b in _bitmapCache.Values)
+                b?.Dispose();
+            _bitmapCache.Clear();
         }
 
         public GIF Clone()
         {
-            return new GIF(bitmap);
+            return new GIF(_bitmapFilename);
         }
     }
 }

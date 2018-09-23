@@ -9,5 +9,7 @@ namespace ManiacEditor.Actions
     {
         void Undo();
         IAction Redo();
+
+        string Description { get; }
     }
 }

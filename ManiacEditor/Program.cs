@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ManiacEditor
@@ -18,12 +15,61 @@ namespace ManiacEditor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ManiacEditor.Resources.objects_attributes.ini"))
+
+            bool allowedToLoad = false;
+            try
             {
-                RSDKv5.Objects.InitObjects(stream);
+                using (var stream = GetObjectsIniResource())
+                {
+                    RSDKv5.Objects.InitObjects(stream);
+                    allowedToLoad = true;
+                }
             }
-            new Editor().Run();
-            //Application.Run(new GUI.MapEditor());
+            catch (FileNotFoundException fnfe)
+            {
+                DisplayLoadFailure($@"{fnfe.Message}
+Missing file: {fnfe.FileName}");
+            }
+            catch (Exception e)
+            {
+                DisplayLoadFailure(e.Message);
+            }
+
+            if (allowedToLoad)
+            {
+                new Editor().Run();
+            }
+        }
+
+        private static void DisplayLoadFailure(string message)
+        {
+            MessageBox.Show(message,
+                            "Unable to start.",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+        }
+
+        private static string GetExecutingDirectoryName()
+        {
+            string exeLocationUrl = Assembly.GetEntryAssembly().GetName().CodeBase;
+            string exeLocation = new Uri(exeLocationUrl).LocalPath;
+            return new FileInfo(exeLocation).Directory.FullName;
+        }
+
+        private static FileStream GetObjectsIniResource()
+        {
+            string executingDirectory = GetExecutingDirectoryName();
+            string fullPathToIni = executingDirectory + @"\Resources\objects_attributes.ini";
+            if (!File.Exists(fullPathToIni))
+            {
+                throw new FileNotFoundException("Unable to find the required file for naming objects and attributes.", 
+                                                @"\Resources\objects_attributes.ini");
+            }
+
+            return new FileStream(fullPathToIni,
+                                  FileMode.Open,
+                                  FileAccess.Read,
+                                  FileShare.Read);
         }
     }
 }

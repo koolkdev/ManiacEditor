@@ -286,3 +286,11 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/ManiacEditor/Properties/Settings.Designer.cs.bak
+/ManiacEditor/Properties/Settings.settings.bak
+/ManiacEditor/AboutBox.cs.bak
+/ManiacEditor/AboutBox.resx.bak
+/ManiacEditor/EditorEntities.cs.bak
+/ManiacEditor/EditorEntity.cs.bak
+/ManiacEditor/EntitiesToolbar.cs.bak
+/ManiacEditor/EntitiesToolbar.Designer.cs.bak

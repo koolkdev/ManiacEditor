@@ -11,6 +11,21 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +36,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,22 +46,79 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>64x64.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64 Release|AnyCPU'">
+    <OutputPath>bin\Release%28x64%29\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x86 Release|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release%28x86%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x86 Debug|AnyCPU'">
+    <OutputPath>bin\Debug%28x86%29\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64 Debug|AnyCPU'">
+    <OutputPath>bin\Debug%28x64%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Optimize>true</Optimize>
+    <DocumentationFile>
+    </DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+    <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.1.1.0\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Desktop, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Desktop.4.0.1\lib\net45\SharpDX.Desktop.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+    <Reference Include="MonoGame.UI.Forms, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.UI.Forms.1.0.1\lib\MonoGame.UI.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Desktop, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Desktop.4.2.0\lib\net45\SharpDX.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D9.4.2.0\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,6 +130,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionAddDeleteEntities.cs" />
     <Compile Include="Actions\ActionDummy.cs" />
     <Compile Include="Actions\ActionEntityPropertyChange.cs" />
@@ -67,14 +146,83 @@
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="ColorsCaching.cs" />
     <Compile Include="DeviceEventArgs.cs" />
+    <Compile Include="AddAttributeBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddAttributeBox.Designer.cs">
+      <DependentUpon>AddAttributeBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeviceLostBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceLostBox.Designer.cs">
+      <DependentUpon>DeviceLostBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Discord.cs" />
     <Compile Include="EditorBackground.cs" />
+    <Compile Include="EditorScene.cs" />
+    <Compile Include="EditSceneSelectInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditSceneSelectInfoForm.Designer.cs">
+      <DependentUpon>EditSceneSelectInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EntitiesToolbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="EntitiesToolbar.Designer.cs">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\FlipDirection.cs" />
+    <Compile Include="DevWarningBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevWarningBox.Designer.cs">
+      <DependentUpon>DevWarningBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="FolderSelectDialog.cs" />
+    <Compile Include="controlBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="controlBox.Designer.cs">
+      <DependentUpon>controlBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExitWarningBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExitWarningBox.Designer.cs">
+      <DependentUpon>ExitWarningBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomMsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>CustomMsgBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\CheatCodes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>CheatCodes.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RunSceneOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RunSceneOptions.Designer.cs">
+      <DependentUpon>RunSceneOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectImporter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectImporter.designer.cs">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectManager.Designer.cs">
+      <DependentUpon>ObjectManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HorizontalLayerScroll.cs" />
     <Compile Include="IDrawArea.cs" />
     <Compile Include="ImageViewer.cs">
       <SubType>UserControl</SubType>
@@ -82,6 +230,13 @@
     <Compile Include="ImageViewer.designer.cs">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="LayerManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LayerManager.Designer.cs">
+      <DependentUpon>LayerManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LinkedEditorEntity.cs" />
     <Compile Include="LocalProperty.cs" />
     <Compile Include="LocalPropertyGrid.cs" />
     <Compile Include="Editor.cs">
@@ -93,12 +248,39 @@
     <Compile Include="EditorEntities.cs" />
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorLayer.cs" />
+    <Compile Include="ObjectRemover.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectRemover.Designer.cs">
+      <DependentUpon>ObjectRemover.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionBox.Designer.cs">
+      <DependentUpon>OptionBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="preLoadBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="preLoadBox.Designer.cs">
+      <DependentUpon>preLoadBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessMemory.cs" />
     <Compile Include="Reflector.cs" />
     <Compile Include="SceneSelect.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SceneSelect.Designer.cs">
       <DependentUpon>SceneSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollInfoLines.cs" />
+    <Compile Include="SettingsReader.cs" />
+    <Compile Include="SoundImporter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SoundImporter.Designer.cs">
+      <DependentUpon>SoundImporter.cs</DependentUpon>
     </Compile>
     <Compile Include="TextureCreator.cs" />
     <Compile Include="ThumbnailFlowLayoutPanel.cs">
@@ -125,8 +307,95 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Resources\WarningStatic2.gif" />
+    <None Include="Resources\RefreshStatic2.gif" />
+    <None Include="Resources\WarningNoStatic2.gif" />
+    <None Include="Resources\WarningStatic.gif" />
+    <None Include="Resources\RefreshStatic.gif" />
+    <None Include="Properties\CheatCodes.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>CheatCodes.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\zoomOutButton.Image1.png" />
+    <None Include="Resources\zoomInButton.Image1.png" />
+    <None Include="Resources\undoButton.Image1.png" />
+    <None Include="Resources\toolStripButton1.Image1.png" />
+    <None Include="Resources\showTileIDButton.Image1.png" />
+    <None Include="Resources\showGridButton.Image1.png" />
+    <None Include="Resources\ShowFGLower.Image1.png" />
+    <None Include="Resources\ShowFGLow.Image1.png" />
+    <None Include="Resources\ShowFGHigher.Image1.png" />
+    <None Include="Resources\ShowFGHigh.Image1.png" />
+    <None Include="Resources\ShowEntities.Image1.png" />
+    <None Include="Resources\showCollisionBButton.Image1.png" />
+    <None Include="Resources\showCollisionAButton.Image1.png" />
+    <None Include="Resources\ShowAnimations.Image1.png" />
+    <None Include="Resources\selectTool.Image1.png" />
+    <None Include="Resources\scrollLockButton.Image1.png" />
+    <None Include="Resources\Save.Image1.png" />
+    <None Include="Resources\RunScene.Image1.png" />
+    <None Include="Resources\resetDeviceButton.Image1.png" />
+    <None Include="Resources\ReloadToolStripButton.Image1.png" />
+    <None Include="Resources\redoButton.Image1.png" />
+    <None Include="Resources\pointerButton.Image1.png" />
+    <None Include="Resources\placeTilesButton.Image1.png" />
+    <None Include="Resources\pixelModeButton.Image1.png" />
+    <None Include="Resources\Open.Image1.png" />
+    <None Include="Resources\zoomOutButton.Image.png" />
+    <None Include="Resources\zoomInButton.Image.png" />
+    <None Include="Resources\undoButton.Image.png" />
+    <None Include="Resources\toolStripButton1.Image.png" />
+    <None Include="Resources\showTileIDButton.Image.png" />
+    <None Include="Resources\showGridButton.Image.png" />
+    <None Include="Resources\ShowFGLower.Image.png" />
+    <None Include="Resources\ShowFGLow.Image.png" />
+    <None Include="Resources\ShowFGHigher.Image.png" />
+    <None Include="Resources\ShowFGHigh.Image.png" />
+    <None Include="Resources\ShowEntities.Image.png" />
+    <None Include="Resources\showCollisionBButton.Image.png" />
+    <None Include="Resources\showCollisionAButton.Image.png" />
+    <None Include="Resources\ShowAnimations.Image.png" />
+    <None Include="Resources\selectTool.Image.png" />
+    <None Include="Resources\scrollLockButton.Image.png" />
+    <None Include="Resources\Save.Image.png" />
+    <None Include="Resources\RunScene.Image.png" />
+    <None Include="Resources\resetDeviceButton.Image.png" />
+    <None Include="Resources\ReloadToolStripButton.Image.png" />
+    <None Include="Resources\redoButton.Image.png" />
+    <None Include="Resources\pointerButton.Image.png" />
+    <None Include="Resources\placeTilesButton.Image.png" />
+    <None Include="Resources\pixelModeButton.Image.png" />
+    <None Include="Resources\Open.Image.png" />
+    <None Include="Resources\WarningMonitor.gif" />
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddAttributeBox.resx">
+      <DependentUpon>AddAttributeBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeviceLostBox.resx">
+      <DependentUpon>DeviceLostBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditSceneSelectInfoForm.resx">
+      <DependentUpon>EditSceneSelectInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EntitiesToolbar.resx">
       <DependentUpon>EntitiesToolbar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controlBox.resx">
+      <DependentUpon>controlBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DevWarningBox.resx">
+      <DependentUpon>DevWarningBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExitWarningBox.resx">
+      <DependentUpon>ExitWarningBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>CustomMsgBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RunSceneOptions.resx">
+      <DependentUpon>RunSceneOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImageViewer.resx">
       <DependentUpon>ImageViewer.cs</DependentUpon>
@@ -134,8 +403,29 @@
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LayerManager.resx">
+      <DependentUpon>LayerManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectImporter.resx">
+      <DependentUpon>ObjectImporter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectRemover.resx">
+      <DependentUpon>ObjectRemover.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectManager.resx">
+      <DependentUpon>ObjectManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionBox.resx">
+      <DependentUpon>OptionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="preLoadBox.resx">
+      <DependentUpon>preLoadBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SceneSelect.resx">
       <DependentUpon>SceneSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SoundImporter.resx">
+      <DependentUpon>SoundImporter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TilesList.resx">
       <DependentUpon>TilesList.cs</DependentUpon>
@@ -153,6 +443,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="discord-rpc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EditorAssets.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -163,10 +459,39 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resources\objects_attributes.ini" />
+    <None Include="Resources\ErrorMonitor.gif" />
+    <None Include="Resources\EditFGLow.Image.png" />
+    <None Include="Resources\EditEntities.Image.png" />
+    <None Include="Resources\EditFGHigh.Image.png" />
+    <None Include="Resources\EditFGHigher.Image.png" />
+    <None Include="Resources\EditFGLower.Image.png" />
+    <None Include="Resources\MagnetMode.Image.png" />
+    <None Include="Resources\New.Image.png" />
+    <None Include="Resources\nudgeFasterButton.Image.png" />
+    <None Include="Resources\EditEntities.Image1.png" />
+    <None Include="Resources\EditFGHigh.Image1.png" />
+    <None Include="Resources\EditFGHigher.Image1.png" />
+    <None Include="Resources\EditFGLow.Image1.png" />
+    <None Include="Resources\EditFGLower.Image1.png" />
+    <None Include="Resources\MagnetMode.Image1.png" />
+    <None Include="Resources\New.Image1.png" />
+    <None Include="Resources\nudgeFasterButton.Image1.png" />
+    <None Include="Resources\ApplicationServiceOK_16x.png" />
+    <None Include="Resources\ErrorStatic.gif" />
+    <None Include="Resources\InfoStatic.gif" />
+    <None Include="Resources\InfoStatic2.gif" />
+    <None Include="Resources\ErrorStatic2.gif" />
+    <Content Include="Resources\objects_attributes.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\LayerManagerWarning.rtf" />
+    <None Include="Resources\ObjectWarning.rtf" />
+    <None Include="Resources\SoundWarning.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\file.ico" />
@@ -179,6 +504,36 @@
       <Project>{cf5496f8-002b-408f-9b3d-67c88f610283}</Project>
       <Name>RSDKv5</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EditorAssets.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="128x128.ico" />
+    <Content Include="16x16Tiles_Edit.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="16x16Tiles_ID.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="64x64.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\VS2017\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

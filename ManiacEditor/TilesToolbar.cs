@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RSDKv5;
+using System.Diagnostics;
+
 
 namespace ManiacEditor
 {
@@ -38,6 +40,7 @@ namespace ManiacEditor
                 for (int i = 0; i < selectTileOptionsCheckboxes.Length; ++i)
                     if (selectTileOptionsCheckboxes[i].Checked) res |= 1 << (10 + i);
                 return res;
+
             }
         }
         
@@ -108,6 +111,12 @@ namespace ManiacEditor
             tilesList.TileScale = 1 << trackBar1.Value;
         }
 
+        public void Reload()
+        {
+            tilesList.Reload();
+
+        }
+
         public new void Dispose()
         {
             tilesList.Dispose();
@@ -116,6 +125,8 @@ namespace ManiacEditor
 
         private void TilesToolbar_Load(object sender, EventArgs e)
         {
+            Debug.WriteLine("Send to debug output.");
+            trackBar1.Value = Properties.Settings.Default.tileToolbarDefaultZoomLevel;
 
         }
 
@@ -162,5 +173,16 @@ namespace ManiacEditor
                 option2CheckBox.Text = "Flip Vertical";
             }
         }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+        }
+        public static void RefreshTileSelected()
+        {
+            Editor.Instance.TilesToolbar.selectedTileLabel.Text = "Selected Tile: " + Editor.Instance.ToolbarSelectedTile;
+        }
+
     }
+
 }

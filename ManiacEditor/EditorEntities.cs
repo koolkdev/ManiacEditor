@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Linq;
+using ManiacEditor.Enums;
+using RSDKv5;
 
 namespace ManiacEditor
 {
     class EditorEntities : IDrawable
     {
+        public static bool FilterRefreshNeeded = false;
+        public static int DefaultFilter = -1;
+
         List<EditorEntity> entities = new List<EditorEntity>();
         List<EditorEntity> selectedEntities = new List<EditorEntity>();
         List<EditorEntity> tempSelection = new List<EditorEntity>();
@@ -29,8 +32,17 @@ namespace ManiacEditor
         public EditorEntities(RSDKv5.Scene scene)
         {
             foreach (var obj in scene.Objects)
-                entities.AddRange(obj.Entities.Select(x => new EditorEntity(x)));
+            {
+                entities.AddRange(obj.Entities.Select(x => GenerateEditorEntity(x)));
+            }
+            FindDuplicateIds();
             entitiesBySlot = entities.ToDictionary(x => x.Entity.SlotID);
+        }
+
+        private void FindDuplicateIds()
+        {
+            var groupedById = entities.GroupBy(e => e.Entity.SlotID)
+                                      .Where(g => g.Count()>1);
         }
 
         private ushort getFreeSlot(RSDKv5.SceneEntity preferred)
@@ -130,7 +142,9 @@ namespace ManiacEditor
 
         private void DuplicateEntities(List<EditorEntity> entities)
         {
-            var new_entities = entities.Select(x => new EditorEntity(new RSDKv5.SceneEntity(x.Entity, getFreeSlot(x.Entity)))).ToList();
+            if (null == entities || !entities.Any()) return;
+            
+            var new_entities = entities.Select(x => GenerateEditorEntity(new RSDKv5.SceneEntity(x.Entity, getFreeSlot(x.Entity)))).ToList();
             if (new_entities.Count > 0)
                 LastAction = new Actions.ActionAddDeleteEntities(new_entities.ToList(), true, x => AddEntities(x), x => DeleteEntities(x));
             AddEntities(new_entities);
@@ -146,7 +160,13 @@ namespace ManiacEditor
             if (duplicate) DuplicateEntities(selectedEntities);
             foreach (var entity in selectedEntities)
             {
-                entity.Move(diff);
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(diff);
+                else
+                {
+                    entity.Move(diff);
+                    //entity.SnapToGrid(diff);
+                }
             }
         }
 
@@ -168,12 +188,16 @@ namespace ManiacEditor
             if (selectedEntities.Count == 0) return null;
             short minX = 0, minY = 0;
 
-            List<EditorEntity> copiedEntities = selectedEntities.Select(x => new EditorEntity(new RSDKv5.SceneEntity(x.Entity, x.Entity.SlotID))).ToList();
+            List<EditorEntity> copiedEntities = selectedEntities.Select(x => GenerateEditorEntity(new RSDKv5.SceneEntity(x.Entity, x.Entity.SlotID))).ToList();
             if (!keepPosition)
             {
                 minX = copiedEntities.Min(x => x.Entity.Position.X.High);
                 minY = copiedEntities.Min(x => x.Entity.Position.Y.High);
-                copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                if (Editor.Instance.showGrid == false)
+                    copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                else
+                    copiedEntities.ForEach(x => x.Move(new Point(-minX, -minY)));
+                    //copiedEntities.ForEach(x => x.SnapToGrid(new Point(-minX, -minY)));
             }
 
             return copiedEntities;
@@ -185,7 +209,25 @@ namespace ManiacEditor
             foreach (var entity in selectedEntities)
             {
                 // Move them
-                entity.Move(newPos);
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(newPos);
+                else
+                    entity.Move(newPos);
+                    //entity.SnapToGrid(newPos);
+            }
+        }
+
+        public void RecreatedPasteFromClipboard(Point newPos, List<EditorEntity> entities)
+        {
+            DuplicateEntities(entities);
+            foreach (var entity in selectedEntities)
+            {
+                // Move them
+                if (Editor.Instance.showGrid == false)
+                    entity.Move(newPos);
+                else
+                    entity.Move(newPos);
+                //entity.SnapToGrid(newPos);
             }
         }
 
@@ -234,9 +276,105 @@ namespace ManiacEditor
 
         public void Draw(DevicePanel d)
         {
+            if (FilterRefreshNeeded)
+                UpdateViewFilters();
             foreach (var entity in entities)
                 entity.Draw(d);
         }
 
+        /// <summary>
+        /// Creates a new instance of the given SceneObject at the indicated position.
+        /// </summary>
+        /// <param name="sceneObject">Type of SceneObject to create an instance of.</param>
+        /// <param name="position">Location to insert into the scene.</param>
+        public void Add(RSDKv5.SceneObject sceneObject, RSDKv5.Position position)
+        {
+            var editorEntity = GenerateEditorEntity(new RSDKv5.SceneEntity(sceneObject, getFreeSlot(null)));
+            editorEntity.Entity.Position = position;
+            var newEntities = new List<EditorEntity> { editorEntity };
+            LastAction = new Actions.ActionAddDeleteEntities(newEntities, true, x => AddEntities(x), x => DeleteEntities(x));
+            AddEntities(newEntities);
+
+            Deselect();
+            editorEntity.Selected = true;
+            selectedEntities.Add(editorEntity);
+        }
+
+        private EditorEntity GenerateEditorEntity(RSDKv5.SceneEntity sceneEntity)
+        {
+            try
+            {
+                // ideally this would be driven by configuration...one day
+                // or can we assume anything with a "Go" and "Tag" Attributes is linked to another?
+                if (sceneEntity.Object.Name.ToString().Equals("WarpDoor", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new LinkedEditorEntity(sceneEntity);
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to generate a LinkedEditorEntity, will create a basic one instead.");
+            }
+
+            EditorEntity entity = new EditorEntity(sceneEntity);
+
+            if (entity.HasFilter() && DefaultFilter > -1)
+            {
+                entity.Entity.GetAttribute("filter").ValueUInt8 = (byte)DefaultFilter;
+                DefaultFilter = -1;
+            }
+
+            entity.SetFilter();
+
+            return entity;
+        }
+
+        public void UpdateViewFilters()
+        {
+            FilterRefreshNeeded = false;
+            foreach (EditorEntity entity in entities)
+                entity.SetFilter();
+        }
+        internal void Flip(FlipDirection direction)
+        {
+            var positions = selectedEntities.Select(se => se.Entity.Position);
+            IEnumerable<Position.Value> monoCoordinatePositions;
+            if (direction == FlipDirection.Horizontal)
+            {
+                monoCoordinatePositions = positions.Select(p => p.X);
+            }
+            else
+            {
+                monoCoordinatePositions = positions.Select(p => p.Y);
+            }
+
+            short min = monoCoordinatePositions.Min(m => m.High);
+            short max = monoCoordinatePositions.Max(m => m.High);
+            int diff = max - min;
+
+            foreach (var entity in selectedEntities)
+            {
+                if (direction == FlipDirection.Horizontal)
+                {
+                    short xPos = entity.Entity.Position.X.High;
+                    int fromLeft = xPos - min;
+                    int fromRight = max - xPos;
+
+                    int newX = fromLeft < fromRight ? max - fromLeft : min + fromRight;
+                    entity.Entity.Position.X.High = (short)newX;
+                }
+                else
+                {
+                    short yPos = entity.Entity.Position.Y.High;
+                    int fromBottom = yPos - min;
+                    int fromTop = max - yPos;
+
+                    int newY = fromBottom < fromTop ? max - fromBottom : min + fromTop;
+                    entity.Entity.Position.Y.High = (short)newY;
+                }
+
+                entity.Flip(direction);
+            }
+        }
     }
 }

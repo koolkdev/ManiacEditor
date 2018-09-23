@@ -11,6 +11,7 @@ namespace ManiacEditor
     class EditorBackground : IDrawable
     {
         const int BOX_SIZE = 8;
+        const int TILE_BOX_SIZE = 1;
 
         static int DivideRoundUp(int number, int by)
         {
@@ -26,8 +27,8 @@ namespace ManiacEditor
         {
             Rectangle screen = d.GetScreen();
 
-            RSDKv5Color rcolor1 = Editor.Instance.Scene.EditorMetadata.BackgroundColor1;
-            RSDKv5Color rcolor2 = Editor.Instance.Scene.EditorMetadata.BackgroundColor2;
+            RSDKv5Color rcolor1 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor1;
+            RSDKv5Color rcolor2 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor2;
 
             Color color1 = Color.FromArgb(rcolor1.A, rcolor1.R, rcolor1.G, rcolor1.B);
             Color color2 = Color.FromArgb(rcolor2.A, rcolor2.R, rcolor2.G, rcolor2.B);
@@ -46,6 +47,66 @@ namespace ManiacEditor
                     for (int x = start_x; x < end_x; ++x)
                     {
                         if ((x + y) % 2 == 1) d.DrawRectangle(x * BOX_SIZE * EditorLayer.TILE_SIZE, y * BOX_SIZE * EditorLayer.TILE_SIZE, (x + 1) * BOX_SIZE * EditorLayer.TILE_SIZE, (y + 1) * BOX_SIZE * EditorLayer.TILE_SIZE, color2);
+                    }
+                }
+            }
+        }
+
+        public void DrawEdit(DevicePanel d)
+        {
+            Rectangle screen = d.GetScreen();
+
+            RSDKv5Color rcolor1 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor1;
+            RSDKv5Color rcolor2 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor2;
+
+            Color color1 = Color.FromArgb(30, rcolor1.R, rcolor1.G, rcolor1.B);
+            Color color2 = Color.FromArgb(30, rcolor2.R, rcolor2.G, rcolor2.B);
+
+            int start_x = screen.X / (BOX_SIZE * EditorLayer.TILE_SIZE);
+            int end_x = Math.Min(DivideRoundUp(screen.X + screen.Width, BOX_SIZE * EditorLayer.TILE_SIZE), Editor.Instance.SceneWidth);
+            int start_y = screen.Y / (BOX_SIZE * EditorLayer.TILE_SIZE);
+            int end_y = Math.Min(DivideRoundUp(screen.Y + screen.Height, BOX_SIZE * EditorLayer.TILE_SIZE), Editor.Instance.Height);
+
+            // Draw with first color everything
+            d.DrawRectangle(screen.X, screen.Y, screen.X + screen.Width, screen.Y + screen.Height, color1);
+
+            if (color2.A != 0)
+            {
+                for (int y = start_y; y < end_y; ++y)
+                {
+                    for (int x = start_x; x < end_x; ++x)
+                    {
+                        if ((x + y) % 2 == 1) d.DrawRectangle(x * BOX_SIZE * EditorLayer.TILE_SIZE, y * BOX_SIZE * EditorLayer.TILE_SIZE, (x + 1) * BOX_SIZE * EditorLayer.TILE_SIZE, (y + 1) * BOX_SIZE * EditorLayer.TILE_SIZE, color2);
+                    }
+                }
+            }
+        }
+
+        public void DrawGrid(DevicePanel d)
+        {
+            Rectangle screen = d.GetScreen();
+
+            RSDKv5Color rcolor1 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor1;
+            RSDKv5Color rcolor2 = Editor.Instance.EditorScene.EditorMetadata.BackgroundColor2;
+
+            Color color1 = Color.FromArgb(rcolor1.A, rcolor1.R, rcolor1.G, rcolor1.B);
+            Color color2 = Color.FromArgb(rcolor2.A, rcolor2.R, rcolor2.G, rcolor2.B);
+
+            int start_x = screen.X / (TILE_BOX_SIZE * EditorLayer.TILE_SIZE);
+            int end_x = Math.Min(DivideRoundUp(screen.X + screen.Width, TILE_BOX_SIZE * EditorLayer.TILE_SIZE), Editor.Instance.SceneWidth);
+            int start_y = screen.Y / (TILE_BOX_SIZE * EditorLayer.TILE_SIZE);
+            int end_y = Math.Min(DivideRoundUp(screen.Y + screen.Height, TILE_BOX_SIZE * EditorLayer.TILE_SIZE), Editor.Instance.Height);
+
+            if (color2.A != 0)
+            {
+                for (int y = start_y; y < end_y; ++y)
+                {
+                    for (int x = start_x; x < end_x; ++x)
+                    {
+                            d.DrawLine(x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
+                            d.DrawLine(x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
+                            //d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
+                            //d.DrawLine(x * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, x * EditorLayer.TILE_SIZE, y * EditorLayer.TILE_SIZE + EditorLayer.TILE_SIZE, System.Drawing.Color.Black);
                     }
                 }
             }

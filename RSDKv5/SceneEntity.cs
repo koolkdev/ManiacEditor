@@ -7,13 +7,14 @@ using System.IO;
 
 namespace RSDKv5
 {
+    [Serializable]
     public class SceneEntity
     {
-        public readonly ushort SlotID;
+        public ushort SlotID;
         public Position Position;
-        public readonly SceneObject Object;
+        public SceneObject Object;
         public List<AttributeValue> Attributes = new List<AttributeValue>();
-        private Dictionary<string, AttributeValue> attributesMap = new Dictionary<string, AttributeValue>();
+        public Dictionary<string, AttributeValue> attributesMap = new Dictionary<string, AttributeValue>();
 
         public SceneEntity(SceneObject obj, ushort slotID)
         {
@@ -70,6 +71,12 @@ namespace RSDKv5
 
             foreach (AttributeValue attribute in Attributes)
                 attribute.Write(writer);
+        }
+
+        public void AddAttributeToObject(string name, AttributeTypes type)
+        {
+            Console.WriteLine("Attempted to add attribute of name \"" + name + "\" to entity \"" + Object.Name + "\"");
+            Object.AddAttribute(name, type);
         }
     }
 }

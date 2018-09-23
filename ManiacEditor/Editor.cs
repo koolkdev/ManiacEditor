@@ -1,19 +1,24 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Drawing.Drawing2D;
-using ManiacEditor.Actions;
-using System.Collections;
-using System.Net;
-using SharpDX.Direct3D9;
-using RSDKv5;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+using System.ComponentModel;
+using ManiacEditor.Actions;
+using ManiacEditor.Enums;
+using ManiacEditor.Properties;
+using RSDKv5;
+using SharpDX.Direct3D9;
 using Color = System.Drawing.Color;
+using System.Runtime.CompilerServices;
 
 namespace ManiacEditor
 {
@@ -23,46 +28,85 @@ namespace ManiacEditor
         bool startDragged;
         int lastX, lastY, draggedX, draggedY;
         int ShiftX = 0, ShiftY = 0, ScreenWidth, ScreenHeight;
+        public bool showTileID;
+        public bool showGrid;
+        public bool showCollisionA;
+        public bool showCollisionB;
+        public bool multiLayerSelect = false;
+        public int backupType = 0;
 
-        int ClickedX=-1, ClickedY=-1;
+        //For Preload Loading Box
+        public static int progressValueX;
+        public static int progressValueY;
+        public static bool isPreRending = false;
+
+        public List<Bitmap> CollisionLayerA = new List<Bitmap>();
+        public List<Bitmap> CollisionLayerB = new List<Bitmap>();
+
+        public List<string> ObjectList = new List<string>(); //All Gameconfig + Stageconfig Object names
+
+        int ClickedX = -1, ClickedY = -1;
+        string scrollDirection = "X";
 
         public Stack<IAction> undo = new Stack<IAction>();
         public Stack<IAction> redo = new Stack<IAction>();
-        
+
         bool draggingSelection;
         int selectingX, selectingY;
         bool zooming;
         double Zoom = 1;
         int ZoomLevel = 0;
+        public String ToolbarSelectedTile;
+        bool SceneLoaded = false;
+        bool AllowSceneChange = false;
 
-        string DataDirectory;
+        public static string DataDirectory;
 
         GameConfig GameConfig;
 
-        string SelectedZone;
+        public string SelectedZone;
         string SelectedScene;
 
         internal StageTiles StageTiles;
-        internal Scene Scene;
+        internal EditorScene EditorScene;
+        internal StageConfig StageConfig;
+        public ObjectRemover objectRemover;
 
         string SceneFilename = null;
+        string StageConfigFileName = null;
 
-        internal EditorLayer FGHigh;
-        internal EditorLayer FGLow;
+        internal EditorLayer FGHigher => EditorScene?.HighDetails;
+        internal EditorLayer FGHigh => EditorScene?.ForegroundHigh;
+        internal EditorLayer FGLow => EditorScene?.ForegroundLow;
+        internal EditorLayer FGLower => EditorScene?.LowDetails;
+        private IList<ToolStripButton> _extraLayerButtons;
 
         internal EditorBackground Background;
 
         internal EditorLayer EditLayer;
 
+
         internal TilesToolbar TilesToolbar = null;
         private EntitiesToolbar entitiesToolbar = null;
 
         internal Dictionary<Point, ushort> TilesClipboard;
-        private List<EditorEntity> entitiesClipboard;
 
-        internal int SceneWidth;
-        internal int SceneHeight;
-        
+        //For Multi Layer Copying and Pasting
+        internal Dictionary<Point, ushort> TilesClipboardLower;
+        internal Dictionary<Point, ushort> TilesClipboardLow;
+        internal Dictionary<Point, ushort> TilesClipboardHigh;
+        internal Dictionary<Point, ushort> TilesClipboardHigher;
+
+        private List<EditorEntity> entitiesClipboard;
+        public int SelectedTilesCount;
+        public int DeselectTilesCount;
+        internal int SelectedTileX;
+        internal int SelectedTileY;
+        internal bool controlWindowOpen;
+
+        internal int SceneWidth => EditorScene.Layers.Max(sl => sl.Width) * 16;
+        internal int SceneHeight => EditorScene.Layers.Max(sl => sl.Height) * 16;
+
         bool scrolling = false;
         bool scrollingDragged = false, wheelClicked = false;
         Point scrollPosition;
@@ -71,22 +115,293 @@ namespace ManiacEditor
 
         public static Editor Instance;
 
+        private IList<ToolStripMenuItem> _recentDataItems;
+        private IList<ToolStripMenuItem> _recentDataItems_Button;
+        public static ProcessMemory GameMemory = new ProcessMemory();
+        public static bool GameRunning = false;
+        public static string GamePath = "";
+
+        public SharpPresence.Discord.RichPresence RPCcontrol = new SharpPresence.Discord.RichPresence(); //For Discord RPC
+        public SharpPresence.Discord.EventHandlers RPCEventHandler = new SharpPresence.Discord.EventHandlers(); //For Discord RPC
+        public string ScenePath = ""; //For Discord RPC
+
         public Editor()
         {
             Instance = this;
             InitializeComponent();
+            InitDiscord();
+
+            /*using (var customMsgBox = new CustomMsgBox($"The specified Data Directory {1} is not valid. Please Try again with a Better Data Directory. It could be outdated, corrupted or worse something else", "Invalid Data Directory!", 2, 1))
+            {
+                customMsgBox.ShowDialog();
+
+            }*/
 
             this.splitContainer1.Panel2MinSize = 254;
 
             GraphicPanel.GotFocus += new EventHandler(OnGotFocus);
             GraphicPanel.LostFocus += new EventHandler(OnLostFocus);
-            
+
             GraphicPanel.Width = SystemInformation.PrimaryMonitorSize.Width;
             GraphicPanel.Height = SystemInformation.PrimaryMonitorSize.Height;
+
+            _extraLayerButtons = new List<ToolStripButton>();
+            _recentDataItems = new List<ToolStripMenuItem>();
+            _recentDataItems_Button = new List<ToolStripMenuItem>();
 
             SetViewSize();
 
             UpdateControls();
+
+            TryLoadSettings();
+
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+
+        [DllImport("USER32.DLL")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        private enum ShowWindowEnum
+        {
+            Hide = 0,
+            ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
+            Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
+            Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
+            Restore = 9, ShowDefault = 10, ForceMinimized = 11
+        };
+
+        public void InitDiscord()
+        {
+            SharpPresence.Discord.Initialize("484279851830870026", RPCEventHandler);
+
+            if (Properties.Settings.Default.ShowDiscordRPC)
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "Idle";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "maniac-small";
+
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                int secondsSinceEpoch = (int)t.TotalSeconds;
+
+                RPCcontrol.startTimestamp = secondsSinceEpoch;
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+            else
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "Maniac Editor";
+
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                int secondsSinceEpoch = (int)t.TotalSeconds;
+
+                RPCcontrol.startTimestamp = secondsSinceEpoch;
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+        }
+
+        public void UpdateDiscord(string Details = null)
+        {
+            if (Properties.Settings.Default.ShowDiscordRPC)
+            {
+                SharpPresence.Discord.RunCallbacks();
+                if (Details != null)
+                {
+                    RPCcontrol.details = Details;
+                }
+                else
+                {
+                    RPCcontrol.details = "Idle";
+                }
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+            else
+            {
+                RPCcontrol.state = "Maniac Editor";
+                RPCcontrol.details = "";
+
+                RPCcontrol.largeImageKey = "maniac";
+                RPCcontrol.largeImageText = "Maniac Editor";
+
+                SharpPresence.Discord.RunCallbacks();
+                SharpPresence.Discord.UpdatePresence(RPCcontrol);
+            }
+        }
+
+        public void DisposeDiscord()
+        {
+            RPCcontrol.startTimestamp = 0;
+            SharpPresence.Discord.Shutdown();
+        }
+
+        /// <summary>
+        /// Try to load settings from the Application Settings file(s).
+        /// This includes User specific settings.
+        /// </summary>
+        private void TryLoadSettings()
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                if (mySettings.UpgradeRequired)
+                {
+                    mySettings.Upgrade();
+                    mySettings.UpgradeRequired = false;
+                    mySettings.Save();
+                }
+
+                WindowState = mySettings.IsMaximized ? FormWindowState.Maximized : WindowState;
+                GamePath = mySettings.GamePath;
+
+                if (mySettings.DataDirectories?.Count > 0)
+                {
+                    RefreshDataDirectories(mySettings.DataDirectories);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to load settings: " + ex);
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the Data directories displayed in the recent list under the File menu.
+        /// </summary>
+        /// <param name="settings">The settings file containing the </param>
+        private void RefreshDataDirectories(StringCollection recentDataDirectories)
+        {
+            recentDataDirectoriesToolStripMenuItem.Visible = false;
+            CleanUpRecentList();
+
+            var startRecentItems = fileToolStripMenuItem.DropDownItems.IndexOf(recentDataDirectoriesToolStripMenuItem);
+            var startRecentItemsButton = toolStripSplitButton1.DropDownItems.IndexOf(noRecentDataDirectoriesToolStripMenuItem);
+
+            foreach (var dataDirectory in recentDataDirectories)
+            {
+                _recentDataItems.Add(CreateDataDirectoryMenuLink(dataDirectory));
+                _recentDataItems_Button.Add(CreateDataDirectoryMenuLink(dataDirectory));
+
+            }
+
+
+            foreach (var menuItem in _recentDataItems.Reverse())
+            {
+                fileToolStripMenuItem.DropDownItems.Insert(startRecentItems, menuItem);
+            }
+
+            foreach (var menuItem in _recentDataItems_Button.Reverse())
+            {
+                toolStripSplitButton1.DropDownItems.Insert(startRecentItemsButton, menuItem);
+            }
+
+
+        }
+
+        /// <summary>
+        /// Removes any recent Data directories from the File menu.
+        /// </summary>
+        private void CleanUpRecentList()
+        {
+            foreach (var menuItem in _recentDataItems)
+            {
+                menuItem.Click -= RecentDataDirectoryClicked;
+                fileToolStripMenuItem.DropDownItems.Remove(menuItem);
+            }
+            foreach (var menuItem in _recentDataItems_Button)
+            {
+                menuItem.Click -= RecentDataDirectoryClicked;
+                toolStripSplitButton1.DropDownItems.Remove(menuItem);
+            }
+            _recentDataItems.Clear();
+            _recentDataItems_Button.Clear();
+        }
+
+        private ToolStripMenuItem CreateDataDirectoryMenuLink(string target)
+        {
+            ToolStripMenuItem newItem = new ToolStripMenuItem(target)
+            {
+                Tag = target
+            };
+            newItem.Click += RecentDataDirectoryClicked;
+            return newItem;
+        }
+
+        private void RecentDataDirectoryClicked(object sender, EventArgs e)
+        {
+            var menuItem = sender as ToolStripMenuItem;
+            string dataDirectory = menuItem.Tag.ToString();
+            var dataDirectories = Properties.Settings.Default.DataDirectories;
+            Properties.Settings.Default.GamePath = GamePath;
+            if (IsDataDirectoryValid(dataDirectory))
+            {
+                ResetDataDirectoryToAndResetScene(dataDirectory);
+            }
+            else
+            {
+                MessageBox.Show($"The specified Data Directory {dataDirectory} is not valid.",
+                                "Invalid Data Directory!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                dataDirectories.Remove(dataDirectory);
+                RefreshDataDirectories(dataDirectories);
+
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void RecentDataDirectoryClicked(object sender, EventArgs e, String dataDirectory)
+        {
+            var dataDirectories = Properties.Settings.Default.DataDirectories;
+            Properties.Settings.Default.GamePath = GamePath;
+            if (IsDataDirectoryValid(dataDirectory))
+            {
+                ResetDataDirectoryToAndResetScene(dataDirectory);
+            }
+            else
+            {
+                MessageBox.Show($"The specified Data Directory {dataDirectory} is not valid.",
+                                "Invalid Data Directory!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                dataDirectories.Remove(dataDirectory);
+                RefreshDataDirectories(dataDirectories);
+
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void ResetDataDirectoryToAndResetScene(string newDataDirectory)
+        {
+            Editor.Instance.SceneChangeWarning(null, null);
+            if (AllowSceneChange == true || SceneLoaded == false || Properties.Settings.Default.DisableSaveWarnings == true)
+            {
+                AllowSceneChange = false;
+                UnloadScene();
+                UseVisibilityPrefrences();
+                DataDirectory = newDataDirectory;
+                AddRecentDataFolder(newDataDirectory);
+                SetGameConfig();
+                if (Properties.Settings.Default.forceBrowse == true)
+                    OpenSceneManual();
+                else
+                    OpenScene();
+            }
+
+
         }
 
         private bool IsEditing()
@@ -109,7 +424,15 @@ namespace ManiacEditor
         {
             if (IsTilesEdit())
             {
-                return EditLayer.SelectedTiles.Count > 0 || EditLayer.TempSelectionTiles.Count > 0;
+                if (!multiLayerSelect)
+                {
+                    return EditLayer.SelectedTiles.Count > 0 || EditLayer.TempSelectionTiles.Count > 0;
+                }
+                else
+                {
+                    return (FGHigher?.SelectedTiles.Count > 0 || FGHigher?.TempSelectionTiles.Count > 0 || FGHigh?.SelectedTiles.Count > 0 || FGHigh?.TempSelectionTiles.Count > 0 || FGLow?.SelectedTiles.Count > 0 || FGLow?.TempSelectionTiles.Count > 0 || FGLower?.SelectedTiles.Count > 0 || FGLower?.TempSelectionTiles.Count > 0);
+                }
+
             }
             else if (IsEntitiesEdit())
             {
@@ -122,21 +445,39 @@ namespace ManiacEditor
         {
             saveToolStripMenuItem.Enabled = enabled;
             saveAsToolStripMenuItem.Enabled = enabled;
-            saveAspngToolStripMenuItem.Enabled = enabled;
+            backupToolStripMenuItem.Enabled = enabled;
 
             ShowFGHigh.Enabled = enabled && FGHigh != null;
-            ShowFGLow.Enabled = enabled;
+            ShowFGLow.Enabled = enabled && FGLow != null;
+            ShowFGHigher.Enabled = enabled && FGHigher != null;
+            ShowFGLower.Enabled = enabled && FGLower != null;
             ShowEntities.Enabled = enabled;
+            ShowAnimations.Enabled = enabled;
+            ReloadToolStripButton.Enabled = enabled;
+            preLoadSceneButton.Enabled = enabled;
 
             Save.Enabled = enabled;
 
-            zoomInButton.Enabled = enabled && ZoomLevel < 5;
-            zoomOutButton.Enabled = enabled && ZoomLevel > -5;
+            if (Properties.Settings.Default.ReduceZoom)
+            {
+                zoomInButton.Enabled = enabled && ZoomLevel < 5;
+                zoomOutButton.Enabled = enabled && ZoomLevel > -2;
+            }
+            else
+            {
+                zoomInButton.Enabled = enabled && ZoomLevel < 5;
+                zoomOutButton.Enabled = enabled && ZoomLevel > -5;
+            }
+
+
+
+            runSceneButton.Enabled = enabled && !GameRunning;
 
             SetEditButtonsState(enabled);
+            UpdateTooltips();
         }
 
-        private void SetSelectOnlyButtonsState(bool enabled=true)
+        private void SetSelectOnlyButtonsState(bool enabled = true)
         {
             enabled &= IsSelected();
             deleteToolStripMenuItem.Enabled = enabled;
@@ -155,12 +496,28 @@ namespace ManiacEditor
 
         private void SetEditButtonsState(bool enabled)
         {
-            EditFGLow.Enabled = enabled;
+            bool windowsClipboardState;
+            EditFGLow.Enabled = enabled && FGLow != null;
             EditFGHigh.Enabled = enabled && FGHigh != null;
+            EditFGLower.Enabled = enabled && FGLower != null;
+            EditFGHigher.Enabled = enabled && FGHigher != null;
             EditEntities.Enabled = enabled;
-            
+            importObjectsToolStripMenuItem.Enabled = enabled && StageConfig != null;
+            removeObjectToolStripMenuItem.Enabled = enabled && StageConfig != null;
+            importSoundsToolStripMenuItem.Enabled = enabled && StageConfig != null;
+            layerManagerToolStripMenuItem.Enabled = enabled;
+
             if (enabled && EditFGLow.Checked) EditLayer = FGLow;
             else if (enabled && EditFGHigh.Checked) EditLayer = FGHigh;
+            else if (enabled && EditFGHigher.Checked) EditLayer = FGHigher;
+            else if (enabled && EditFGLower.Checked) EditLayer = FGLower;
+            else if (enabled && _extraLayerButtons.Any(elb => elb.Checked))
+            {
+                var selectedExtraLayerButton = _extraLayerButtons.Single(elb => elb.Checked);
+                var editorLayer = EditorScene.OtherLayers.Single(el => el.Name.Equals(selectedExtraLayerButton.Text));
+
+                EditLayer = editorLayer;
+            }
             else EditLayer = null;
 
             undoToolStripMenuItem.Enabled = enabled && undo.Count > 0;
@@ -173,10 +530,22 @@ namespace ManiacEditor
             selectTool.Enabled = enabled && IsTilesEdit();
             placeTilesButton.Enabled = enabled && IsTilesEdit();
 
-            if (enabled && IsTilesEdit() && TilesClipboard != null)
+            showGridButton.Enabled = enabled && StageConfig != null;
+            showCollisionAButton.Enabled = enabled && StageConfig != null;
+            showCollisionBButton.Enabled = enabled && StageConfig != null;
+            showTileIDButton.Enabled = enabled && StageConfig != null;
+
+
+            //Doing this too often seems to cause a lot of grief for the app, should be relocated and stored as a bool
+            //windowsClipboardState = Clipboard.ContainsData("ManiacTiles");
+            windowsClipboardState = false;
+
+
+            if (enabled && IsTilesEdit() && (TilesClipboard != null || windowsClipboardState))
                 pasteToolStripMenuItem.Enabled = true;
             else
                 pasteToolStripMenuItem.Enabled = false;
+
 
             if (IsTilesEdit())
             {
@@ -187,10 +556,21 @@ namespace ManiacEditor
                     {
                         EditorPlaceTile(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), x);
                     });
-                    TilesToolbar.TileOptionChanged = new Action<int, bool>( (option, state) =>
-                    {
-                        EditLayer.SetPropertySelected(option + 12, state);
-                    });
+                    TilesToolbar.TileOptionChanged = new Action<int, bool>((option, state) =>
+                   {
+                       if (multiLayerSelect == false)
+                       {
+                           EditLayer.SetPropertySelected(option + 12, state);
+                       }
+                       else
+                       {
+                           FGHigh?.SetPropertySelected(option + 12, state);
+                           FGHigher?.SetPropertySelected(option + 12, state);
+                           FGLow?.SetPropertySelected(option + 12, state);
+                           FGLower?.SetPropertySelected(option + 12, state);
+                       }
+
+                   });
                     splitContainer1.Panel2.Controls.Clear();
                     splitContainer1.Panel2.Controls.Add(TilesToolbar);
                     splitContainer1.Panel2Collapsed = false;
@@ -210,7 +590,8 @@ namespace ManiacEditor
             {
                 if (entitiesToolbar == null)
                 {
-                    entitiesToolbar = new EntitiesToolbar();
+                    entitiesToolbar = new EntitiesToolbar(EditorScene.Objects);
+                    //entitiesToolbar = new EntitiesToolbar(ObjectList);
                     entitiesToolbar.SelectedEntity = new Action<int>(x =>
                     {
                         entities.SelectSlot(x);
@@ -219,6 +600,13 @@ namespace ManiacEditor
                     entitiesToolbar.AddAction = new Action<IAction>(x =>
                     {
                         undo.Push(x);
+                        redo.Clear();
+                        UpdateControls();
+                    });
+                    entitiesToolbar.Spawn = new Action<SceneObject>(x =>
+                    {
+                        entities.Add(x, new Position((short)(ShiftX / Zoom), (short)(ShiftY / Zoom)));
+                        undo.Push(entities.LastAction);
                         redo.Clear();
                         UpdateControls();
                     });
@@ -255,7 +643,32 @@ namespace ManiacEditor
         {
             if (IsTilesEdit())
             {
-                List<ushort> values = EditLayer.GetSelectedValues();
+                List<ushort> values;
+                List<ushort> values1;
+                List<ushort> values2;
+                List<ushort> values3;
+                List<ushort> values4;
+                List<ushort> valuesBlank = new List<ushort>();
+                if (multiLayerSelect == true)
+                {
+                    if (FGHigh?.GetSelectedValues() == null) values1 = valuesBlank;
+                    else values1 = FGHigh.GetSelectedValues();
+                    if (FGLow?.GetSelectedValues() == null) values2 = valuesBlank;
+                    else values2 = FGLow.GetSelectedValues();
+                    if (FGLower?.GetSelectedValues() == null) values3 = valuesBlank;
+                    else values3 = FGLower.GetSelectedValues();
+                    if (FGHigher?.GetSelectedValues() == null) values4 = valuesBlank;
+                    else values4 = FGHigher.GetSelectedValues();
+
+                    values = values1;
+                    values.AddRange(values2);
+                    values.AddRange(values3);
+                    values.AddRange(values4);
+                }
+                else
+                {
+                    values = EditLayer.GetSelectedValues();
+                }
                 if (values.Count > 0)
                 {
                     for (int i = 0; i < 4; ++i)
@@ -283,7 +696,7 @@ namespace ManiacEditor
 
         private void UpdateControls()
         {
-            SetSceneOnlyButtonsState(Scene != null);
+            SetSceneOnlyButtonsState(EditorScene != null);
         }
 
         public void OnGotFocus(object sender, EventArgs e)
@@ -309,33 +722,154 @@ namespace ManiacEditor
         {
             if (EditLayer != null)
             {
-                List<IAction> actions = EditLayer.Actions;
-                if (actions.Count > 0) redo.Clear();
-                while (actions.Count > 0)
+                List<IAction> actions;
+                List<IAction> fgHighActions;
+                List<IAction> fgHigherActions;
+                List<IAction> fglowActions;
+                List<IAction> fglowerActions;
+                if (multiLayerSelect)
                 {
-                    bool create_new = false;
-                    if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                    if (FGLower != null)
                     {
-                        create_new = true;
+                        fglowerActions = FGLower?.Actions;
+                        // FG Lower Section
+                        if (fglowerActions.Count > 0) redo.Clear();
+                        while (fglowerActions.Count > 0)
+                        {
+                            bool create_new = false;
+                            if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                            {
+                                create_new = true;
+                            }
+                            else
+                            {
+                                create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                            }
+                            if (create_new)
+                            {
+                                undo.Push(new ActionsGroup());
+                            }
+                            (undo.Peek() as ActionsGroup).AddAction(fglowerActions[0]);
+                            fglowerActions.RemoveAt(0);
+                        }
                     }
-                    else
+                    if (FGLow != null)
                     {
-                        create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                        fglowActions = FGLow?.Actions;
+                        // FG Low Section
+                        if (fglowActions.Count > 0) redo.Clear();
+                        while (fglowActions.Count > 0)
+                        {
+                            bool create_new = false;
+                            if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                            {
+                                create_new = true;
+                            }
+                            else
+                            {
+                                create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                            }
+                            if (create_new)
+                            {
+                                undo.Push(new ActionsGroup());
+                            }
+                            (undo.Peek() as ActionsGroup).AddAction(fglowActions[0]);
+                            fglowActions.RemoveAt(0);
+                        }
                     }
-                    if (create_new)
+                    if (FGHigh != null)
                     {
-                        undo.Push(new ActionsGroup());
+                        fgHighActions = FGHigh?.Actions;
+
+                        // FG High Section
+                        if (fgHighActions.Count > 0) redo.Clear();
+                        while (fgHighActions.Count > 0)
+                        {
+                            bool create_new = false;
+                            if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                            {
+                                create_new = true;
+                            }
+                            else
+                            {
+                                create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                            }
+                            if (create_new)
+                            {
+                                undo.Push(new ActionsGroup());
+                            }
+                            (undo.Peek() as ActionsGroup).AddAction(fgHighActions[0]);
+                            fgHighActions.RemoveAt(0);
+                        }
                     }
-                    (undo.Peek() as ActionsGroup).AddAction(actions[0]);
-                    actions.RemoveAt(0);
+                    if (FGHigher != null)
+                    {
+                        fgHigherActions = FGHigher?.Actions;
+                        // FG Higher Section
+                        if (fgHigherActions.Count > 0) redo.Clear();
+                        while (fgHigherActions.Count > 0)
+                        {
+                            bool create_new = false;
+                            if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                            {
+                                create_new = true;
+                            }
+                            else
+                            {
+                                create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                            }
+                            if (create_new)
+                            {
+                                undo.Push(new ActionsGroup());
+                            }
+                            (undo.Peek() as ActionsGroup).AddAction(fgHigherActions[0]);
+                            fgHigherActions.RemoveAt(0);
+                        }
+                    }
                 }
+                else
+                {
+                    actions = EditLayer.Actions;
+                    if (actions.Count > 0) redo.Clear();
+                    while (actions.Count > 0)
+                    {
+                        bool create_new = false;
+                        if (undo.Count == 0 || !(undo.Peek() is ActionsGroup))
+                        {
+                            create_new = true;
+                        }
+                        else
+                        {
+                            create_new = (undo.Peek() as ActionsGroup).IsClosed;
+                        }
+                        if (create_new)
+                        {
+                            undo.Push(new ActionsGroup());
+                        }
+                        (undo.Peek() as ActionsGroup).AddAction(actions[0]);
+                        actions.RemoveAt(0);
+                    }
+                }
+
                 UpdateControls();
             }
         }
 
         public void DeleteSelected()
         {
-            EditLayer?.DeleteSelected();
+            if (multiLayerSelect == false)
+            {
+                EditLayer?.DeleteSelected();
+            }
+            else
+            {
+                FGLow?.DeleteSelected();
+                FGLower?.DeleteSelected();
+                FGHigh?.DeleteSelected();
+                FGHigher?.DeleteSelected();
+            }
+
+
             UpdateEditLayerActions();
 
             if (IsEntitiesEdit())
@@ -364,14 +898,27 @@ namespace ManiacEditor
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(0, true);
             }
-            else if (e.KeyCode == Keys.ShiftKey)
+            else if (e.KeyCode == Keys.Alt)
             {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, true);
             }
+            else if (e.KeyCode == Keys.ShiftKey)
+            {
+                e.Handled = true;
+                nudgeFasterButton.Checked = true;
+                Properties.Settings.Default.EnableFasterNudge = true;
+            }
             else if (e.Control && e.KeyCode == Keys.O)
             {
-                Open_Click(null, null);
+                if (e.Alt)
+                {
+                    openDataDirectoryToolStripMenuItem_Click(null, null);
+                }
+                else
+                {
+                    Open_Click(null, null);
+                }
             }
             else if (e.Control && e.KeyCode == Keys.N)
             {
@@ -379,7 +926,14 @@ namespace ManiacEditor
             }
             else if (e.Control && e.KeyCode == Keys.S)
             {
-                Save_Click(null, null);
+                if (e.Alt)
+                {
+                    saveAsToolStripMenuItem_Click(null, null);
+                }
+                else
+                {
+                    Save_Click(null, null);
+                }
             }
             else if (e.Control && (e.KeyCode == Keys.D0 || e.KeyCode == Keys.NumPad0))
             {
@@ -411,14 +965,38 @@ namespace ManiacEditor
                     else if (e.KeyData == Keys.Up || e.KeyData == Keys.Down || e.KeyData == Keys.Left || e.KeyData == Keys.Right)
                     {
                         int x = 0, y = 0;
-                        switch (e.KeyData)
+                        if (Properties.Settings.Default.EnableFasterNudge == false)
                         {
-                            case Keys.Up: y = -1; break;
-                            case Keys.Down: y = 1; break;
-                            case Keys.Left: x = -1; break;
-                            case Keys.Right: x = 1; break;
+                            switch (e.KeyData)
+                            {
+                                case Keys.Up: y = -1; break;
+                                case Keys.Down: y = 1; break;
+                                case Keys.Left: x = -1; break;
+                                case Keys.Right: x = 1; break;
+                            }
                         }
-                        EditLayer?.MoveSelectedQuonta(new Point(x, y));
+                        else
+                        {
+                            switch (e.KeyData)
+                            {
+                                case Keys.Up: y = -1 - Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Down: y = 1 + Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Left: x = -1 - Properties.Settings.Default.FasterNudgeValue; break;
+                                case Keys.Right: x = 1 + Properties.Settings.Default.FasterNudgeValue; break;
+                            }
+                        }
+                        if (!multiLayerSelect)
+                        {
+                            EditLayer?.MoveSelectedQuonta(new Point(x, y));
+                        }
+                        else
+                        {
+                            FGLow.MoveSelectedQuonta(new Point(x, y));
+                            FGLower.MoveSelectedQuonta(new Point(x, y));
+                            FGHigh.MoveSelectedQuonta(new Point(x, y));
+                            FGHigher.MoveSelectedQuonta(new Point(x, y));
+                        }
+
                         UpdateEditLayerActions();
 
                         if (IsEntitiesEdit())
@@ -427,7 +1005,7 @@ namespace ManiacEditor
                             entitiesToolbar.UpdateCurrentEntityProperites();
 
                             // Try to merge with last move
-                            if (undo.Count > 0 && undo.Peek() is ActionMoveEntities && (undo.Peek() as ActionMoveEntities).UpdateFromKey(entities.SelectedEntities, new Point(x,y))) { }
+                            if (undo.Count > 0 && undo.Peek() is ActionMoveEntities && (undo.Peek() as ActionMoveEntities).UpdateFromKey(entities.SelectedEntities, new Point(x, y))) { }
                             else
                             {
                                 undo.Push(new ActionMoveEntities(entities.SelectedEntities.ToList(), new Point(x, y), true));
@@ -440,11 +1018,15 @@ namespace ManiacEditor
                     {
                         if (IsTilesEdit())
                             flipVerticalToolStripMenuItem_Click(sender, e);
+                        else if (IsEntitiesEdit())
+                            FlipEntities(FlipDirection.Veritcal);
                     }
                     else if (e.KeyData == Keys.M)
                     {
                         if (IsTilesEdit())
                             flipHorizontalToolStripMenuItem_Click(sender, e);
+                        else if (IsEntitiesEdit())
+                            FlipEntities(FlipDirection.Horizontal);
                     }
                     if (e.Control)
                     {
@@ -465,6 +1047,12 @@ namespace ManiacEditor
             }
         }
 
+        private void FlipEntities(FlipDirection direction)
+        {
+            entities.Flip(direction);
+            entitiesToolbar.UpdateCurrentEntityProperites();
+        }
+
         public void GraphicPanel_OnKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey)
@@ -472,10 +1060,19 @@ namespace ManiacEditor
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(0, false);
             }
-            else if (e.KeyCode == Keys.ShiftKey)
+            else if (e.KeyCode == Keys.Alt)
             {
                 if (IsTilesEdit() && placeTilesButton.Checked)
                     TilesToolbar.SetSelectTileOption(1, false);
+            }
+            else if (e.KeyCode == Keys.ShiftKey)
+            {
+                nudgeFasterButton.Checked = false;
+                Properties.Settings.Default.EnableFasterNudge = false;
+            }
+            else if (e.KeyCode == Keys.B)
+            {
+                scrollLockButton_Click(sender, e);
             }
         }
 
@@ -486,7 +1083,7 @@ namespace ManiacEditor
 
         private bool ShiftPressed()
         {
-            return ModifierKeys.HasFlag(Keys.Shift);
+            return ModifierKeys.HasFlag(Keys.Alt);
         }
 
         private void GraphicPanel_OnMouseDoubleClick(object sender, MouseEventArgs e)
@@ -495,26 +1092,84 @@ namespace ManiacEditor
 
         private void GraphicPanel_OnMouseMove(object sender, MouseEventArgs e)
         {
+            if (Properties.Settings.Default.AllowMoreRenderUpdates)
+            {
+                UpdateRender();
+            }
             if (ClickedX != -1)
             {
                 Point clicked_point = new Point((int)(ClickedX / Zoom), (int)(ClickedY / Zoom));
                 // There was just a click now we can determine that this click is dragging
+
+                //This is to allow scenes that don't have layers to use multi-layer
+                bool? pointSelect1 = FGHigh?.IsPointSelected(clicked_point);
+                bool? pointSelect2 = FGHigher?.IsPointSelected(clicked_point);
+                bool? pointSelect3 = FGLow?.IsPointSelected(clicked_point);
+                bool? pointSelect4 = FGLower?.IsPointSelected(clicked_point);
+                if (pointSelect1 == null) pointSelect1 = false;
+                if (pointSelect2 == null) pointSelect2 = false;
+                if (pointSelect3 == null) pointSelect3 = false;
+                if (pointSelect4 == null) pointSelect4 = false;
+                bool pointSelect1_c = pointSelect1.Value;
+                bool pointSelect2_c = pointSelect2.Value;
+                bool pointSelect3_c = pointSelect3.Value;
+                bool pointSelect4_c = pointSelect4.Value;
+                bool? hasTileAt1 = FGHigh?.HasTileAt(clicked_point);
+                bool? hasTileAt2 = FGHigher?.HasTileAt(clicked_point);
+                bool? hasTileAt3 = FGLow?.HasTileAt(clicked_point);
+                bool? hasTileAt4 = FGLower?.HasTileAt(clicked_point);
+                if (hasTileAt1 == null) hasTileAt1 = false;
+                if (hasTileAt2 == null) hasTileAt2 = false;
+                if (hasTileAt3 == null) hasTileAt3 = false;
+                if (hasTileAt4 == null) hasTileAt4 = false;
+                bool hasTileAt1_c = hasTileAt1.Value;
+                bool hasTileAt2_c = hasTileAt2.Value;
+                bool hasTileAt3_c = hasTileAt3.Value;
+                bool hasTileAt4_c = hasTileAt4.Value;
+
+
                 if (IsTilesEdit())
                 {
-                    if (EditLayer.IsPointSelected(clicked_point))
+                    if (EditLayer.IsPointSelected(clicked_point) && !multiLayerSelect)
                     {
                         // Start dragging the tiles
                         dragged = true;
                         startDragged = true;
                         EditLayer.StartDrag();
                     }
-                    else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && EditLayer.HasTileAt(clicked_point))
+
+                    else if ((pointSelect1_c || pointSelect2_c || pointSelect3_c || pointSelect4_c) && multiLayerSelect)
+                    {
+                        // Start dragging the tiles
+                        dragged = true;
+                        startDragged = true;
+                        FGHigh?.StartDrag();
+                        FGLow?.StartDrag();
+                        FGLower?.StartDrag();
+                        FGHigher?.StartDrag();
+                    }
+
+                    else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && EditLayer.HasTileAt(clicked_point) && !multiLayerSelect)
                     {
                         // Start dragging the single selected tile
                         EditLayer.Select(clicked_point);
                         dragged = true;
                         startDragged = true;
                         EditLayer.StartDrag();
+                    }
+                    else if (!selectTool.Checked && !ShiftPressed() && !CtrlPressed() && (hasTileAt1_c || hasTileAt2_c || hasTileAt3_c || hasTileAt4_c) && multiLayerSelect)
+                    {
+                        // Start dragging the single selected tile
+                        FGLow?.Select(clicked_point);
+                        FGLower?.Select(clicked_point);
+                        FGHigh?.Select(clicked_point);
+                        FGHigher?.Select(clicked_point);
+                        dragged = true;
+                        startDragged = true;
+                        FGHigh?.StartDrag();
+                        FGLow?.StartDrag();
+                        FGLower?.StartDrag();
+                        FGHigher?.StartDrag();
                     }
                     else
                     {
@@ -561,7 +1216,7 @@ namespace ManiacEditor
                 {
                     scrollingDragged = true;
                 }
-                
+
                 int xMove = (hScrollBar1.Visible) ? e.X - ShiftX - scrollPosition.X : 0;
                 int yMove = (vScrollBar1.Visible) ? e.Y - ShiftY - scrollPosition.Y : 0;
 
@@ -570,20 +1225,20 @@ namespace ManiacEditor
 
                 if (xMove > 0)
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSE;
-                    else if(yMove < 0) Cursor = Cursors.PanNE;
+                    if (yMove > 0) Cursor = Cursors.PanSE;
+                    else if (yMove < 0) Cursor = Cursors.PanNE;
                     else Cursor = Cursors.PanEast;
                 }
                 else if (xMove < 0)
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSW;
-                    else if(yMove < 0) Cursor = Cursors.PanNW;
+                    if (yMove > 0) Cursor = Cursors.PanSW;
+                    else if (yMove < 0) Cursor = Cursors.PanNW;
                     else Cursor = Cursors.PanWest;
                 }
                 else
                 {
-                    if(yMove > 0) Cursor = Cursors.PanSouth;
-                    else if(yMove < 0) Cursor = Cursors.PanNorth;
+                    if (yMove > 0) Cursor = Cursors.PanSouth;
+                    else if (yMove < 0) Cursor = Cursors.PanNorth;
                     else
                     {
                         if (vScrollBar1.Visible && hScrollBar1.Visible) Cursor = Cursors.NoMove2D;
@@ -600,7 +1255,7 @@ namespace ManiacEditor
                 if (y < 0) y = 0;
                 if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
                 if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
-                
+
                 if (x != position.X || y != position.Y)
                 {
                     if (vScrollBar1.Visible)
@@ -611,12 +1266,41 @@ namespace ManiacEditor
                     {
                         hScrollBar1.Value = x;
                     }
-                    GraphicPanel.Render();
                     GraphicPanel.OnMouseMoveEventCreate();
                 }
+                UpdateRender();
             }
 
-            toolStripStatusLabel1.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
+            //
+            // Tooltip Bar Info 
+            //
+
+            positionLabel.Text = "X: " + (int)(e.X / Zoom) + " Y: " + (int)(e.Y / Zoom);
+
+            if (Properties.Settings.Default.pixelCountMode == false)
+            {
+                selectedPositionLabel.Text = "Selected Tile Position: X: " + (int)SelectedTileX + ", Y: " + (int)SelectedTileY;
+                selectedPositionLabel.ToolTipText = "The Position of the Selected Tile";
+            }
+            else
+            {
+                selectedPositionLabel.Text = "Selected Tile Pixel Position: " + "X: " + (int)SelectedTileX * 16 + ", Y: " + (int)SelectedTileY * 16;
+                selectedPositionLabel.ToolTipText = "The Pixel Position of the Selected Tile";
+            }
+            if (Properties.Settings.Default.pixelCountMode == false)
+            {
+                selectionSizeLabel.Text = "Amount of Tiles in Selection: " + (SelectedTilesCount - DeselectTilesCount);
+                selectionSizeLabel.ToolTipText = "The Size of the Selection";
+            }
+            else
+            {
+                selectionSizeLabel.Text = "Length of Pixels in Selection: " + (SelectedTilesCount - DeselectTilesCount) * 16;
+                selectionSizeLabel.ToolTipText = "The Length of all the Tiles (by Pixels) in the Selection";
+            }
+
+            //
+            // End of Tooltip Bar Info Section
+            //
 
             if (IsEditing())
             {
@@ -691,8 +1375,10 @@ namespace ManiacEditor
                         {
                             hScrollBar1.Value = x;
                         }
-                        GraphicPanel.Render();
                         GraphicPanel.OnMouseMoveEventCreate();
+                        UpdateRender();
+
+
                     }
 
                 }
@@ -713,7 +1399,18 @@ namespace ManiacEditor
                             y1 = (int)(e.Y / Zoom);
                             y2 = (int)(selectingY / Zoom);
                         }
-                        EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                        if (!multiLayerSelect)
+                        {
+                            EditLayer?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                        }
+                        else
+                        {
+                            FGLow?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                            FGLower?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                            FGHigh?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                            FGHigher?.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
+                        }
+
                         UpdateTilesOptions();
 
                         if (IsEntitiesEdit()) entities.TempSelection(new Rectangle(x1, y1, x2 - x1, y2 - y1), CtrlPressed());
@@ -724,7 +1421,18 @@ namespace ManiacEditor
                     Point oldPoint = new Point((int)(lastX / Zoom), (int)(lastY / Zoom));
                     Point newPoint = new Point((int)(e.X / Zoom), (int)(e.Y / Zoom));
 
-                    EditLayer?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                    if (multiLayerSelect)
+                    {
+                        FGLow?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                        FGLower?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                        FGHigh?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                        FGHigher?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                    }
+                    else
+                    {
+                        EditLayer?.MoveSelected(oldPoint, newPoint, CtrlPressed());
+                    }
+
                     UpdateEditLayerActions();
                     if (IsEntitiesEdit())
                     {
@@ -732,7 +1440,7 @@ namespace ManiacEditor
                         {
                             entities.MoveSelected(oldPoint, newPoint, CtrlPressed() && startDragged);
                         }
-                        catch(EditorEntities.TooManyEntitiesException)
+                        catch (EditorEntities.TooManyEntitiesException)
                         {
                             MessageBox.Show("Too many entities! (limit: 2048)");
                             dragged = false;
@@ -755,7 +1463,7 @@ namespace ManiacEditor
         }
         private void GraphicPanel_OnMouseDown(object sender, MouseEventArgs e)
         {
-            //GraphicPanel.Focus();
+            GraphicPanel.Focus();
             if (e.Button == MouseButtons.Left)
             {
                 if (IsEditing() && !dragged)
@@ -819,6 +1527,13 @@ namespace ManiacEditor
                     {
                         EditLayer.Select(p);
                     }
+                    if ((!FGHigh.IsPointSelected(p) || !FGHigher.IsPointSelected(p) || !FGLow.IsPointSelected(p) || !FGLower.IsPointSelected(p)))
+                    {
+                        FGLow?.Select(p);
+                        FGLower?.Select(p);
+                        FGHigher?.Select(p);
+                        FGHigh?.Select(p);
+                    }
                     DeleteSelected();
                 }
             }
@@ -850,8 +1565,9 @@ namespace ManiacEditor
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (IsEditing()) {
-                    MagnetDisable();
+                if (IsEditing())
+                {
+                    //MagnetDisable();
                     if (draggingSelection)
                     {
                         if (selectingX != e.X && selectingY != e.Y)
@@ -869,14 +1585,34 @@ namespace ManiacEditor
                                 y1 = (int)(e.Y / Zoom);
                                 y2 = (int)(selectingY / Zoom);
                             }
+                            if (!multiLayerSelect)
+                            {
+                                EditLayer?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                            }
+                            else
+                            {
+                                FGLow?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                FGLower?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                FGHigh?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                FGHigher?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
+                            }
 
-                            EditLayer?.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
                             if (IsEntitiesEdit()) entities.Select(new Rectangle(x1, y1, x2 - x1, y2 - y1), ShiftPressed() || CtrlPressed(), CtrlPressed());
                             SetSelectOnlyButtonsState();
                             UpdateEditLayerActions();
                         }
                         draggingSelection = false;
-                        EditLayer?.EndTempSelection();
+                        if (!multiLayerSelect)
+                        {
+                            EditLayer?.EndTempSelection();
+                        }
+                        else
+                        {
+                            FGLow?.EndTempSelection();
+                            FGLower?.EndTempSelection();
+                            FGHigher?.EndTempSelection();
+                            FGHigh?.EndTempSelection();
+                        }
                         if (IsEntitiesEdit()) entities.EndTempSelection();
                     }
                     else
@@ -887,7 +1623,17 @@ namespace ManiacEditor
                             Point clicked_point = new Point((int)(ClickedX / Zoom), (int)(ClickedY / Zoom));
                             if (IsTilesEdit())
                             {
-                                EditLayer.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                if (!multiLayerSelect)
+                                {
+                                    EditLayer.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                }
+                                else
+                                {
+                                    FGHigh?.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                    FGHigher?.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                    FGLow?.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                    FGLower?.Select(clicked_point, ShiftPressed() || CtrlPressed(), CtrlPressed());
+                                }
                                 UpdateEditLayerActions();
                             }
                             else if (IsEntitiesEdit())
@@ -935,31 +1681,115 @@ namespace ManiacEditor
 
         private void GraphicPanel_MouseWheel(object sender, MouseEventArgs e)
         {
-            //GraphicPanel.Focus();
+            GraphicPanel.Focus();
             if (CtrlPressed())
             {
+                int maxZoom;
+                int minZoom;
+                if (Properties.Settings.Default.ReduceZoom)
+                {
+                    maxZoom = 5;
+                    minZoom = -2;
+                }
+                else
+                {
+                    maxZoom = 5;
+                    minZoom = -5;
+                }
                 int change = e.Delta / 120;
                 ZoomLevel += change;
-                if (ZoomLevel > 5) ZoomLevel = 5;
-                if (ZoomLevel < -5) ZoomLevel = -5;
-                
+                if (ZoomLevel > maxZoom) ZoomLevel = maxZoom;
+                if (ZoomLevel < minZoom) ZoomLevel = minZoom;
+
                 SetZoomLevel(ZoomLevel, new Point(e.X - ShiftX, e.Y - ShiftY));
             }
             else
             {
-                if (vScrollBar1.Visible)
+                if (vScrollBar1.Visible || hScrollBar1.Visible)
                 {
-                    int y = vScrollBar1.Value - e.Delta;
-                    if (y < 0) y = 0;
-                    if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
-                    vScrollBar1.Value = y;
+                    if (scrollDirection == "Y" && !Properties.Settings.Default.scrollLock)
+                    {
+                        if (vScrollBar1.Visible)
+                        {
+                            int y = vScrollBar1.Value - e.Delta;
+                            if (y < 0) y = 0;
+                            if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                            vScrollBar1.Value = y;
+                        }
+                        else
+                        {
+                            int x = hScrollBar1.Value - e.Delta * 2;
+                            if (x < 0) x = 0;
+                            if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                            hScrollBar1.Value = x;
+                        }
+                    }
+                    else if (scrollDirection == "X" && !Properties.Settings.Default.scrollLock)
+                    {
+                        if (hScrollBar1.Visible)
+                        {
+                            int x = hScrollBar1.Value - e.Delta * 2;
+                            if (x < 0) x = 0;
+                            if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                            hScrollBar1.Value = x;
+                        }
+                        else
+                        {
+                            int y = vScrollBar1.Value - e.Delta;
+                            if (y < 0) y = 0;
+                            if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                            vScrollBar1.Value = y;
+                        }
+                    }
+                    else if (scrollDirection == "Locked" || Properties.Settings.Default.scrollLock == true)
+                    {
+                        if (Properties.Settings.Default.ScrollLockDirection == false)
+                        {
+                            if (vScrollBar1.Visible)
+                            {
+                                int y = vScrollBar1.Value - e.Delta * 2;
+                                if (y < 0) y = 0;
+                                if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (y <= -1) y = 0;
+                                vScrollBar1.Value = y;
+                            }
+                            else
+                            {
+                                int x = vScrollBar1.Value - e.Delta * 2;
+                                if (x < 0) x = 0;
+                                if (x > vScrollBar1.Maximum - vScrollBar1.LargeChange) x = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (x <= -1) x = 0;
+                                vScrollBar1.Value = x;
+                            }
+                        }
+                        else
+                        {
+                            if (hScrollBar1.Visible)
+                            {
+                                int x = hScrollBar1.Value - e.Delta * 2;
+                                if (x < 0) x = 0;
+                                if (x > hScrollBar1.Maximum - hScrollBar1.LargeChange) x = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+                                if (x <= -1) x = 0;
+                                hScrollBar1.Value = x;
+                            }
+                            else
+                            {
+                                int y = vScrollBar1.Value - e.Delta;
+                                if (y < 0) y = 0;
+                                if (y > vScrollBar1.Maximum - vScrollBar1.LargeChange) y = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+                                if (y <= -1) y = 0;
+                                vScrollBar1.Value = y;
+                            }
+                        }
+
+                    }
                 }
 
             }
         }
 
         public void SetZoomLevel(int zoom_level, Point zoom_point)
-        {            
+        {
             double old_zoom = Zoom;
 
             ZoomLevel = zoom_level;
@@ -984,7 +1814,7 @@ namespace ManiacEditor
             int oldShiftX = ShiftX;
             int oldShiftY = ShiftY;
 
-            if (Scene != null)
+            if (EditorScene != null)
                 SetViewSize((int)(SceneWidth * Zoom), (int)(SceneHeight * Zoom));
 
             if (hScrollBar1.Visible)
@@ -1001,10 +1831,14 @@ namespace ManiacEditor
             }
 
             zooming = false;
+            if (Properties.Settings.Default.AllowMoreRenderUpdates)
+            {
+                UpdateRender();
+            }
 
             UpdateControls();
         }
-        
+
         private bool load()
         {
             if (DataDirectory == null)
@@ -1012,26 +1846,110 @@ namespace ManiacEditor
                 do
                 {
                     MessageBox.Show("Please select the \"Data\" folder", "Message");
+                    string newDataDirectory = GetDataDirectory();
 
-                    FolderSelectDialog folderBrowserDialog = new FolderSelectDialog();
-                    folderBrowserDialog.Title = "Select Data Folder";
-
-                    if (!folderBrowserDialog.ShowDialog())
-                        return false;
-
-                    DataDirectory = folderBrowserDialog.FileName;
+                    // allow user to quit gracefully
+                    if (string.IsNullOrWhiteSpace(newDataDirectory)) return false;
+                    if (IsDataDirectoryValid(newDataDirectory))
+                    {
+                        DataDirectory = newDataDirectory;
+                    }
                 }
-                while (!File.Exists(Path.Combine(DataDirectory, "Game", "GameConfig.bin")));
+                while (null == DataDirectory);
 
-                GameConfig = new GameConfig(Path.Combine(DataDirectory, "Game", "GameConfig.bin"));
+                SetGameConfig();
+                AddRecentDataFolder(DataDirectory);
             }
+            // Clears all the Textures
+            EditorEntity.ReleaseResources();
             return true;
+        }
+
+        private string GetDataDirectory()
+        {
+            using (var folderBrowserDialog = new FolderSelectDialog())
+            {
+                folderBrowserDialog.Title = "Select Data Folder";
+
+                if (!folderBrowserDialog.ShowDialog())
+                    return null;
+
+                return folderBrowserDialog.FileName;
+            }
+        }
+
+        private bool IsDataDirectoryValid()
+        {
+            return IsDataDirectoryValid(DataDirectory);
+        }
+
+        private bool IsDataDirectoryValid(string directoryToCheck)
+        {
+            return File.Exists(Path.Combine(directoryToCheck, "Game", "GameConfig.bin"));
+        }
+
+        /// <summary>
+        /// Sets the GameConfig property in relation to the DataDirectory property.
+        /// </summary>
+        private void SetGameConfig()
+        {
+            GameConfig = new GameConfig(Path.Combine(DataDirectory, "Game", "GameConfig.bin"));
+        }
+
+        /// <summary>
+        /// Adds a Data directory to the persisted list, and refreshes the UI.
+        /// </summary>
+        /// <param name="dataDirectory">Path to the Data directory</param>
+        private void AddRecentDataFolder(string dataDirectory)
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                var dataDirectories = mySettings.DataDirectories;
+
+                if (dataDirectories == null)
+                {
+                    dataDirectories = new StringCollection();
+                    mySettings.DataDirectories = dataDirectories;
+                }
+
+                if (dataDirectories.Contains(dataDirectory))
+                {
+                    dataDirectories.Remove(dataDirectory);
+                }
+
+                if (dataDirectories.Count >= 10)
+                {
+                    for (int i = 9; i < dataDirectories.Count; i++)
+                    {
+                        dataDirectories.RemoveAt(i);
+                    }
+                }
+
+                dataDirectories.Insert(0, dataDirectory);
+
+                mySettings.Save();
+
+                RefreshDataDirectories(dataDirectories);
+
+                _baseDataDirectoryLabel.Text = string.Format(_baseDataDirectoryLabel.Tag.ToString(),
+                                                             dataDirectory);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to add data folder to recent list: " + ex);
+            }
         }
 
         void UnloadScene()
         {
-            Scene = null;
+
+            SceneLoaded = false;
+            EditorScene?.Dispose();
+            EditorScene = null;
             SceneFilename = null;
+            StageConfig = null;
+            StageConfigFileName = null;
 
             SelectedScene = null;
             SelectedZone = null;
@@ -1039,15 +1957,20 @@ namespace ManiacEditor
             if (StageTiles != null) StageTiles.Dispose();
             StageTiles = null;
 
-            if (FGHigh != null) FGHigh.Dispose();
-            FGHigh = null;
-            if (FGLow != null) FGLow.Dispose();
-            FGLow = null;
+            TearDownExtraLayerButtons();
 
             Background = null;
-            
-            TilesClipboard = null;
-            entitiesClipboard = null;
+
+            if (!Properties.Settings.Default.ForceCopyUnlock)
+            {
+                TilesClipboard = null;
+                entitiesClipboard = null;
+            }
+            if (Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
+            {
+                entitiesClipboard = null;
+            }
+
 
             entities = null;
 
@@ -1059,84 +1982,364 @@ namespace ManiacEditor
 
             EditFGLow.Checked = false;
             EditFGHigh.Checked = false;
+            EditFGLower.Checked = false;
+            EditFGHigher.Checked = false;
             EditEntities.Checked = false;
 
             SetViewSize();
 
             UpdateControls();
+
+            // clear memory a little more aggressively 
+            EditorEntity.ReleaseResources();
+            GC.Collect();
+
+            CollisionLayerA.Clear();
+            CollisionLayerB.Clear();
+        }
+
+        void UseVisibilityPrefrences()
+        {
+            if (!Properties.Settings.Default.FGLowerDefault)
+            {
+                ShowFGLower.Checked = false;
+            }
+            else
+            {
+                ShowFGLower.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGLowDefault)
+            {
+                ShowFGLow.Checked = false;
+            }
+            else
+            {
+                ShowFGLow.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGHighDefault)
+            {
+                ShowFGHigh.Checked = false;
+            }
+            else
+            {
+                ShowFGHigh.Checked = true;
+            }
+            if (!Properties.Settings.Default.FGHigherDefault)
+            {
+                ShowFGHigher.Checked = false;
+            }
+            else
+            {
+                ShowFGHigher.Checked = true;
+            }
+            if (!Properties.Settings.Default.EntitiesDefault)
+            {
+                ShowEntities.Checked = false;
+            }
+            else
+            {
+                ShowEntities.Checked = true;
+            }
+            if (!Properties.Settings.Default.AnimationsDefault)
+            {
+                ShowAnimations.Checked = false;
+            }
+            else
+            {
+                ShowAnimations.Checked = true;
+            }
         }
 
         private void Open_Click(object sender, EventArgs e)
         {
-            if (load())
+            Editor.Instance.SceneChangeWarning(sender, e);
+            if (AllowSceneChange == true || SceneLoaded == false || Properties.Settings.Default.DisableSaveWarnings == true)
             {
-                SceneSelect select = new SceneSelect(GameConfig);
-                select.ShowDialog();
+                AllowSceneChange = false;
+                if (!load()) return;
+                if (Properties.Settings.Default.forceBrowse == true)
+                    OpenSceneManual();
+                else
+                    OpenScene();
 
-                if (select.Result == null)
-                    return;
+            }
+            else
+            {
+                return;
+            }
 
-                UnloadScene();
+        }
 
+        private void OpenScene()
+        {
+
+            SceneSelect select = new SceneSelect(GameConfig);
+            select.ShowDialog();
+
+            if (select.Result == null)
+                return;
+
+            UnloadScene();
+            UseVisibilityPrefrences();
+
+            try
+            {
                 if (File.Exists(select.Result))
                 {
                     // Selected file
+                    // Don't forget to populate these Members
+                    string directoryPath = Path.GetDirectoryName(select.Result);
+                    SelectedZone = new DirectoryInfo(directoryPath).Name;
+                    SelectedScene = Path.GetFileName(select.Result);
 
-                    StageTiles = new StageTiles(Path.GetDirectoryName(select.Result));
+                    StageTiles = new StageTiles(directoryPath);
+
                     SceneFilename = select.Result;
                 }
                 else
                 {
-                    string[] splitted = select.Result.Split('/');
-
-                    SelectedZone = splitted[0];
-                    SelectedScene = splitted[1];
-
+                    SelectedZone = select.Result.Replace(Path.GetFileName(select.Result), "");
+                    SelectedScene = Path.GetFileName(select.Result);
 
                     StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
                     SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
                 }
-                Scene = new Scene(SceneFilename);
 
-                SceneLayer low_layer = null, high_layer = null;
+                //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
+                CollisionLayerA.Clear();
+                CollisionLayerB.Clear();
 
-                foreach (SceneLayer layer in Scene.Layers)
+                for (int i = 0; i < 1024; i++)
                 {
-                    if (layer.Name == "FG Low\0" || layer.Name == "Playfield\0")
-                        low_layer = layer;
-                    else if (layer.Name == "FG High\0" || layer.Name == "Ring Count\0")
-                        high_layer = layer;
+                    CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                    CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
                 }
-
-                if (low_layer == null /* || high_layer == null */)
+                if (Properties.Settings.Default.DisableEntityReading == true)
                 {
-                    UnloadScene();
-                    MessageBox.Show("Unsupported scene (yet)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    EditorScene.readTilesOnly = true;
+                }
+                EditorScene = new EditorScene(SceneFilename);
+
+                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
+                if (File.Exists(StageConfigFileName))
+                {
+                    StageConfig = new StageConfig(StageConfigFileName);
                 }
 
-                ShowFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
-                EditFGLow.Text = low_layer.Name.Substring(0, low_layer.Name.Length - 1);
-                ShowFGHigh.Checked = high_layer != null;
-                if (high_layer != null) {
-                    ShowFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
-                    EditFGHigh.Text = high_layer.Name.Substring(0, high_layer.Name.Length - 1);
+                ObjectList.Clear();
+                for (int i = 0; i < GameConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(GameConfig.ObjectsNames[i]);
                 }
+                for (int i = 0; i < StageConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(StageConfig.ObjectsNames[i]);
+                }
+                ScenePath = select.Result;
+                UpdateDiscord("Editing " + select.Result);
+                SceneLoaded = true;
 
-                FGLow = new EditorLayer(low_layer);
-                if (high_layer != null) FGHigh = new EditorLayer(high_layer);
-
-                Background = new EditorBackground();
-
-                entities = new EditorEntities(Scene);
-
-                SceneWidth = low_layer.Width * 16;
-                SceneHeight = low_layer.Height * 16;
-
-                SetViewSize(SceneWidth, SceneHeight);
-
-                UpdateControls();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Load failed. Error: " + ex.ToString());
+                return;
+            }
+
+
+            SetupLayerButtons();
+
+            Background = new EditorBackground();
+
+            entities = new EditorEntities(EditorScene);
+
+            SetViewSize(SceneWidth, SceneHeight);
+
+            UpdateControls();
+
+            SceneLoaded = true;
+
+            if (Properties.Settings.Default.AutoPreloadScene == true)
+            {
+                preLoadSceneButton_Click(null, null);
+            }
+        }
+
+        private void OpenSceneManual()
+        {
+            string Result = null;
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Scene File|*.bin";
+            if (open.ShowDialog() != DialogResult.Cancel)
+            {
+                Result = open.FileName;
+            }
+
+            if (Result == null)
+                return;
+
+            UnloadScene();
+            UseVisibilityPrefrences();
+
+            try
+            {
+                if (File.Exists(Result))
+                {
+                    // Selected file
+                    // Don't forget to populate these Members
+                    string directoryPath = Path.GetDirectoryName(Result);
+                    SelectedZone = new DirectoryInfo(directoryPath).Name;
+                    SelectedScene = Path.GetFileName(Result);
+
+                    StageTiles = new StageTiles(directoryPath);
+
+                    SceneFilename = Result;
+                }
+                else
+                {
+                    SelectedZone = Result.Replace(Path.GetFileName(Result), "");
+                    SelectedScene = Path.GetFileName(Result);
+
+                    StageTiles = new StageTiles(Path.Combine(DataDirectory, "Stages", SelectedZone));
+                    SceneFilename = Path.Combine(DataDirectory, "Stages", SelectedZone, SelectedScene);
+                }
+
+                //These cause issues, but not clearing them means when new stages are loaded Collision Mask 0 will be index 1024... (I think)
+                CollisionLayerA.Clear();
+                CollisionLayerB.Clear();
+
+                for (int i = 0; i < 1024; i++)
+                {
+                    CollisionLayerA.Add(StageTiles.Config.CollisionPath1[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                    CollisionLayerB.Add(StageTiles.Config.CollisionPath2[i].DrawCMask(Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255)));
+                }
+                if (Properties.Settings.Default.DisableEntityReading == true)
+                {
+                    RSDKv5.Scene.readTilesOnly = true;
+                }
+                else
+                {
+                    RSDKv5.Scene.readTilesOnly = false;
+                }
+                EditorScene = new EditorScene(SceneFilename);
+                StageConfigFileName = Path.Combine(Path.GetDirectoryName(SceneFilename), "StageConfig.bin");
+                if (File.Exists(StageConfigFileName))
+                {
+                    StageConfig = new StageConfig(StageConfigFileName);
+                }
+
+                ObjectList.Clear();
+                for (int i = 0; i < GameConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(GameConfig.ObjectsNames[i]);
+                }
+                for (int i = 0; i < StageConfig.ObjectsNames.Count; i++)
+                {
+                    ObjectList.Add(StageConfig.ObjectsNames[i]);
+                }
+                ScenePath = Result;
+                UpdateDiscord("Editing " + Result);
+                SceneLoaded = true;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Load failed. Error: " + ex.ToString());
+                return;
+            }
+
+
+            SetupLayerButtons();
+
+            Background = new EditorBackground();
+
+            entities = new EditorEntities(EditorScene);
+
+            SetViewSize(SceneWidth, SceneHeight);
+
+            UpdateControls();
+
+        }
+
+        private void SetupLayerButtons()
+        {
+            TearDownExtraLayerButtons();
+            foreach (EditorLayer el in EditorScene.OtherLayers)
+            {
+                ToolStripButton tsb = new ToolStripButton(el.Name);
+                toolStrip1.Items.Add(tsb);
+                tsb.ForeColor = Color.DarkGreen;
+                tsb.CheckOnClick = true;
+                tsb.Click += AdHocLayerEdit;
+
+                _extraLayerButtons.Add(tsb);
+            }
+
+            UpdateDualButtonsControlsForLayer(FGLow, ShowFGLow, EditFGLow);
+            UpdateDualButtonsControlsForLayer(FGHigh, ShowFGHigh, EditFGHigh);
+            UpdateDualButtonsControlsForLayer(FGLower, ShowFGLower, EditFGLower);
+            UpdateDualButtonsControlsForLayer(FGHigher, ShowFGHigher, EditFGHigher);
+        }
+
+        private void TearDownExtraLayerButtons()
+        {
+            foreach (var elb in _extraLayerButtons)
+            {
+                elb.Click -= AdHocLayerEdit;
+                toolStrip1.Items.Remove(elb);
+            }
+            _extraLayerButtons.Clear();
+        }
+
+
+
+        /// <summary>
+        /// Given a scene layer, configure the given visibiltiy and edit buttons which will control that layer.
+        /// </summary>
+        /// <param name="layer">The layer of the scene from which to extract a name.</param>
+        /// <param name="visibilityButton">The button which controls the visibility of the layer.</param>
+        /// <param name="editButton">The button which controls editing the layer.</param>
+        private void UpdateDualButtonsControlsForLayer(EditorLayer layer, ToolStripButton visibilityButton, ToolStripButton editButton)
+        {
+            bool layerValid = layer != null;
+            visibilityButton.Checked = layerValid;
+            if (layerValid)
+            {
+                string name = layer.Name;
+                visibilityButton.Text = name;
+                editButton.Text = name;
+            }
+        }
+
+        private void AdHocLayerEdit(object sender, EventArgs e)
+        {
+            ToolStripButton tsb = sender as ToolStripButton;
+            Deselect(false);
+            if (tsb.Checked)
+            {
+                if (!Properties.Settings.Default.KeepLayersVisible)
+                {
+                    ShowFGLow.Checked = false;
+                    ShowFGHigh.Checked = false;
+                    ShowFGLower.Checked = false;
+                    ShowFGHigher.Checked = false;
+                }
+                EditFGLow.Checked = false;
+                EditFGHigh.Checked = false;
+                EditFGLower.Checked = false;
+                EditFGHigher.Checked = false;
+                EditEntities.Checked = false;
+
+                foreach (var elb in _extraLayerButtons)
+                {
+                    if (elb != tsb)
+                    {
+                        elb.Checked = false;
+                    }
+                }
+            }
+
+            UpdateControls();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -1217,7 +2420,12 @@ namespace ManiacEditor
             hScrollBar1.Value = Math.Max(0, Math.Min(hScrollBar1.Value, hScrollBar1.Maximum - hScrollBar1.LargeChange));
             vScrollBar1.Value = Math.Max(0, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange));
         }
-        
+
+        private void ResetViewSize()
+        {
+            SetViewSize((int)(SceneWidth * Zoom), (int)(SceneHeight * Zoom));
+        }
+
         private void ResizeGraphicPanel(int width = 0, int height = 0)
         {
             GraphicPanel.Width = width;
@@ -1234,6 +2442,32 @@ namespace ManiacEditor
             Open_Click(sender, e);
         }
 
+        private void openDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SceneChangeWarning(sender, e);
+            if (AllowSceneChange == true || SceneLoaded == false)
+            {
+                AllowSceneChange = false;
+                string newDataDirectory = GetDataDirectory();
+                if (null == newDataDirectory) return;
+                if (newDataDirectory.Equals(DataDirectory)) return;
+
+                if (IsDataDirectoryValid(newDataDirectory))
+                    ResetDataDirectoryToAndResetScene(newDataDirectory);
+                else
+                    MessageBox.Show($@"{newDataDirectory} is not
+a valid Data Directory.",
+                                    "Invalid Data Directory!",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+            }
+            else
+            {
+                return;
+            }
+
+        }
+
         public void OnResetDevice(object sender, DeviceEventArgs e)
         {
             Device device = e.Device;
@@ -1244,16 +2478,29 @@ namespace ManiacEditor
             // hmm, if I call refresh when I update the values, for some reason it will stop to render until I stop calling refrsh
             // So I will refresh it here
             if (entitiesToolbar?.NeedRefresh ?? false) entitiesToolbar.PropertiesRefresh();
-            if (Scene != null)
+            if (EditorScene != null)
             {
                 if (!IsTilesEdit())
                     Background.Draw(GraphicPanel);
+                if (IsTilesEdit())
+                {
+                    if (Properties.Settings.Default.ShowEditLayerBackground == true)
+                    {
+                        Background.DrawEdit(GraphicPanel);
+                    }
+                }
+                if (EditorScene.OtherLayers.Contains(EditLayer))
+                    EditLayer.Draw(GraphicPanel);
+                if (ShowFGLower.Checked || EditFGLower.Checked)
+                    FGLower.Draw(GraphicPanel);
                 if (ShowFGLow.Checked || EditFGLow.Checked)
                     FGLow.Draw(GraphicPanel);
-                if (ShowEntities.Checked && !EditEntities.Checked)
+                if (ShowEntities.Checked || !EditEntities.Checked)
                     entities.Draw(GraphicPanel);
                 if (ShowFGHigh.Checked || EditFGHigh.Checked)
                     FGHigh.Draw(GraphicPanel);
+                if (ShowFGHigher.Checked || EditFGHigher.Checked)
+                    FGHigher.Draw(GraphicPanel);
                 if (EditEntities.Checked)
                     entities.Draw(GraphicPanel);
             }
@@ -1274,8 +2521,10 @@ namespace ManiacEditor
                         y2 = (int)(selectingY / Zoom);
                     }
 
-                    GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(50, Color.Purple));
-
+                    if (Properties.Settings.Default.UseFasterSelectionRendering == false)
+                    {
+                        GraphicPanel.DrawRectangle(x1, y1, x2, y2, Color.FromArgb(100, Color.Purple));
+                    }
                     GraphicPanel.DrawLine(x1, y1, x2, y1, Color.Purple);
                     GraphicPanel.DrawLine(x1, y1, x1, y2, Color.Purple);
                     GraphicPanel.DrawLine(x2, y2, x2, y1, Color.Purple);
@@ -1288,9 +2537,11 @@ namespace ManiacEditor
                 else if (vScrollBar1.Visible) GraphicPanel.DrawVertCursor(scrollPosition.X, scrollPosition.Y);
                 else if (hScrollBar1.Visible) GraphicPanel.DrawHorizCursor(scrollPosition.X, scrollPosition.Y);
             }
+            if (showGrid)
+                Background.DrawGrid(GraphicPanel);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public void Form1_Load(object sender, EventArgs e)
         {
             GraphicPanel.Init(this);
         }
@@ -1300,6 +2551,7 @@ namespace ManiacEditor
             Show();
             Focus();
             GraphicPanel.Run();
+
         }
 
         private void LayerShowButton_Click(ToolStripButton button, string desc)
@@ -1326,23 +2578,53 @@ namespace ManiacEditor
             LayerShowButton_Click(ShowFGHigh, "Layer FG High");
         }
 
+        private void ShowFGHigher_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowFGHigher, "Layer FG Higher");
+        }
+
+        private void ShowFGLower_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowFGLower, "Layer FG Lower");
+        }
+
         private void ShowEntities_Click(object sender, EventArgs e)
         {
             LayerShowButton_Click(ShowEntities, "Entities");
         }
 
+        private void ShowAnimations_Click(object sender, EventArgs e)
+        {
+            LayerShowButton_Click(ShowAnimations, "Animations");
+        }
+
+        /// <summary>
+        /// Deselects all tiles and entities
+        /// </summary>
+        /// <param name="updateControls">Whether to update associated on-screen controls</param>
         public void Deselect(bool updateControls = true)
         {
             if (IsEditing())
             {
-                EditLayer?.Deselect();
+                if (multiLayerSelect == false)
+                {
+                    EditLayer?.Deselect();
+                }
+                else
+                {
+                    FGLow?.Deselect();
+                    FGHigh?.Deselect();
+                    FGLower?.Deselect();
+                    FGHigher?.Deselect();
+                }
+
                 if (IsEntitiesEdit()) entities.Deselect();
                 SetSelectOnlyButtonsState(false);
                 if (updateControls)
                     UpdateEditLayerActions();
             }
             //MagnetDisable();
-        }        
+        }
 
         private void LayerEditButton_Click(ToolStripButton button)
         {
@@ -1355,8 +2637,15 @@ namespace ManiacEditor
             {
                 EditFGLow.Checked = false;
                 EditFGHigh.Checked = false;
+                EditFGLower.Checked = false;
+                EditFGHigher.Checked = false;
                 EditEntities.Checked = false;
                 button.Checked = true;
+            }
+
+            foreach (var elb in _extraLayerButtons)
+            {
+                elb.Checked = false;
             }
             UpdateControls();
         }
@@ -1371,15 +2660,25 @@ namespace ManiacEditor
             LayerEditButton_Click(EditFGHigh);
         }
 
+        private void EditFGLower_Click(object sender, EventArgs e)
+        {
+            LayerEditButton_Click(EditFGLower);
+        }
+
+        private void EditFGHigher_Click(object sender, EventArgs e)
+        {
+            LayerEditButton_Click(EditFGHigher);
+        }
+
         private void EditEntities_Click(object sender, EventArgs e)
         {
             LayerEditButton_Click(EditEntities);
         }
-        
+
 
         private void Save_Click(object sender, EventArgs e)
         {
-            if (Scene == null) return;
+            if (EditorScene == null) return;
 
             if (IsTilesEdit())
             {
@@ -1387,13 +2686,40 @@ namespace ManiacEditor
                 Deselect();
             }
 
-            Scene.Write(SceneFilename);
+            try
+            {
+                EditorScene.Save(SceneFilename);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to save the scene to file '{SceneFilename}'
+Error: {ex.Message}");
+            }
+
+            try
+            {
+                StageConfig?.Write(StageConfigFileName);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to save the StageConfig to file '{StageConfigFileName}'
+Error: {ex.Message}");
+            }
+        }
+
+        private void ShowError(string message, string title = "Error!")
+        {
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            /*using (var customMsgBox = new CustomMsgBox(message, title, 1, 1))
+            {
+                customMsgBox.ShowDialog();
+            }*/
         }
 
         private void MagnetMode_Click(object sender, EventArgs e)
         {
         }
-        
+
 
         private void New_Click(object sender, EventArgs e)
         {
@@ -1415,24 +2741,86 @@ namespace ManiacEditor
         }
         private void saveAspngToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Scene != null)
+            if (EditorScene == null) return;
+
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = ".png File|*.png";
+            save.DefaultExt = "png";
+            if (save.ShowDialog() != DialogResult.Cancel)
             {
-                SaveFileDialog save = new SaveFileDialog();
-                save.Filter = ".png File|*.png";
-                save.DefaultExt = "png";
-                if (save.ShowDialog() != DialogResult.Cancel)
+                using (Bitmap bitmap = new Bitmap(SceneWidth, SceneHeight))
+                using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    using (Bitmap bitmap = new Bitmap(SceneWidth, SceneHeight))
-                    {
-                        using (Graphics g = Graphics.FromImage(bitmap))
-                        {
-                            FGLow.Draw(g);
-                            FGHigh.Draw(g);
-                        }
-                        bitmap.Save(save.FileName);
-                    }
+                    // not all scenes have both a Low and a High foreground
+                    // only attempt to render the ones we actually have
+                    FGLow?.Draw(g);
+                    FGHigh?.Draw(g);
+                    FGLower?.Draw(g);
+                    FGHigher?.Draw(g);
+                    bitmap.Save(save.FileName);
                 }
             }
+        }
+
+        private void exportEachLayerAspngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (EditorScene?.Layers == null || !EditorScene.Layers.Any()) return;
+
+                var dialog = new FolderSelectDialog()
+                {
+                    Title = "Select folder to save each exported layer image to"
+                };
+
+                if (!dialog.ShowDialog()) return;
+
+                int fileCount = 0;
+
+                foreach (var editorLayer in EditorScene.AllLayers)
+                {
+                    string fileName = Path.Combine(dialog.FileName, editorLayer.Name + ".png");
+
+                    if (!CanWriteFile(fileName))
+                    {
+                        ShowError($"Layer export aborted. {fileCount} images saved.");
+                        return;
+                    }
+
+                    using (var bitmap = new Bitmap(editorLayer.Width * EditorLayer.TILE_SIZE, editorLayer.Height * EditorLayer.TILE_SIZE))
+                    using (var g = Graphics.FromImage(bitmap))
+                    {
+                        editorLayer.Draw(g);
+                        bitmap.Save(fileName, ImageFormat.Png);
+                        ++fileCount;
+                    }
+                }
+
+                MessageBox.Show($"Layer export succeeded. {fileCount} images saved.", "Success!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowError("An error occurred: " + ex.Message);
+            }
+        }
+
+        private bool CanWriteFile(string fullFilePath)
+        {
+            if (!File.Exists(fullFilePath)) return true;
+
+            if (File.GetAttributes(fullFilePath).HasFlag(FileAttributes.ReadOnly))
+            {
+                ShowError($"The file '{fullFilePath}' is Read Only.", "File is Read Only.");
+                return false;
+            }
+
+            var result = MessageBox.Show($"The file '{fullFilePath}' already exists. Overwrite?", "Overwrite?",
+                                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes) return true;
+
+            return false;
         }
 
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
@@ -1447,7 +2835,18 @@ namespace ManiacEditor
 
         private void flipHorizontalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditLayer?.FlipPropertySelected(1 << 10);
+            if (multiLayerSelect == false)
+            {
+                EditLayer?.FlipPropertySelected(FlipDirection.Horizontal);
+            }
+            else
+            {
+                FGHigher?.FlipPropertySelected(FlipDirection.Horizontal);
+                FGHigh?.FlipPropertySelected(FlipDirection.Horizontal);
+                FGLower?.FlipPropertySelected(FlipDirection.Horizontal);
+                FGLow?.FlipPropertySelected(FlipDirection.Horizontal);
+            }
+
             UpdateEditLayerActions();
         }
 
@@ -1455,13 +2854,13 @@ namespace ManiacEditor
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsTilesEdit())
-            {
-                TilesClipboard = EditLayer.CopyToClipboard();
-            }
+                CopyTilesToClipboard();
+
+
             else if (IsEntitiesEdit())
-            {
-                entitiesClipboard = entities.CopyToClipboard();
-            }
+                CopyEntitiesToClipboard();
+
+
             UpdateControls();
         }
 
@@ -1517,7 +2916,7 @@ namespace ManiacEditor
                 {
                     // Deselect to apply the changes
                     Deselect();
-                } 
+                }
                 else if (IsEntitiesEdit())
                 {
                     if (undo.Peek() is ActionAddDeleteEntities)
@@ -1554,50 +2953,181 @@ namespace ManiacEditor
             UpdateControls();
         }
 
+        private void UpdateTooltips()
+        {
+            UpdateTooltipForStacks(undoButton, undo);
+            UpdateTooltipForStacks(redoButton, redo);
+        }
+
+        private void UpdateTooltipForStacks(ToolStripButton tsb, Stack<IAction> actionStack)
+        {
+            if (actionStack?.Count > 0)
+            {
+                IAction action = actionStack.Peek();
+                tsb.ToolTipText = string.Format(tsb.Text, action.Description + " ");
+            }
+            else
+            {
+                tsb.ToolTipText = string.Format(tsb.Text, string.Empty);
+            }
+        }
+
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsTilesEdit())
             {
-                TilesClipboard = EditLayer.CopyToClipboard();
+                CopyTilesToClipboard();
                 DeleteSelected();
                 UpdateControls();
                 UpdateEditLayerActions();
             }
             else if (IsEntitiesEdit())
             {
-                entitiesClipboard = entities.CopyToClipboard();
-                DeleteSelected();
-                UpdateControls();
+                if (entitiesToolbar.ContainsFocus.Equals(false))
+                {
+                    CopyEntitiesToClipboard();
+                    DeleteSelected();
+                    UpdateControls();
+                }
+            }
+        }
+
+        private void CopyTilesToClipboard()
+        {
+            if (multiLayerSelect == true)
+            {
+                Dictionary<Point, ushort> copyDataLower = FGLower?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataLow = FGLow?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataHigh = FGHigh?.CopyToClipboard();
+                Dictionary<Point, ushort> copyDataHigher = FGHigher?.CopyToClipboard();
+
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                {
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesLower", copyDataLower), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesLow", copyDataLow), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesHigh", copyDataHigh), true);
+                    Clipboard.SetDataObject(new DataObject("ManiacTilesHigher", copyDataHigher), true);
+                }
+
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                TilesClipboardLower = copyDataLower;
+                TilesClipboardLow = copyDataLow;
+                TilesClipboardHigh = copyDataHigh;
+                TilesClipboardHigher = copyDataHigher;
+            }
+            else
+            {
+                Dictionary<Point, ushort> copyData = EditLayer.CopyToClipboard();
+
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                    Clipboard.SetDataObject(new DataObject("ManiacTiles", copyData), true);
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                TilesClipboard = copyData;
+            }
+
+        }
+
+        private void CopyEntitiesToClipboard()
+        {
+            if (entitiesToolbar.ContainsFocus.Equals(false))
+            {
+                List<EditorEntity> copyData = entities.CopyToClipboard();
+
+                // Make a DataObject for the copied data and send it to the Windows clipboard for cross-instance copying
+                if (Properties.Settings.Default.EnableWindowsClipboard)
+                {
+                    if (!Properties.Settings.Default.ProhibitEntityUseOnExternalClipboard)
+                        Clipboard.SetDataObject(new DataObject("ManiacEntities", copyData), true);
+                }
+
+
+                // Also copy to Maniac's clipboard in case it gets overwritten elsewhere
+                entitiesClipboard = copyData;
             }
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (IsTilesEdit() && TilesClipboard != null)
+            if (IsTilesEdit())
             {
-                EditLayer.PasteFromClipboard(new Point((int)(ShiftX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(ShiftY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
-                UpdateEditLayerActions();
+                if (multiLayerSelect == false)
+                {
+                    // check if there are tiles on the Windows clipboard; if so, use those
+                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
+                    {
+                        EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTiles"));
+                        UpdateEditLayerActions();
+                    }
+
+                    // if there's none, use the internal clipboard
+                    else if (TilesClipboard != null)
+                    {
+                        EditLayer.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboard);
+                        UpdateEditLayerActions();
+                    }
+                }
+                else
+                {
+                    // check if there are tiles on the Windows clipboard; if so, use those
+                    if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacTiles"))
+                    {
+                        FGLower?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesLower"));
+                        FGLow?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesLow"));
+                        FGHigh?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesHigh"));
+                        FGHigher?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), (Dictionary<Point, ushort>)Clipboard.GetDataObject().GetData("ManiacTilesHigher"));
+                        UpdateEditLayerActions();
+                    }
+
+                    // if there's none, use the internal clipboard
+                    else if (TilesClipboard != null)
+                    {
+                        FGLower?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardLower);
+                        FGLow?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardLow);
+                        FGHigh?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardHigh);
+                        FGHigher?.PasteFromClipboard(new Point((int)(lastX / Zoom) + EditorLayer.TILE_SIZE - 1, (int)(lastY / Zoom) + EditorLayer.TILE_SIZE - 1), TilesClipboardHigher);
+                        UpdateEditLayerActions();
+                    }
+                }
+
             }
             else if (IsEntitiesEdit())
             {
-                try
+                if (entitiesToolbar.ContainsFocus.Equals(false))
                 {
-                    entities.PasteFromClipboard(new Point((int)(ShiftX / Zoom), (int)(ShiftY / Zoom)), entitiesClipboard);
-                    UpdateLastEntityAction();
+                    try
+                    {
+                        // check if there are entities on the Windows clipboard; if so, use those
+                        if (Properties.Settings.Default.EnableWindowsClipboard && Clipboard.ContainsData("ManiacEntities"))
+                        {
+                            entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), (List<EditorEntity>)Clipboard.GetDataObject().GetData("ManiacEntities"));
+                            UpdateLastEntityAction();
+                        }
+
+                        // if there's none, use the internal clipboard
+                        else if (entitiesClipboard != null)
+                        {
+                            entities.PasteFromClipboard(new Point((int)(lastX / Zoom), (int)(lastY / Zoom)), entitiesClipboard);
+                            UpdateLastEntityAction();
+                        }
+                    }
+                    catch (EditorEntities.TooManyEntitiesException)
+                    {
+                        MessageBox.Show("Too many entities! (limit: 2048)");
+                        return;
+                    }
+                    UpdateEntitiesToolbarList();
+                    SetSelectOnlyButtonsState();
                 }
-                catch (EditorEntities.TooManyEntitiesException)
-                {
-                    MessageBox.Show("Too many entities! (limit: 2048)");
-                    return;
-                }
-                UpdateEntitiesToolbarList();
-                SetSelectOnlyButtonsState();
             }
         }
 
         private void GraphicPanel_MouseEnter(object sender, EventArgs e)
         {
-            //GraphicPanel.Focus();
+            GraphicPanel.Focus();
         }
 
         private void GraphicPanel_DragEnter(object sender, DragEventArgs e)
@@ -1605,9 +3135,20 @@ namespace ManiacEditor
             if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
             {
                 Point rel = GraphicPanel.PointToScreen(Point.Empty);
-                e.Effect = DragDropEffects.Move;
-                // (ushort)((Int32)e.Data.GetData(e.Data.GetFormats()[0])
-                EditLayer.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                e.Effect = DragDropEffects.None;
+                //(ushort)((Int32)e.Data.GetData(e.Data.GetFormats()[0])
+                if (multiLayerSelect == true)
+                {
+                    FGLower.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGLow.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigh.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigher.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                }
+                else
+                {
+                    EditLayer.StartDragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                }
+
                 UpdateEditLayerActions();
             }
             else
@@ -1621,27 +3162,59 @@ namespace ManiacEditor
             if (e.Data.GetDataPresent(typeof(Int32)) && IsTilesEdit())
             {
                 Point rel = GraphicPanel.PointToScreen(Point.Empty);
-                EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
-                GraphicPanel.Render();
+                if (multiLayerSelect == true)
+                {
+                    FGLower?.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGLow?.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigh?.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                    FGHigher?.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                }
+                else
+                {
+                    EditLayer.DragOver(new Point((int)(((e.X - rel.X) + ShiftX) / Zoom), (int)(((e.Y - rel.Y) + ShiftY) / Zoom)), (ushort)TilesToolbar.SelectedTile);
+                }
+
+                UpdateRender();
+
             }
         }
 
         private void GraphicPanel_DragLeave(object sender, EventArgs e)
         {
-            EditLayer?.EndDragOver(true);
-            GraphicPanel.Render();
+            if (multiLayerSelect == true) {
+                FGLower?.EndDragOver(true);
+                FGLow?.EndDragOver(true);
+                FGHigh?.EndDragOver(true);
+                FGHigher?.EndDragOver(true);
+            }
+            else
+            {
+                EditLayer?.EndDragOver(true);
+            }
+
+            UpdateRender();
         }
 
         private void GraphicPanel_DragDrop(object sender, DragEventArgs e)
         {
-            EditLayer?.EndDragOver(false);
+            if (multiLayerSelect == true)
+            {
+                FGLower?.EndDragOver(false);
+                FGLow?.EndDragOver(false);
+                FGHigh?.EndDragOver(false);
+                FGHigher?.EndDragOver(false);
+            }
+            else
+            {
+                EditLayer?.EndDragOver(false);
+            }
         }
 
         private void zoomInButton_Click(object sender, EventArgs e)
         {
             ZoomLevel += 1;
-            if (ZoomLevel > 5) ZoomLevel = 5;
-            if (ZoomLevel < -5) ZoomLevel = -5;
+            if (ZoomLevel >= 5) ZoomLevel = 5;
+            if (ZoomLevel <= -5) ZoomLevel = -5;
 
             SetZoomLevel(ZoomLevel, new Point(0, 0));
         }
@@ -1649,8 +3222,8 @@ namespace ManiacEditor
         private void zoomOutButton_Click(object sender, EventArgs e)
         {
             ZoomLevel -= 1;
-            if (ZoomLevel > 5) ZoomLevel = 5;
-            if (ZoomLevel < -5) ZoomLevel = -5;
+            if (ZoomLevel >= 5) ZoomLevel = 5;
+            if (ZoomLevel <= -5) ZoomLevel = -5;
 
             SetZoomLevel(ZoomLevel, new Point(0, 0));
         }
@@ -1694,7 +3267,7 @@ namespace ManiacEditor
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Scene == null) return;
+            if (EditorScene == null) return;
 
             if (IsTilesEdit())
             {
@@ -1710,8 +3283,350 @@ namespace ManiacEditor
             save.FileName = Path.GetFileName(SceneFilename);
             if (save.ShowDialog() != DialogResult.Cancel)
             {
-                Scene.Write(save.FileName);
+                EditorScene.Write(save.FileName);
             }
+        }
+
+        public void importObjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Scene sourceScene = GetSceneSelection();
+                if (null == sourceScene) return;
+
+                using (var objectImporter = new ObjectImporter(sourceScene.Objects, EditorScene.Objects, StageConfig))
+                {
+                    if (objectImporter.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // user clicked Import, get to it!
+                    objectRemover.RefreshList();
+                    UpdateControls();
+                    entitiesToolbar?.RefreshObjects(EditorScene.Objects);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import Objects. " + ex.Message);
+            }
+        }
+
+        private void importSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                StageConfig sourceStageConfig = null;
+                using (var fd = new OpenFileDialog())
+                {
+                    fd.Filter = "Stage Config File|*.bin";
+                    fd.DefaultExt = ".bin";
+                    fd.Title = "Select Stage Config File";
+                    fd.InitialDirectory = Path.Combine(DataDirectory, "Stages");
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        sourceStageConfig = new StageConfig(fd.FileName);
+                    }
+                }
+                if (null == sourceStageConfig) return;
+
+                using (var soundImporter = new SoundImporter(sourceStageConfig, StageConfig))
+                {
+                    if (soundImporter.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // changing the sound list doesn't require us to do anything either
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import sounds. " + ex.Message);
+            }
+        }
+
+        public Scene GetSceneSelection()
+        {
+            string selectedScene;
+            using (SceneSelect select = new SceneSelect(GameConfig))
+            {
+                select.ShowDialog();
+
+                if (select.Result == null)
+                    return null;
+
+                selectedScene = select.Result;
+            }
+
+            if (!File.Exists(selectedScene))
+            {
+                string[] splitted = selectedScene.Split('/');
+
+                string part1 = splitted[0];
+                string part2 = splitted[1];
+
+                selectedScene = Path.Combine(DataDirectory, "Stages", part1, part2);
+            }
+            return new Scene(selectedScene);
+        }
+
+        private void layerManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Deselect(true);
+
+            using (var lm = new LayerManager(EditorScene))
+            {
+                lm.ShowDialog();
+            }
+            controlWindowOpen = true;
+
+            SetupLayerButtons();
+            ResetViewSize();
+            UpdateControls();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var aboutBox = new AboutBox())
+            {
+                aboutBox.ShowDialog();
+            }
+        }
+
+        private void optionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var optionBox = new OptionBox())
+            {
+                optionBox.ShowDialog();
+            }
+        }
+
+        private void controlsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            using (var ControlBox = new controlBox())
+            {
+                ControlBox.ShowDialog();
+            }
+        }
+
+        private void Editor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                var mySettings = Properties.Settings.Default;
+                mySettings.IsMaximized = WindowState == FormWindowState.Maximized;
+                mySettings.Save();
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Failed to write settings: " + ex);
+            }
+        }
+
+        private void ReloadToolStripButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // release all our resources, and force a reload of the tiles
+                // Entities should take care of themselves
+                DisposeTextures();
+                EditorEntity.ReleaseResources();
+
+                StageTiles?.Image.Reload();
+                TilesToolbar?.Reload();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void RunScene_Click(object sender, EventArgs e)
+        {
+            IntPtr hWnd = FindWindow("SonicMania", null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName("SonicMania").FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                RunSequence(sender, e);
+            }
+        }
+
+        private void RunSequence(object sender, EventArgs e)
+        {
+            // Ask where Sonic Mania ia located when not set
+            if (string.IsNullOrEmpty(Properties.Settings.Default.RunGamePath))
+            {
+                var ofd = new OpenFileDialog();
+                ofd.Title = "Select SonicMania.exe";
+                ofd.Filter = "Windows PE Executable|*.exe";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    Properties.Settings.Default.RunGamePath = ofd.FileName;
+            }
+            else
+            {
+                if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                {
+                    Properties.Settings.Default.RunGamePath = "";
+                    return;
+                }
+            }
+
+            ProcessStartInfo psi;
+
+            if (Properties.Settings.Default.RunGameInsteadOfScene == true)
+            {
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath);
+            }
+            else
+            {
+                if (Properties.Settings.Default.UsePrePlusOffsets == true)
+                {
+                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath, $"stage={SelectedZone};scene={SelectedScene[5]};");
+                }
+                else
+                {
+                    psi = new ProcessStartInfo(Properties.Settings.Default.RunGamePath);
+                    // TODO: Find workaround to get Mania to boot into a Scene Post Plus
+                    // Moved to main offset section
+                }
+
+            }
+            if (Properties.Settings.Default.RunGamePath != "")
+            {
+                string maniaDir = Path.GetDirectoryName(Properties.Settings.Default.RunGamePath);
+                // Check if the mod loader is installed
+                if (File.Exists(Path.Combine(maniaDir, "d3d9.dll")))
+                    psi.WorkingDirectory = maniaDir;
+                else
+                    psi.WorkingDirectory = Path.GetDirectoryName(DataDirectory);
+                var p = Process.Start(psi);
+                GameRunning = true;
+                UpdateControls();
+                UseCheatCodes(p);
+
+                new Thread(() =>
+                {
+                    /* Level != Main Menu*/
+                    while (GameMemory.ReadByte(0x00CCF6F8) != 0x02)
+                    {
+                        // Check if the user closed the game
+                        if (p.HasExited)
+                        {
+                            GameRunning = false;
+                            Invoke(new Action(() => UpdateControls()));
+                            return;
+                        }
+                        // Restrict to Player 1
+                        if (GameMemory.ReadByte(0xA4C860) == 0x01)
+                        {
+                            GameMemory.WriteByte(0xA4C860, 0x00);
+                        }
+                        Thread.Sleep(300);
+                    }
+                    // User is on the Main Menu
+                    // Close the game
+                    GameMemory.WriteByte(0x628094, 0);
+                    GameRunning = false;
+                    Invoke(new Action(() => UpdateControls()));
+                }).Start();
+            }
+        }
+
+        public void UseCheatCodes(System.Diagnostics.Process p)
+        {
+            if (Properties.Settings.Default.UsePrePlusOffsets == true)
+            {
+                // Patches
+                GameMemory.Attach(p);
+
+            }
+            else
+            {
+                GameMemory.Attach(p);
+                //if (CheatCodes.Default.DisableBackgroundPausing)
+                GameMemory.WriteByte(0x005FDD00, 0xEB); // Background Pausing
+                                                        /*if (CheatCodes.Default.EnableDebugMode)
+                                                        {*/
+                GameMemory.WriteByte(0x00E48768, 0x01); // Debug Mode
+                GameMemory.WriteByte(0x006F1806, 0x01); // Dev Menu
+                //}
+                /*if (CheatCodes.Default.DisableSuperMusic)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.DisableSuperPeelOutAnimation)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableInstaSheildandDropDash)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableSuperPeelOut)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableSuperWithNoEmerlads)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.EnableVapeMode)
+                    GameMemory.WriteInt16(0x006F1806, 0x01);
+                if (CheatCodes.Default.FreezeTimer)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.InfiniteLives)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.InfiniteRings)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.HideHUD)
+                    GameMemory.WriteByte(0x006F1806, 0x01);
+                if (CheatCodes.Default.DisableBackgroundPausing)
+                    GameMemory.WriteByte(0x006F1806, 0x01);*/
+
+            }
+        }
+
+        private void pixelModeButton_Click(object sender, EventArgs e)
+        {
+            if (pixelModeButton.Checked == false)
+            {
+                pixelModeButton.Checked = true;
+                Properties.Settings.Default.pixelCountMode = true;
+            }
+            else
+            {
+                pixelModeButton.Checked = false;
+                Properties.Settings.Default.pixelCountMode = false;
+            }
+
+        }
+
+        private void scrollLockButton_Click(object sender, EventArgs e)
+        {
+            if (scrollLockButton.Checked == false)
+            {
+                scrollLockButton.Checked = true;
+                Properties.Settings.Default.scrollLock = true;
+                scrollDirection = "Locked";
+            }
+            else
+            {
+                if (Properties.Settings.Default.ScrollLockY == true)
+                {
+                    scrollLockButton.Checked = false;
+                    Properties.Settings.Default.scrollLock = false;
+                    scrollDirection = "Y";
+                }
+                else
+                {
+                    scrollLockButton.Checked = false;
+                    Properties.Settings.Default.scrollLock = false;
+                    scrollDirection = "X";
+                }
+
+            }
+
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
@@ -1724,27 +3639,41 @@ namespace ManiacEditor
 
         private void flipVerticalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditLayer?.FlipPropertySelected(1 << 11);
+            if (multiLayerSelect == false)
+            {
+                EditLayer?.FlipPropertySelected(FlipDirection.Veritcal);
+            }
+            else
+            {
+                FGHigher?.FlipPropertySelected(FlipDirection.Veritcal);
+                FGHigh?.FlipPropertySelected(FlipDirection.Veritcal);
+                FGLower?.FlipPropertySelected(FlipDirection.Veritcal);
+                FGLow?.FlipPropertySelected(FlipDirection.Veritcal);
+            }
             UpdateEditLayerActions();
+        }
+
+        private void resetDeviceButton_Click(object sender, EventArgs e)
+        {
+            GraphicPanel.AttemptRecovery();
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftY = e.NewValue;
-            GraphicPanel.Render();
+            UpdateRender();
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             ShiftX = e.NewValue;
-            GraphicPanel.Render();
+            UpdateRender();
         }
 
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftY = (sender as VScrollBar).Value;
-            if(!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
-
+            if (!(zooming || draggingSelection || dragged || scrolling)) UpdateRender();
             if (draggingSelection)
             {
                 GraphicPanel.OnMouseMoveEventCreate();
@@ -1754,14 +3683,602 @@ namespace ManiacEditor
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             ShiftX = hScrollBar1.Value;
-            if (!(zooming || draggingSelection || dragged || scrolling)) GraphicPanel.Render();
+            if (!(zooming || draggingSelection || dragged || scrolling)) UpdateRender();
+            if (draggingSelection)
+            {
+                GraphicPanel.OnMouseMoveEventCreate();
+            }
         }
 
+        private void showTileIDButton_Click(object sender, EventArgs e)
+        {
+            if (showTileIDButton.Checked == false)
+            {
+                showTileIDButton.Checked = true;
+                ReloadToolStripButton_Click(sender, e);
+                showTileID = true;
+            }
+            else
+            {
+                showTileIDButton.Checked = false;
+                ReloadToolStripButton_Click(sender, e);
+                showTileID = false;
+            }
+        }
+
+        private void showGridButton_Click(object sender, EventArgs e)
+        {
+            if (showGridButton.Checked == false)
+            {
+                showGridButton.Checked = true;
+                showGrid = true;
+            }
+            else
+            {
+                showGridButton.Checked = false;
+                showGrid = false;
+            }
+        }
+
+        private void ShowCollisionAButton_Click(object sender, EventArgs e)
+        {
+            if (showCollisionAButton.Checked == false)
+            {
+                showCollisionAButton.Checked = true;
+                showCollisionA = true;
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+            else
+            {
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+        }
+
+        private void showCollisionBButton_Click(object sender, EventArgs e)
+        {
+            if (showCollisionBButton.Checked == false)
+            {
+                showCollisionBButton.Checked = true;
+                showCollisionB = true;
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+            else
+            {
+                showCollisionBButton.Checked = false;
+                showCollisionB = false;
+                showCollisionAButton.Checked = false;
+                showCollisionA = false;
+                ReloadToolStripButton_Click(sender, e);
+            }
+        }
+
+        private void nudgeFasterButton_Click(object sender, EventArgs e)
+        {
+            if (nudgeFasterButton.Checked == false)
+            {
+                nudgeFasterButton.Checked = true;
+                Properties.Settings.Default.EnableFasterNudge = true;
+            }
+            else
+            {
+                nudgeFasterButton.Checked = false;
+                Properties.Settings.Default.EnableFasterNudge = false;
+            }
+        }
+
+        private void removeObjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                using (var ObjectRemover = new ObjectRemover(EditorScene.Objects, StageConfig))
+                {
+                    if (ObjectRemover.ShowDialog() != DialogResult.OK)
+                        return; // nothing to do
+
+                    // user clicked Import, get to it!
+                    UpdateControls();
+                    entitiesToolbar?.RefreshObjects(EditorScene.Objects);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to import Objects. " + ex.Message);
+            }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void backupScene()
+        {
+            backupType = 1;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
+        }
+        public void backupSceneBeforeCrash()
+        {
+            backupType = 2;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
+        }
+        public void autoBackupScene()
+        {
+            backupType = 3;
+            backupToolStripMenuItem_Click(null, null);
+            backupType = 0;
+        }
+
+        private void backupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            backupTool(null, null);
+        }
+
+        private void backupTool(object sender, EventArgs e)
+        {
+            //Backup Types:
+            // 1: Manual Backups - Made by the user, and infinite amount
+            // 2: Emergency Backups - Made by the editor, right before a crash or something progress losing, and only is made
+            // 3: Automatic Backups - Made by the editor by user choice (toggle in options) automatically every so often
+            if (EditorScene == null) return;
+
+            if (IsTilesEdit())
+            {
+                // Apply changes
+                Deselect();
+            }
+
+            try
+            {
+                if (backupType == 1)
+                {
+                    String SceneFilenameBak = SceneFilename + ".bak";
+                    int i = 1;
+                    while ((File.Exists(SceneFilenameBak)))
+                    {
+                        SceneFilenameBak = SceneFilename.Substring(0, SceneFilename.Length - 4) + "." + i + ".bin.bak";
+                        i++;
+                    }
+                    EditorScene.Save(SceneFilenameBak);
+                }
+                if (backupType == 2)
+                {
+                    String SceneFilenameBak = SceneFilename + ".crash.bak";
+                    EditorScene.Save(SceneFilenameBak);
+                }
+                else
+                {
+                    String SceneFilenameBak = SceneFilename + ".idk.bak";
+                    int i = 1;
+                    while ((File.Exists(SceneFilenameBak)))
+                    {
+                        SceneFilenameBak = SceneFilename.Substring(0, SceneFilename.Length - 4) + "." + i + ".bin.bak";
+                        i++;
+                    }
+                    EditorScene.Save(SceneFilenameBak);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to backup the scene to file '{SceneFilename}'
+Error: {ex.Message}");
+            }
+
+            try
+            {
+                StageConfig?.Write(StageConfigFileName);
+            }
+            catch (Exception ex)
+            {
+                ShowError($@"Failed to backup the StageConfig to file '{StageConfigFileName}'
+Error: {ex.Message}");
+            }
+        }
+
+        private void backupRecoverButton_Click(object sender, EventArgs e)
+        {
+            string Result = null, ResultOriginal = null, ResultOld = null;
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Backup Scene|*.bin.bak|Old Scene|*.bin.old|Crash Backup Scene|*.bin.crash.bak";
+            if (open.ShowDialog() != DialogResult.Cancel)
+            {
+                Result = open.FileName;
+                ResultOriginal = Result.Split('.')[0] + ".bin";
+                ResultOld = ResultOriginal + ".old";
+                int i = 1;
+                while ((File.Exists(ResultOld)))
+                {
+                    ResultOld = ResultOriginal.Substring(0, ResultOriginal.Length - 4) + "." + i + ".bin.old";
+                    i++;
+                }
+
+
+
+            }
+
+            if (Result == null)
+                return;
+
+            UnloadScene();
+            UseVisibilityPrefrences();
+            File.Replace(Result, ResultOriginal, ResultOld);
+
+        }
+
+        private void vScrollBar1_Entered(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.scrollLock == false)
+            {
+                scrollDirection = "Y";
+            }
+            else
+            {
+                scrollDirection = "Locked";
+            }
+
+        }
+
+        private void openDataDirectoryMenuButton(object sender, EventArgs e)
+        {
+            string dataDirectory = _recentDataItems[0].Tag.ToString();
+            if (dataDirectory != null)
+            {
+                RecentDataDirectoryClicked(sender, e, dataDirectory);
+            }
+        }
+
+        private void openSceneFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string SceneFilename_mod = SceneFilename.Replace('/', '\\');
+            Process.Start("explorer.exe", "/select, " + SceneFilename_mod);
+            //MessageBox.Show(SceneFilename_mod);
+        }
+
+        private void openDataDirectoryFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string DataDirectory_mod = DataDirectory.Replace('/', '\\');
+            Process.Start("explorer.exe", "/select, " + DataDirectory_mod);
+            //MessageBox.Show(DataDirectory_mod);
+        }
+
+        private void openSonicManiaFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            string GameFolder = Properties.Settings.Default.RunGamePath;
+            string GameFolder_mod = GameFolder.Replace('/', '\\');
+            Process.Start("explorer.exe", "/select, " + GameFolder_mod);
+            //MessageBox.Show(GameFolder_mod);
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void rSDKAnnimationEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String aniProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunAniEdPath);
+            IntPtr hWnd = FindWindow(aniProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(aniProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+
+                // Ask where RSDK Annimation Editor is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunAniEdPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select RSDK Animation Editor.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunAniEdPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                    {
+                        Properties.Settings.Default.RunAniEdPath = "";
+                        return;
+                    }
+                }
+
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunAniEdPath);
+                Process.Start(psi);
+            }
+        }
+
+        private void cToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String collisionProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunTileManiacPath);
+            IntPtr hWnd = FindWindow(collisionProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(collisionProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where Tile Maniac is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunTileManiacPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select TileManiac.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunTileManiacPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunTileManiacPath))
+                    {
+                        Properties.Settings.Default.RunTileManiacPath = "";
+                        return;
+                    }
+                }
+
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunTileManiacPath);
+                Process.Start(psi);
+            }
+
+        }
+
+        private void openDataDirectoryButton_DropDownOpened(object sender, EventArgs e)
+        {
+            toolStripSplitButton1.AutoToolTip = false;
+        }
+
+        private void openDataDirectoryButton_DropDownClosed(object sender, EventArgs e)
+        {
+            toolStripSplitButton1.AutoToolTip = true;
+        }
+
+        public void preLoadSceneButton_Click(object sender, EventArgs e)
+        {
+            isPreRending = true;
+            var thread = new Thread(
+            () =>
+            {
+                preLoadBox p = new preLoadBox();
+                p.ShowDialog();
+            });
+            thread.Start();
+
+            var preLoadForm = (preLoadBox)Application.OpenForms["preLoadBox"] as preLoadBox;
+            //TODO: This is supposed to grab the open box so we can make calls to it, but it does not
+            for (bool s = false; s == true;)
+            {
+                preLoadForm = (preLoadBox)Application.OpenForms["preLoadBox"] as preLoadBox;
+                if(preLoadForm != null)
+                {
+                    s = true;
+                }
+            }
+            
+
+
+            hScrollBar1.Value = 0;
+            vScrollBar1.Value = 0;
+            int ScreenMaxH = hScrollBar1.Maximum - hScrollBar1.LargeChange;
+            int ScreenMaxV = vScrollBar1.Maximum - vScrollBar1.LargeChange;
+
+            for (int y = 0; y < ScreenMaxV;)
+            {
+                for (int x = 0; x < ScreenMaxH;)
+                {
+                    hScrollBar1.Value = x;
+                    int x_test = x + 100;
+                    if (x_test >= ScreenMaxH)
+                    {
+                        x = x + x_test - ScreenMaxH;
+                    }
+                    else
+                    {
+                        x = x + 100;
+                    }
+                    //progressValueX = (hScrollBar1.Value / hScrollBar1.Maximum);
+                    // Enable when the previous TODO above is Fixed
+
+                }
+                vScrollBar1.Value = y;
+                int y_test = y + 100;
+                if (y_test >= ScreenMaxV)
+                {
+                    y = y + y_test - ScreenMaxV;
+                }
+                else
+                {
+                    y = y + 100;
+                }
+                //progressValueY = (vScrollBar1.Value / vScrollBar1.Maximum);
+                // Enable when the previous TODO above is Fixed
+
+
+            }
+            hScrollBar1.Value = 0;
+            vScrollBar1.Value = 0;
+
+            // get the form reference back and close it
+            isPreRending = false;
+            thread.Abort();
+        }
+
+        private void gameOptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var runSceneOptions = new RunSceneOptions())
+            {
+                runSceneOptions.ShowDialog();
+            }
+        }
+
+        private void openModManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String modProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunModLoaderPath);
+            IntPtr hWnd = FindWindow(modProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(modProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where the Mania Mod Manager is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunModLoaderPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select Mania Mod Manager.exe";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunModLoaderPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunGamePath))
+                    {
+                        Properties.Settings.Default.RunModLoaderPath = "";
+                        return;
+                    }
+                }
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunModLoaderPath);
+                Process.Start(psi);
+            }
+
+            
+        }
+
+        private void colorPaletteEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String palleteProcessName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.RunPalleteEditorPath);
+            IntPtr hWnd = FindWindow(palleteProcessName, null); // this gives you the handle of the window you need.
+            Process processes = Process.GetProcessesByName(palleteProcessName).FirstOrDefault();
+            if (processes != null)
+            {
+                // check if the window is hidden / minimized
+                if (processes.MainWindowHandle == IntPtr.Zero)
+                {
+                    // the window is hidden so try to restore it before setting focus.
+                    ShowWindow(processes.Handle, ShowWindowEnum.Restore);
+                }
+
+                // set user the focus to the window
+                SetForegroundWindow(processes.MainWindowHandle);
+            }
+            else
+            {
+                // Ask where Color Palette Program is located when not set
+                if (string.IsNullOrEmpty(Properties.Settings.Default.RunPalleteEditorPath))
+                {
+                    var ofd = new OpenFileDialog();
+                    ofd.Title = "Select Color Palette Program (.exe)";
+                    ofd.Filter = "Windows PE Executable|*.exe";
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        Properties.Settings.Default.RunPalleteEditorPath = ofd.FileName;
+                }
+                else
+                {
+                    if (!File.Exists(Properties.Settings.Default.RunPalleteEditorPath))
+                    {
+                        Properties.Settings.Default.RunPalleteEditorPath = "";
+                        return;
+                    }
+                }
+
+                ProcessStartInfo psi;
+                psi = new ProcessStartInfo(Properties.Settings.Default.RunPalleteEditorPath);
+                Process.Start(psi);
+            }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            if (multiLayerSelect)
+            {
+                toolStripButton1.Checked = false;
+                multiLayerSelect = false;
+            }
+            else
+            {
+                toolStripButton1.Checked = true;
+                multiLayerSelect = true;
+            }
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (!EditFGHigh.Checked && !EditFGLow.Checked && !EditFGLower.Checked && !EditFGHigher.Checked)
+            {
+                //Work around to prevent a bad crash
+                DisposeTextures();
+                //GraphicPanel.AttemptRecovery();
+            }
+        }
+
+        private void hScrollBar1_Entered(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.scrollLock == false)
+            {
+                scrollDirection = "X";
+            }
+            else
+            {
+                scrollDirection = "Locked";
+            }
+        }
         public void DisposeTextures()
         {
-            if (StageTiles != null) StageTiles.DisposeTextures();
+            // Make sure to dispose the textures of the extra layers too
+            StageTiles?.DisposeTextures();
             if (FGHigh != null) FGHigh.DisposeTextures();
             if (FGLow != null) FGLow.DisposeTextures();
+            if (FGHigher != null) FGHigher.DisposeTextures();
+            if (FGLower != null) FGLower.DisposeTextures();
+            //if (CollisionLayerA != null) CollisionLayerA.Clear();
+            //if (CollisionLayerB != null) CollisionLayerB.Clear();
+
+            foreach (var el in EditorScene.OtherLayers)
+            {
+                el.DisposeTextures();
+            }
         }
 
         public Rectangle GetScreen()
@@ -1772,6 +4289,112 @@ namespace ManiacEditor
         public double GetZoom()
         {
             return Zoom;
+        }
+
+        DialogResult deviceExceptionResult;
+        public void DeviceExceptionDialog()
+        {
+                try
+                {
+                    GraphicPanel.DisposeDeviceResources();
+                    GraphicPanel.Init(this);
+                }
+                catch (SharpDX.SharpDXException)
+                {
+                    using (var deviceLostBox = new DeviceLostBox())
+                    {
+                        deviceLostBox.ShowDialog();
+                        deviceExceptionResult = deviceLostBox.DialogResult;
+                    }
+                    if (deviceExceptionResult == DialogResult.Yes) //Yes and Exit
+                    {
+                        Editor.Instance.backupSceneBeforeCrash();
+                        Environment.Exit(1);
+
+                    }
+                    else if (deviceExceptionResult == DialogResult.No) //No and try to Restart
+                    {
+                        GraphicPanel.DisposeDeviceResources();
+                        GraphicPanel.Init(this);
+
+                    }
+                    else if (deviceExceptionResult == DialogResult.Retry) //Yes and try to Restart
+                    {
+                        Editor.Instance.backupSceneBeforeCrash();
+                        GraphicPanel.DisposeDeviceResources();
+                        GraphicPanel.Init(this);
+                    }
+                    else if (deviceExceptionResult == DialogResult.Ignore) //No and Exit
+                    {
+                        Environment.Exit(1);
+                    }
+                }
+            }
+            private void Editor_FormClosing1(object sender, System.Windows.Forms.FormClosingEventArgs e)
+            {
+                if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
+                {
+                    DialogResult exitBoxResult;
+                    using (var exitBox = new ExitWarningBox())
+                    {
+                        exitBox.ShowDialog();
+                        exitBoxResult = exitBox.DialogResult;
+                    }
+                    if (exitBoxResult == DialogResult.Yes)
+                    {
+                        Save_Click(sender, e);
+                        Environment.Exit(1);
+                    }
+                    else if (exitBoxResult == DialogResult.No)
+                    {
+                        Environment.Exit(1);
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
+                }
+                else
+                {
+                    Environment.Exit(1);
+                }
+
+            }
+
+        private void SceneChangeWarning(object sender, EventArgs e)
+        {
+            if (SceneLoaded == true && Properties.Settings.Default.DisableSaveWarnings == false)
+            {
+                DialogResult exitBoxResult;
+                using (var exitBox = new ExitWarningBox())
+                {
+                    exitBox.ShowDialog();
+                    exitBoxResult = exitBox.DialogResult;
+                }
+                if (exitBoxResult == DialogResult.Yes)
+                {
+                    Save_Click(sender, e);
+                    AllowSceneChange = true;
+                }
+                else if (exitBoxResult == DialogResult.No)
+                {
+                    AllowSceneChange = true;
+                }
+                else
+                {
+                    AllowSceneChange = false;
+                }
+            }
+            else
+            {
+                AllowSceneChange = true;
+            }
+
+        }
+
+        public void UpdateRender()
+        {
+                GraphicPanel.Render();
         }
     }
 }

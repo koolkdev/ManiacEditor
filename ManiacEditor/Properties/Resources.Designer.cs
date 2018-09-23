@@ -19,7 +19,7 @@ namespace ManiacEditor.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,36 @@ namespace ManiacEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ApplicationServiceOK_16x {
+            get {
+                object obj = ResourceManager.GetObject("ApplicationServiceOK_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ErrorMonitor {
+            get {
+                object obj = ResourceManager.GetObject("ErrorMonitor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ErrorStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("ErrorStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon file {
@@ -77,6 +107,277 @@ namespace ManiacEditor.Properties {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap InfoStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("InfoStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red255\green0\blue0;}
+        ///\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 . \par
+        ///Any changes made will be reflected when this window is closed. Don&apos;t forget to save after! \par
+        ///You did take that backup, didn&apos;t you?\lang9\f1\fs22\par
+        ///}
+        ///.
+        /// </summary>
+        internal static string LayerManagerWarning {
+            get {
+                return ResourceManager.GetString("LayerManagerWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MagnetMode {
+            get {
+                object obj = ResourceManager.GetObject("MagnetMode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap New {
+            get {
+                object obj = ResourceManager.GetObject("New", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red255\green0\blue0;}
+        ///\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 .\par
+        ///\pard It will make changes to the \i StageConfig.bin\i0  file which belongs to the Scene you are currently editing. Some Objects will require you to import sounds, or make other changes; but those are not automatically handled...\par
+        ///\pard\qc\b you \b0 must do that b [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ObjectWarning {
+            get {
+                return ResourceManager.GetString("ObjectWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Open {
+            get {
+                object obj = ResourceManager.GetObject("Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap placeTilesButton {
+            get {
+                object obj = ResourceManager.GetObject("placeTilesButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pointerButton {
+            get {
+                object obj = ResourceManager.GetObject("pointerButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redoButton {
+            get {
+                object obj = ResourceManager.GetObject("redoButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RefreshStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("RefreshStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ReloadToolStripButton {
+            get {
+                object obj = ResourceManager.GetObject("ReloadToolStripButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap resetDeviceButton {
+            get {
+                object obj = ResourceManager.GetObject("resetDeviceButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RunScene {
+            get {
+                object obj = ResourceManager.GetObject("RunScene", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save {
+            get {
+                object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap selectTool {
+            get {
+                object obj = ResourceManager.GetObject("selectTool", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap showCollisionAButton {
+            get {
+                object obj = ResourceManager.GetObject("showCollisionAButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap showCollisionBButton {
+            get {
+                object obj = ResourceManager.GetObject("showCollisionBButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap showGridButton {
+            get {
+                object obj = ResourceManager.GetObject("showGridButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap showTileIDButton {
+            get {
+                object obj = ResourceManager.GetObject("showTileIDButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Segoe UI;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red255\green0\blue0;}
+        ///{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\qc\f0\fs18 This feature is \cf1\b highly experimental\cf0\b0 .\par
+        ///\pard It will make changes to the \i StageConfig.bin\i0  file which belongs to the Scene you are currently editing, in order to make the Sounds you select available for use. But actually getting those sounds to play...\par
+        ///\pard\q [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SoundWarning {
+            get {
+                return ResourceManager.GetString("SoundWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap toolStripButton1 {
+            get {
+                object obj = ResourceManager.GetObject("toolStripButton1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap undoButton {
+            get {
+                object obj = ResourceManager.GetObject("undoButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningMonitor {
+            get {
+                object obj = ResourceManager.GetObject("WarningMonitor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningStatic2 {
+            get {
+                object obj = ResourceManager.GetObject("WarningStatic2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap zoomInButton {
+            get {
+                object obj = ResourceManager.GetObject("zoomInButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap zoomOutButton {
+            get {
+                object obj = ResourceManager.GetObject("zoomOutButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

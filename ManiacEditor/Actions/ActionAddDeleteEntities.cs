@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ManiacEditor.Actions
 {
@@ -11,6 +9,8 @@ namespace ManiacEditor.Actions
         Action<List<EditorEntity>> deleteEntity;
         List<EditorEntity> entities;
         bool add;
+
+        public string Description => GenerateActionDescription();
 
         public ActionAddDeleteEntities(List<EditorEntity> entities, bool add, Action<List<EditorEntity>> addEntity, Action<List<EditorEntity>> deleteEntity)
         {
@@ -31,6 +31,42 @@ namespace ManiacEditor.Actions
         public IAction Redo()
         {
             return new ActionAddDeleteEntities(entities, !add, addEntity, deleteEntity);
+        }
+
+        private string GenerateActionDescription()
+        {
+            string action;
+            string name = null;
+            if (add)
+            {
+                action = "adding";
+            }
+            else
+            {
+                action = "deleting";
+            }
+
+            if (null == entities)
+            {
+                // this shouldn't happen
+                name = "object";
+            }
+            else if (entities.Count == 1)
+            {
+                name = entities[0]?.Entity?.Object?.Name?.ToString();
+            }
+            else
+            {
+                name = $"{entities.Count} objects";
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                // this probably shouldn't happen either
+                name = "object";
+            }
+
+            return $"{action} {name}";
         }
 
     }

@@ -7,9 +7,10 @@ using System.IO;
 
 namespace RSDKv5
 {
+    [Serializable]
     public class NameIdentifier
     {
-        public readonly byte[] Hash;
+        private readonly byte[] Hash;
         public readonly String Name = null;
 
         public NameIdentifier(string name)

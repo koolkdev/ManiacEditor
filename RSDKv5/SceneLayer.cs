@@ -10,51 +10,16 @@ namespace RSDKv5
     public class SceneLayer
     {
         byte IgnoredByte;
-        public string Name;
+        private string _name;
 
         public byte IsScrollingVertical;
         public byte UnknownByte2;
 
-        public ushort Width;
-        public ushort Height;
+        private ushort _width;
+        private ushort _height;
 
-        public ushort UnknownWord1;
-        public ushort UnknownWord2;
-
-        public class ScrollInfo
-        {
-            ushort UnknownWord1;
-            ushort UnknownWord2;
-            byte UnknownByte1;
-            byte UnknownByte2;
-
-            public ScrollInfo(ushort word1 = 0x100, ushort word2 = 0, byte byte1 = 0, byte byte2 = 0)
-            {
-                this.UnknownWord1 = word1;
-                this.UnknownWord2 = word2;
-
-                this.UnknownByte1 = byte1;
-                this.UnknownByte2 = byte2;
-            }
-
-            internal ScrollInfo(Reader reader)
-            {
-                UnknownWord1 = reader.ReadUInt16();
-                UnknownWord2 = reader.ReadUInt16();
-
-                UnknownByte1 = reader.ReadByte();
-                UnknownByte2 = reader.ReadByte();
-            }
-
-            internal void Write(Writer writer)
-            {
-                writer.Write(UnknownWord1);
-                writer.Write(UnknownWord2);
-
-                writer.Write(UnknownByte1);
-                writer.Write(UnknownByte2);
-            }
-        }
+        public short UnknownWord1;
+        public short UnknownWord2;
 
         public List<ScrollInfo> ScrollingInfo = new List<ScrollInfo>();
 
@@ -62,9 +27,16 @@ namespace RSDKv5
 
         public ushort[][] Tiles;
 
+        public string Name { get => _name; set => _name = value; }
+        public ushort Width { get => _width; private set => _width = value; }
+        public ushort Height { get => _height; private set => _height = value; }
 
-        public SceneLayer(string name, ushort Width, ushort Height)
+        public SceneLayer(string name, ushort width, ushort height)
         {
+            Name = name;
+            Width = width;
+            Height = height;
+
             ScrollingInfo.Add(new ScrollInfo());
             // Per pixel (of height or of width, depends if it scrolls horizontal or veritcal)
             ScrollIndexes = new byte[Height * 16];
@@ -89,8 +61,8 @@ namespace RSDKv5
             Width = reader.ReadUInt16();
             Height = reader.ReadUInt16();
 
-            UnknownWord1 = reader.ReadUInt16();
-            UnknownWord2 = reader.ReadUInt16();
+            UnknownWord1 = reader.ReadInt16();
+            UnknownWord2 = reader.ReadInt16();
 
             ushort scrolling_info_count = reader.ReadUInt16();
             for (int i = 0; i < scrolling_info_count; ++i)
@@ -139,6 +111,45 @@ namespace RSDKv5
                         cwriter.Write(Tiles[i][j]);
                 cwriter.Close();
                 writer.WriteCompressed(cmem.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Resizes a layer.
+        /// </summary>
+        /// <param name="width">The new Width</param>
+        /// <param name="height">The new Height</param>
+        public void Resize(ushort width, ushort height)
+        {
+            // first take a backup of the current dimensions
+            // then update the internal dimensions
+            ushort oldWidth = Width;
+            ushort oldHeight = Height;
+            Width = width;
+            Height = height;
+
+            // resize the various scrolling and tile arrays
+            Array.Resize(ref ScrollIndexes, Height * 16);
+            Array.Resize(ref Tiles, Height);
+
+            // fill the extended tile arrays with "empty" values
+
+            // if we're actaully getting shorter, do nothing!
+            for (ushort i = oldHeight; i < Height; i++)
+            {
+                // first create arrays child arrays to the old width
+                // a little inefficient, but at least they'll all be equal sized
+                Tiles[i] = new ushort[oldWidth];
+                for (int j = 0; j < oldWidth; ++j)
+                    Tiles[i][j] = 0xffff; // fill the new ones with blanks
+            }
+
+            for (ushort i = 0; i < Height; i++)
+            {
+                // now resize all child arrays to the new width
+                Array.Resize(ref Tiles[i], Width);
+                for (ushort j = oldWidth; j < Width; j++)
+                    Tiles[i][j] = 0xffff; // and fill with blanks if wider
             }
         }
     }
